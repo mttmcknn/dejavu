@@ -25,7 +25,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - run: ./gradlew :dejavu:testDebugUnitTest :dejavu:jvmTest :dejavu:lintDebug apiCheck
 
   compose-compat:
@@ -41,7 +41,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - run: ./gradlew :dejavu:compileDebugKotlin :dejavu:testDebugUnitTest -PcomposeBomVersion=${{ matrix.bom }}
 
   ios-tests:
@@ -53,7 +53,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - name: Xcode preflight
         run: |
           if [ -d /Applications/Xcode_26.5.app ]; then
@@ -77,7 +77,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - run: ./gradlew :dejavu:wasmJsBrowserTest :compose-experimental:wasmJsBrowserTest
 
   compose-experimental:
@@ -89,7 +89,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - run: ./gradlew :compose-experimental:jvmTest
 
   build-demos:
@@ -101,7 +101,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - run: ./gradlew :demo-desktop:compileKotlinJvm :demo-wasm:compileKotlinWasmJs
 
   instrumented-tests:
@@ -121,7 +121,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
 
       - name: Enable KVM
         run: |
@@ -164,7 +164,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
 
       - name: Enable KVM
         run: |

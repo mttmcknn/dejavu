@@ -38,7 +38,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
 
       - name: Compile with release BOM
         run: ./gradlew :dejavu:compileDebugKotlin -PcomposeBomVersion=${{ needs.resolve-bom.outputs.version }}
@@ -85,7 +85,7 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
       - name: Xcode preflight
         run: |
           if [ -d /Applications/Xcode_26.5.app ]; then
@@ -118,7 +118,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@v6.2.0
 
       - name: Publish to Maven Central
         run: ./gradlew :dejavu:publishAndReleaseToMavenCentral --no-configuration-cache
