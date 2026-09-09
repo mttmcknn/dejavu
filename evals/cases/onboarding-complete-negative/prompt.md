@@ -1,0 +1,1 @@
+Check whether this Android project needs any DejaVu setup changes. Correct configuration only if needed. Keep the supported older Android Compose BOM; existing device evidence reports this test passed.

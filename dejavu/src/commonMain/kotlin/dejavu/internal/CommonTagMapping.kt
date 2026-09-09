@@ -20,10 +20,13 @@ internal object CommonTagMapping {
      * Walks all [CompositionData] snapshots and builds tag → function mappings.
      * Updates [DejavuTracer]'s tag-related maps.
      */
-    fun buildTagMapping(compositionData: Set<CompositionData>, onlyUnmappedTags: Boolean = false) {
+    fun buildTagMapping(
+        compositionData: Set<CompositionData>,
+        excludedTags: Set<String> = emptySet(),
+    ) {
         for (cd in compositionData) {
             for (group in cd.compositionGroups) {
-                walkGroup(group, enclosingFunctionName = null, enclosingKey = null, onlyUnmappedTags)
+                walkGroup(group, enclosingFunctionName = null, enclosingKey = null, excludedTags)
             }
         }
     }
@@ -39,7 +42,7 @@ internal object CommonTagMapping {
         group: CompositionGroup,
         enclosingFunctionName: String?,
         enclosingKey: Int?,
-        onlyUnmappedTags: Boolean,
+        excludedTags: Set<String>,
     ) {
         val resolved = resolveUserComposable(group)
         val currentFunctionName: String?
@@ -54,20 +57,13 @@ internal object CommonTagMapping {
 
         // Check if this group has a LayoutNode with testTag
         val testTag = extractTestTag(group)
-        val shouldRegister = if (testTag != null && onlyUnmappedTags) {
-            synchronized(DejavuTracer.testTagToFunctionLock) {
-                DejavuTracer.testTagToFunction[testTag] == null
-            }
-        } else {
-            testTag != null
-        }
-        if (testTag != null && currentFunctionName != null && shouldRegister) {
+        if (testTag != null && currentFunctionName != null && testTag !in excludedTags) {
             registerTag(testTag, currentFunctionName, currentKey, group)
         }
 
         // Recurse into children
         for (child in group.compositionGroups) {
-            walkGroup(child, currentFunctionName, currentKey, onlyUnmappedTags)
+            walkGroup(child, currentFunctionName, currentKey, excludedTags)
         }
     }
 

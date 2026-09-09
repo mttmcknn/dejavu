@@ -11,18 +11,15 @@ APIs lands *first*, before those APIs graduate into the core accuracy suite.
 
 ## Why it is a separate module
 
-`:dejavu`'s `commonTest` is compiled against the **full Compose BOM range** — back to 2024.06
-(Compose 1.6) — in the `compose-compat` CI sweep. Experimental / newest-Compose APIs don't exist at
-those older BOMs, so putting their tests in `:dejavu`'s `commonTest` would break that cross-version
-sweep.
+Experimental / newest-Compose APIs evolve faster than Dejavu's core public behavior. Keeping their
+regressions here lets them land immediately and move into the core accuracy suite once stable.
 
-Isolating them here keeps the core suite portable across the whole BOM range. This module only ever
-builds at the **current baseline BOM**, so it is free to reference APIs that older Compose versions
-don't have.
+The KMP targets build against the pinned Compose Multiplatform release baseline. Android builds and
+runs this module at **every supported Android BOM checkpoint**, alongside the legacy UI suite.
 
 ## Currently covered
 
-The module currently exercises Compose 1.11's new APIs:
+The common suite exercises Compose 1.11 APIs:
 
 - the experimental non-lazy `Grid` layout,
 - the experimental `FlexBox` layout,
@@ -32,7 +29,8 @@ The module currently exercises Compose 1.11's new APIs:
   (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`), and
 - `movableContentOf`.
 
-These run on JVM, iOS, Wasm, and Android instrumented.
+These run on JVM, iOS, Wasm, and Android instrumented. The Android suite runs against every
+supported Android BOM.
 
 ## Test style
 
@@ -61,3 +59,17 @@ its coverage out of this module:
 2. Fold it into the accuracy suite — `ComposablePatternAccuracyTest` / `SideEffectAccuracyTest`.
 3. Update the compatibility docs (`docs/how-it-works.md`, `README.md`).
 4. Delete the now-redundant test (and any module-only helper it no longer needs) from here.
+
+## Compose 1.12 regressions
+
+The 1.12 baseline adds six tests in `src/compose112Test`: stable and changed keyed `SideEffect`,
+shrinking vararg effect keys, shrinking `remember` keys, frame assertions without implicit waits,
+and nested movable content with LinkBuffer enabled. Unkeyed `SideEffect` remains the ground-truth
+counter. The stable-key fixture deliberately recomposes four times even though its keyed callback
+never runs again; DejaVu must report four and reject an incorrect zero budget.
+
+The experimental `pressed` API accepts a `Style` in 1.11 and a block in 1.12. A small adapter in
+`src/compose111Test` or `src/compose112Test` preserves the same test behavior across this change.
+Gradle selects the source directory from the explicit Android BOM override, or the pinned baseline
+for KMP. Old Android checkpoints run 20 experimental tests; the 1.12 baseline runs 26. New APIs do
+not force the core library's supported Android floor upward.

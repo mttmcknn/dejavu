@@ -1,0 +1,1 @@
+Review this accuracy regression for any necessary corrections. It intentionally exercises four extra recompositions and expects a stable-budget failure. Preserve that contract; make changes only if necessary.

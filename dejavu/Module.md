@@ -8,5 +8,8 @@ without per-composable setup.
 
 ## Getting started
 
-Add the dependency and call `Dejavu.enable()` before your test's `setContent()`.
+Add Dejavu to your test dependencies. On Android, use `createRecompositionTrackingRule()` and
+set the screen with the rule's `setContent`, or use the activity overload to launch your screen.
+On JVM, iOS, and Wasm, return `runRecompositionTrackingUiTest` directly from your test and call
+`setTrackedContent` inside it. These helpers manage tracking and cleanup automatically.
 See the [Getting Started guide](https://dejavu.mmckenna.me/latest/getting-started/) for details.

@@ -20,8 +20,11 @@ What actually happened. Include assertion output if applicable.
 
 ## Environment
 - Dejavu version:
-- Compose version:
-- Android API level:
+- Compose Multiplatform version and/or Android BOM:
+- Kotlin version:
+- Target (Android, JVM, iOS, Wasm):
+- Test harness (Android rule or KMP helper):
+- Android compile SDK and device API level (if applicable):
 - Device/Emulator:
 
 ## Additional Context

@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.mmckenna.dejavu"
-version = "0.4.0"
+version = "0.6.0-SNAPSHOT"
 
 kotlin {
   explicitApi()
@@ -37,7 +37,11 @@ kotlin {
   iosArm64()
   iosSimulatorArm64()
 
-  wasmJs { browser() }
+  wasmJs {
+    browser()
+    // Compose 1.12 requires webpack bundling to load Skiko for browser UI tests.
+    binaries.executable()
+  }
 
   sourceSets {
     val iosMain by creating {
@@ -102,7 +106,7 @@ kotlin {
 
 android {
   namespace = "dejavu"
-  compileSdk = 36
+  compileSdk = 37
   defaultConfig {
     minSdk = 24
     consumerProguardFiles("consumer-rules.pro")
@@ -142,11 +146,13 @@ android {
   }
 }
 
-// Compose BOM for version alignment (overridable via -PcomposeBomVersion=...)
+// The normal build uses Compose's recommended platform. Compatibility checks use an
+// enforced platform so a newer Compose Multiplatform dependency cannot silently win over
+// the older BOM that CI was explicitly asked to validate.
 dependencies {
   val composeBomVersion = project.findProperty("composeBomVersion") as? String
   val composeBom = if (composeBomVersion != null) {
-    platform("androidx.compose:compose-bom:$composeBomVersion")
+    enforcedPlatform("androidx.compose:compose-bom:$composeBomVersion")
   } else {
     platform(libs.androidx.compose.bom)
   }
@@ -214,7 +220,7 @@ mavenPublishing {
   pom {
     name.set("Dejavu")
     description.set("Implicit recomposition tracking for Jetpack Compose UI tests")
-    url.set("https://github.com/himattm/dejavu")
+    url.set("https://github.com/mttmcknn/dejavu")
     licenses {
       license {
         name.set("The Apache License, Version 2.0")
@@ -223,27 +229,30 @@ mavenPublishing {
     }
     developers {
       developer {
-        id.set("himattm")
+        id.set("mttmcknn")
         name.set("Matt McKenna")
         url.set("https://blog.mmckenna.me")
       }
     }
     scm {
-      url.set("https://github.com/himattm/dejavu")
-      connection.set("scm:git:git://github.com/himattm/dejavu.git")
-      developerConnection.set("scm:git:ssh://github.com/himattm/dejavu.git")
+      url.set("https://github.com/mttmcknn/dejavu")
+      connection.set("scm:git:git://github.com/mttmcknn/dejavu.git")
+      developerConnection.set("scm:git:ssh://github.com/mttmcknn/dejavu.git")
     }
   }
 }
 
 dokka {
   dokkaPublications.html {
+    moduleVersion.set(providers.gradleProperty("docsVersion").orElse(project.version.toString()))
+    includes.from("Module.md")
     outputDirectory.set(rootProject.layout.projectDirectory.dir("docs/api"))
   }
   dokkaSourceSets.configureEach {
     sourceLink {
       localDirectory.set(projectDir.resolve("src"))
-      remoteUrl("https://github.com/himattm/dejavu/blob/main/dejavu/src")
+      val sourceRef = providers.gradleProperty("docsSourceRef").orElse("main").get()
+      remoteUrl("https://github.com/mttmcknn/dejavu/blob/$sourceRef/dejavu/src")
       remoteLineSuffix.set("#L")
     }
     documentedVisibilities(

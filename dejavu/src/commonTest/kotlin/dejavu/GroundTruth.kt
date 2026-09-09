@@ -1,5 +1,8 @@
 package dejavu
 
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
+
 /**
  * Shared `SideEffect`-as-ground-truth recomposition counter for the dejavu pattern tests.
  *
@@ -32,32 +35,42 @@ package dejavu
  * assertion). For multi-instance composables whose per-tag counts only resolve on Android, record
  * a function-level key instead and assert against that — see the converted multi-instance tests.
  *
- * Not thread-safe; Compose UI tests drive composition on a single test thread.
+ * Access is synchronized because Android records `SideEffect`s on the main thread while assertions
+ * run on the instrumentation thread.
  */
 internal object GroundTruth {
+    private val lock = SynchronizedObject()
     private val counts = mutableMapOf<String, Int>()
     private val baseline = mutableMapOf<String, Int>()
 
     /** Record one composition (initial or recomposition) of the node with [tag]. */
     fun record(tag: String) {
-        counts[tag] = (counts[tag] ?: 0) + 1
+        synchronized(lock) {
+            counts[tag] = (counts[tag] ?: 0) + 1
+        }
     }
 
     /** Freeze the current counts as the baseline, aligning with Dejavu's reset/zero point. */
     fun snapshotBaseline() {
-        baseline.clear()
-        baseline.putAll(counts)
+        synchronized(lock) {
+            baseline.clear()
+            baseline.putAll(counts)
+        }
     }
 
     /** Recompositions of [tag] since the last [snapshotBaseline] (== Dejavu's post-baseline count). */
-    fun delta(tag: String): Int = (counts[tag] ?: 0) - (baseline[tag] ?: 0)
+    fun delta(tag: String): Int = synchronized(lock) {
+        (counts[tag] ?: 0) - (baseline[tag] ?: 0)
+    }
 
     /** Total compositions of [tag] recorded so far (initial + recompositions). */
-    fun total(tag: String): Int = counts[tag] ?: 0
+    fun total(tag: String): Int = synchronized(lock) { counts[tag] ?: 0 }
 
     /** Reset all state. Call at the start of every test (in the test body or `@BeforeTest`). */
     fun clear() {
-        counts.clear()
-        baseline.clear()
+        synchronized(lock) {
+            counts.clear()
+            baseline.clear()
+        }
     }
 }

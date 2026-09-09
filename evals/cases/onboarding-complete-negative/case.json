@@ -1,0 +1,42 @@
+{
+  "id": "onboarding-complete-negative",
+  "title": "Onboarding complete negative",
+  "family": "dejavu-onboarding",
+  "target_skills": [
+    "dejavu-onboarding"
+  ],
+  "expected_skills": [
+    "dejavu-onboarding"
+  ],
+  "allowed_skills": [
+    "dejavu-onboarding"
+  ],
+  "task_mode": "edit",
+  "kind": "negative",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "onboarding-complete-negative"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Recognizes complete compatible setup, preserves versions and existing positive tracking test, and makes no edits or redundant new tests."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Uses supplied passing evidence without claiming to have rerun it."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

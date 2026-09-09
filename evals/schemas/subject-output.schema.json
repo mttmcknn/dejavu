@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "skills_used", "evidence"],
+  "properties": {
+    "summary": { "type": "string" },
+    "skills_used": {
+      "type": "array",
+      "description": "Only public repository skills whose SKILL.md instructions were actually read and followed during this run; omit evaluator-owned fixture dependencies.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": { "type": "array", "items": { "type": "string" } }
+  }
+}

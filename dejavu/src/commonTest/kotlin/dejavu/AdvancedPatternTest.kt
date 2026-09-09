@@ -148,6 +148,7 @@ class AdvancedPatternTest {
         // real recomposition count for this node (the LaunchedEffect restart settles under waitForIdle).
         onNodeWithTag("effect_restart")
             .assertRecompositions(exactly = GroundTruth.delta("effect_restart"))
+        assertEquals(1, GroundTruth.delta("effect_restart"), "effect-key child recomposes once on key change")
     }
 }
 

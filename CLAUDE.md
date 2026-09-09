@@ -2,6 +2,10 @@
 
 Implicit recomposition tracking for Compose UI tests. KMP library targeting Android, Desktop (JVM), iOS, and WasmJs.
 
+Many sample composables intentionally recompose too often. Preserve these fixtures when validating
+the library. Accuracy means matching independent `SideEffect` counters and producing the expected
+budget failures; it does not mean optimizing every sample until it is stable.
+
 ## Verification Requirements
 
 **Always run UI tests when validating changes.** This is a UI testing framework — unit tests alone are not sufficient. The SideEffect accuracy tests in `commonTest` verify that the tracer's recomposition counts match ground-truth `SideEffect` counters through actual Compose UI rendering.
@@ -30,16 +34,23 @@ Minimum verification after any code change:
 ### `compose-experimental` module
 
 Separate Gradle module (`:compose-experimental`) that stages recomposition tests for experimental /
-newest-Compose APIs. They live here, not in `:dejavu`'s commonTest, because commonTest compiles
-against the full Compose BOM range (back to 1.6) in the `compose-compat` sweep where these APIs don't
-exist. Convention: when an API graduates to stable and the `:dejavu` BOM floor includes it, promote
-its test into `dejavu/src/commonTest` and delete it here. See `compose-experimental/README.md`.
+newest-Compose APIs before they graduate into the core accuracy suite. KMP targets use the pinned
+Compose Multiplatform baseline; Android builds and runs this module at every supported Compose 1.11–1.12
+BOM checkpoint. Convention: when an API graduates to stable and the `:dejavu` BOM floor includes
+it, promote its test into `dejavu/src/commonTest` and delete it here. See
+`compose-experimental/README.md`.
 
 ## Key Architecture
 
 - `DejavuTracer` implements `CompositionTracer` — intercepts every `traceEventStart`/`traceEventEnd`
 - First composition of a key → tracked but not counted as recomposition. Subsequent → counted.
-- Tag mapping (testTag → function name) is Android-only via Group tree walking. Other platforms use function-name tracking directly.
+- Tag mapping runs on all targets. Android uses its tooling Group tree with a common fallback and
+  frame-driven per-instance tracking. Other targets walk `CompositionGroup` directly; unresolved
+  multi-instance counts can fall back to the shared function count.
+- The inspection collection has stable object identity because Compose registers it in a hash set
+  of mutable collections. Do not replace it with a content-hashed set.
+- KMP UI test helpers must return Compose's `TestResult`. Keep assertions and tracer lifecycle
+  inside the suspendable test body so Wasm awaits completion and observes failures.
 - Locking uses `kotlinx-atomicfu` `SynchronizedObject` (not `kotlin.synchronized` which is JVM-only)
 - `@kotlin.concurrent.Volatile` in common/native code (not `@Volatile` which is `kotlin.jvm.Volatile`)
 
@@ -53,25 +64,27 @@ its test into `dejavu/src/commonTest` and delete it here. See `compose-experimen
 
 Always run with `-q --console=plain`.
 
-## Bundled Claude skills
+For release readiness, start a clean emulator, set `ANDROID_SERIAL`, and run
+`./test.sh --all-boms`. This enforces every supported Android BOM and runs both UI suites in
+addition to the JVM, iOS, Wasm, API, lint, and demo build checks. Compose 1.10 consumers remain on
+Dejavu 0.3.1; 0.4.0 retains the Compose Multiplatform 1.11 / compile SDK 36 baseline. DejaVu 0.5.x
+builds against Compose Multiplatform 1.12.0 and supports Android BOM 2026.05.00 through 2026.08.00.
+Android consumers require compile SDK 37 and must enforce the BOM to retain an older Compose line.
+For documentation-only edits, run the documentation checks in CONTRIBUTING.md; UI suites are
+required for runtime changes, not prose or website changes.
 
-This repo ships four skills under `.claude/skills/` for AI agents working with Dejavu:
+## Bundled agent skills
 
-- `dejavu-onboarding` — add Dejavu to a project from scratch (gradle dependency, first test).
-- `dejavu-test-writer` — author Compose UI recomposition tests using Dejavu's APIs.
-- `dejavu-error-triage` — one-shot diagnosis of a single failing `UnexpectedRecompositionsError`.
-- `dejavu-perf-loop` — closed-loop optimization of a composable's recomposition behavior, using Dejavu as the validator. Invokes `dejavu-test-writer` to establish the baseline test.
+Four skills live under `skills/`: `dejavu-onboarding`, `dejavu-test-writer`,
+`dejavu-error-triage` and `dejavu-perf-loop`. Edit these canonical files.
+The Claude Code plugin reads `skills/` directly; `.claude/skills/` and `.agents/skills/`
+supply repository discovery links. References needed outside this repository are bundled inside each skill.
+Companion skills are optional; use them when their scope fits the request.
 
-The four skills cross-reference each other so the agent can flow between them: onboarding → test-writer → (error-triage | perf-loop) depending on whether the user wants a one-shot fix or an iteration loop.
+After skill changes, run `python3 validation/skills.py`, `python3 evals/run.py validate`
+and `python3 -m unittest discover -s evals/tests -p 'test_*.py'`. Model evaluations
+are opt-in and advisory, with previews and call caps. See `evals/README.md`.
+A source-level skill evaluation does not replace actual UI verification for runtime changes.
 
-All skills point at the canonical docs in `docs/` and the canonical test patterns in `dejavu/src/commonTest/kotlin/dejavu/*PatternTest.kt` rather than duplicating them. They auto-load for sessions opened in this repo.
-
-### Plugin layout
-
-The same skills are also packaged as a Claude Code plugin so users outside this repo can install them globally:
-
-- `.claude-plugin/plugin.json` — plugin manifest (`name: dejavu`).
-- `.claude-plugin/marketplace.json` — single-plugin marketplace listing.
-- `skills/<skill-name>/` — symlinks into `.claude/skills/` so the canonical SKILL.md files have one source of truth. Edit the canonical files under `.claude/skills/`; the plugin layout picks up the change via symlink.
-
-Install instructions for end-users live in `README.md`.
+Plugin metadata lives in `.claude-plugin/`; keep its plugin and marketplace
+versions equal. The skill bundle's version is independent of the library version.

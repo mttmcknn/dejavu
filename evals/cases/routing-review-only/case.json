@@ -1,0 +1,42 @@
+{
+  "id": "routing-review-only",
+  "title": "Routing review only",
+  "family": "dejavu-error-triage",
+  "target_skills": [
+    "dejavu-error-triage"
+  ],
+  "expected_skills": [
+    "dejavu-error-triage"
+  ],
+  "allowed_skills": [
+    "dejavu-error-triage"
+  ],
+  "task_mode": "review",
+  "kind": "routing",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "routing-review-only"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Explains that a real state-dependent update can legitimately recompose once and that stable means zero after initial composition."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Keeps this diagnosis read-only; suggests a contract-aligned positive-count assertion and verification rather than optimizing UI to zero or starting an iteration loop."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

@@ -1,9 +1,12 @@
 site_name: Dejavu
 site_description: Lock in Compose UI efficiency. Catch recomposition regressions before your users.
 site_url: https://dejavu.mmckenna.me
-repo_url: https://github.com/himattm/dejavu
-repo_name: himattm/dejavu
+repo_url: https://github.com/mttmcknn/dejavu
+repo_name: mttmcknn/dejavu
 edit_uri: edit/main/docs/
+strict: true
+hooks:
+  - validation/docs_hook.py
 
 theme:
   name: material
@@ -37,12 +40,19 @@ theme:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
-  - Use Cases: use-cases.md
-  - Examples: examples.md
+  - Guides:
+      - Use Cases: use-cases.md
+      - Agent Skills: agent-skills.md
+      - Examples: examples.md
+      - How It Works: how-it-works.md
+      - Error Messages: error-messages.md
+      - Causality Analysis: causality-analysis.md
   - 'API Reference ↗': api/index.html
-  - How It Works: how-it-works.md
-  - Error Messages: error-messages.md
-  - Causality Analysis: causality-analysis.md
+  - Releases:
+      - Versions and migration: releases/index.md
+      - 0.5.0 validation: releases/0.5.0.md
+      - 0.4.0 validation: releases/0.4.0.md
+  - Contributing: contributing.md
 
 markdown_extensions:
   - admonition
@@ -55,11 +65,13 @@ markdown_extensions:
   - attr_list
 
 plugins:
+  - search
   - mike
 
 extra:
+  dejavu_release: 0.5.0
   version:
     provider: mike
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/himattm/dejavu
+      link: https://github.com/mttmcknn/dejavu

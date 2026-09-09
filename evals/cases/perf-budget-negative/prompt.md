@@ -1,0 +1,1 @@
+Check if this interaction needs further optimization. Our contract is at most two recompositions, not an exact count. Existing validated runs at the same version give one or two, with correct UI; fix only if necessary.

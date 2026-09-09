@@ -47,9 +47,8 @@ import kotlin.test.assertEquals
  *   `DejavuTracer.getRecompositionCount("dejavu.RowItem"/"dejavu.GridCell")` ==
  *   `GroundTruth.delta(...)` (tracer == real total recompositions across all loop items).
  *
- * All tests in this file render LazyVariantsScreen which contains a LazyVerticalGrid. The Compose
- * runtime slot table hash crashes on iOS/Native and WasmJs — upstream bug. The existing
- * `isIos`/`isWasmJs` guards skip the entire file on affected platforms and are preserved as-is.
+ * All tests render a LazyVerticalGrid on every target. This also guards the inspection-collection
+ * identity fix: a content-hashed collection crashes Compose registration on iOS and Wasm (#21).
  */
 @OptIn(ExperimentalTestApi::class)
 class LazyVariantsPatternTest {
@@ -67,7 +66,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyRow_tagMappingWorks() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         refreshTagMapping()
@@ -87,7 +85,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyRow_selectItem_selectionCountRecomposes() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         resetRecompositionCounts()
@@ -104,7 +101,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyRow_selectItem_gridCountStable() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         resetRecompositionCounts()
@@ -122,7 +118,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyRow_initiallyStable() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         resetRecompositionCounts()
@@ -139,7 +134,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyGrid_tagMappingWorks() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         refreshTagMapping()
@@ -159,7 +153,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyGrid_selectCell_highlightCountRecomposes() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         resetRecompositionCounts()
@@ -176,7 +169,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyGrid_selectCell_rowCountStable() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         resetRecompositionCounts()
@@ -194,7 +186,6 @@ class LazyVariantsPatternTest {
 
     @Test
     fun lazyGrid_initiallyStable() = runComposeUiTest {
-        if (isIos || isWasmJs) { println("SKIP: slot table crash on iOS/WasmJs (upstream bug)"); return@runComposeUiTest }
         setContent { DejavuTestContent { LazyVariantsScreen() } }
         waitForIdle()
         resetRecompositionCounts()

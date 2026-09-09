@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -18,6 +19,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 
 /**
  * Cross-platform port of Android ErrorMessageValidationTest.
@@ -43,27 +45,20 @@ class ErrorMessagePatternTest {
      * the select button 3 times, then asserts exactly=1 to produce
      * a structured error message.
      */
-    private fun captureErrorMessage(): String = buildString {
-        runComposeUiTest {
-            setContent { DejavuTestContent { ErrorTestScreen() } }
+    private fun ComposeUiTest.captureErrorMessage(): String {
+        setContent { DejavuTestContent { ErrorTestScreen() } }
+        waitForIdle()
+        repeat(3) {
+            onNodeWithTag("select_button").performClick()
             waitForIdle()
-
-            repeat(3) {
-                onNodeWithTag("select_button").performClick()
-                waitForIdle()
-            }
-
-            try {
-                onNodeWithTag("test_header").assertRecompositions(exactly = 1)
-            } catch (e: AssertionError) {
-                append(e.message)
-            }
         }
+        return assertFailsWith<AssertionError> {
+            onNodeWithTag("test_header").assertRecompositions(exactly = 1)
+        }.message.orEmpty()
     }
 
     @Test
-    fun errorMessage_containsHeaderAndExpectedActual() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsHeaderAndExpectedActual() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("Recomposition assertion failed for testTag='test_header'"),
@@ -80,8 +75,7 @@ class ErrorMessagePatternTest {
     }
 
     @Test
-    fun errorMessage_containsSourceLocation() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsSourceLocation() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("ErrorTestHeader"),
@@ -90,8 +84,7 @@ class ErrorMessagePatternTest {
     }
 
     @Test
-    fun errorMessage_containsAllTrackedComposables() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsAllTrackedComposables() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("All tracked composables:"),
@@ -108,8 +101,7 @@ class ErrorMessagePatternTest {
     }
 
     @Test
-    fun errorMessage_containsRecompositionTimeline() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsRecompositionTimeline() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("Recomposition timeline:"),
@@ -134,8 +126,7 @@ class ErrorMessagePatternTest {
     }
 
     @Test
-    fun errorMessage_containsParentInfo() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsParentInfo() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("parent:"),
@@ -144,8 +135,7 @@ class ErrorMessagePatternTest {
     }
 
     @Test
-    fun errorMessage_containsCausalityInfo() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsCausalityInfo() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("Possible cause:"),
@@ -158,8 +148,7 @@ class ErrorMessagePatternTest {
     }
 
     @Test
-    fun errorMessage_containsSemanticTree() {
-        if (isWasmJs) { println("SKIP: Wasm test runner swallows AssertionError"); return }
+    fun errorMessage_containsSemanticTree() = runComposeUiTest {
         val msg = captureErrorMessage()
         assertTrue(
             msg.contains("Node:"),

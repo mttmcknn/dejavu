@@ -1,0 +1,9 @@
+{
+  "changed": [
+    "app/build.gradle.kts",
+    "app/src/androidTest/CounterTest.kt"
+  ],
+  "protected": {
+    "app/src/main/CounterValue.kt": "392521e06b5b68ea2b721ca9a87e689303b71a9e9eb1e71970959964bc6c568c"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "perf-batched-state-novel",
+  "title": "Perf batched state novel",
+  "family": "dejavu-perf-loop",
+  "target_skills": [
+    "dejavu-perf-loop"
+  ],
+  "expected_skills": [
+    "dejavu-perf-loop"
+  ],
+  "allowed_skills": [
+    "dejavu-perf-loop"
+  ],
+  "task_mode": "review",
+  "kind": "novel",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "perf-batched-state-novel"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Rejects the state-source-count floor and explains that coalesced writes can produce one execution."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Retains the valid requested upper budget, recognizes both UI and independent counter evidence, and does not propose redundant optimization or test runs."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

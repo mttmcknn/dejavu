@@ -1,0 +1,1 @@
+Add DejaVu 0.5.0 to this Android project and its first test proving one real update is tracked. Keep Compose BOM 2026.06.01, compile SDK 37 and min SDK 24. Edit app/build.gradle.kts and add app/src/androidTest/CounterTest.kt. Use the existing CounterValue composable.
