@@ -8,7 +8,7 @@
 
 *Wait... didn't we just compose this?*
 
-[![CI](https://github.com/himattm/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/himattm/dejavu/actions/workflows/ci.yml)
+[![CI](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
 [![Compose](https://img.shields.io/badge/Compose-1.11–1.12-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -41,6 +41,10 @@ Dejavu is a test-only library that turns recomposition behavior into assertions.
 
 ### 1. Add dependency
 
+DejaVu 0.5.0 requires Android **compile SDK 37** and **min SDK 24**. The release uses
+Compose Multiplatform 1.12.0; Android Compose 1.11 remains supported with an enforced BOM.
+See [Compatibility](#compatibility) before adding the dependency to an older Compose project.
+
 ```kotlin
 // app/build.gradle.kts
 dependencies {
@@ -67,7 +71,10 @@ fun incrementCounter_onlyValueRecomposes() {
 }
 ```
 
-`createRecompositionTrackingRule` wraps `createAndroidComposeRule` and resets counts before each test. For `createComposeRule()` or other rule types, see [Examples](https://dejavu.mmckenna.me/examples/).
+This test assumes the counter screen is already set. Use `createRecompositionTrackingRule<YourActivity>()`
+to launch an activity that sets that screen, or call `composeTestRule.setContent { YourScreen() }`
+when using the plain rule. The [Getting Started guide](https://dejavu.mmckenna.me/latest/getting-started/)
+includes a complete example.
 
 ## What a Failure Looks Like
 
@@ -90,7 +97,7 @@ dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag
     Parameter/parent change detected (dirty bits set)
 ```
 
-See [Error Messages Guide](https://dejavu.mmckenna.me/error-messages/) for how to read and act on each section.
+See [Error Messages Guide](https://dejavu.mmckenna.me/latest/error-messages/) for how to read and act on each section.
 
 ## Claude Code Skills (for AI Agents)
 
@@ -104,7 +111,7 @@ Dejavu ships four Claude Code skills that teach AI agents how to use it:
 Install them globally in Claude Code so they're available in any project:
 
 ```
-/plugin marketplace add himattm/dejavu
+/plugin marketplace add mttmcknn/dejavu
 /plugin install dejavu@dejavu
 ```
 
@@ -126,7 +133,7 @@ For Claude Code users, the bundled `dejavu-test-writer` and `dejavu-perf-loop` s
 
 When AI agents or automated tooling modify your codebase, they can introduce subtle changes to recomposition behavior without touching any visible UI. Dejavu tests act as guardrails — if an agent's changes cause a composable to recompose more than expected, the test fails before the change is merged. You get the speed of automated refactoring with the confidence that recomposition behavior is preserved.
 
-See the full [Use Cases](https://dejavu.mmckenna.me/use-cases/) guide for examples.
+See the full [Use Cases](https://dejavu.mmckenna.me/latest/use-cases/) guide for examples.
 
 ## API Reference
 
@@ -184,7 +191,8 @@ Dejavu hooks into the Compose runtime's `CompositionTracer` API (available since
 4. **Tracks causality** — `Snapshot.registerApplyObserver` detects state changes; dirty bits detect parameter-driven recompositions
 5. **Reports on failure** — assembles source location, timeline, tracked composables, and causality into a structured error
 
-All tracking runs in the app process on the main thread, directly accessible to instrumented tests.
+On Android, tracking runs in the app process and is accessible to instrumented tests. JVM, iOS,
+and Wasm tests use the shared tracer through `runRecompositionTrackingUiTest`.
 
 ## Compatibility
 
@@ -267,15 +275,16 @@ Compose 1.12. These methods require 1.12; the existing rule API remains covered 
 ## Known Limitations
 
 - **Off-screen lazy items** — `LazyColumn`/`LazyRow` only compose items that are visible. Items that haven't been composed don't exist in the composition tree, so Dejavu has nothing to track. Scroll them into view before asserting.
+- **Non-Android instance diagnostics** — unresolved tags can share a function-level count when multiple instances use the same composable. Android has the most complete per-instance diagnostics.
 - **Activity-owned Recomposer clock** — `createAndroidComposeRule` uses the Activity's real `Recomposer`, not a test-controlled one. This means `mainClock.advanceTimeBy()` can't drive infinite animations forward. Use `createComposeRule` (without an Activity) if you need a controllable clock.
 - **Parameter change tracking precision** — parameter diffs use `Group.parameters` from the Compose tooling data API, which was designed for Layout Inspector rather than programmatic diffing. Parameter names may be unavailable, and values are compared via `hashCode`/`toString`, so custom types without meaningful `toString` show opaque values.
 
 ## Further Reading
 
-- [Use Cases](https://dejavu.mmckenna.me/use-cases/) — locking in UI efficiency, AI agent guardrails, and CI enforcement
-- [Examples](https://dejavu.mmckenna.me/examples/) — test patterns for common scenarios
-- [Error Messages Guide](https://dejavu.mmckenna.me/error-messages/) — how to read and act on failure output
-- [Causality Analysis](https://dejavu.mmckenna.me/causality-analysis/) — understanding why composables recompose
+- [Use Cases](https://dejavu.mmckenna.me/latest/use-cases/) — locking in UI efficiency, AI agent guardrails, and CI enforcement
+- [Examples](https://dejavu.mmckenna.me/latest/examples/) — test patterns for common scenarios
+- [Error Messages Guide](https://dejavu.mmckenna.me/latest/error-messages/) — how to read and act on failure output
+- [Causality Analysis](https://dejavu.mmckenna.me/latest/causality-analysis/) — understanding why composables recompose
 
 ## Contributing
 

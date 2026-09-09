@@ -88,8 +88,12 @@ kotlin {
 ```
 
 Use the latest version from Maven Central (the README badge has the current
-number) compatible with the project's Compose version. DejaVu 0.5.x requires Compose 1.11;
-Compose 1.10 projects should stay on 0.3.1. Don't downgrade a compatible newer release.
+number) compatible with the project's Compose version. DejaVu 0.5.x builds against Compose
+Multiplatform 1.12.0 and requires Android compile SDK 37 and min SDK 24. Android Compose 1.11
+is supported only with its BOM enforced in both app and instrumentation dependencies.
+Use 0.4.0 for Compose Multiplatform 1.11 / compile SDK 36, and 0.3.1 for Compose 1.10.
+Follow the complete setup in `docs/getting-started.md`, including the plain rule's debug test
+manifest dependency. Don't downgrade a compatible newer release.
 
 ### 4. Pick a target composable for the first test
 
@@ -200,7 +204,7 @@ Filter logcat with tag `Dejavu`. See `docs/use-cases.md` "Stream Composition Sta
   compiler plugin if it isn't already configured.
 - **Wasm test completion** — return `runRecompositionTrackingUiTest` directly from the test.
   Put diagnostic assertions inside its body so the runner awaits their asynchronous result.
-  DejaVu 0.5.0 restores lazy-grid and diagnostic-message coverage on iOS/Wasm.
+  DejaVu 0.4.0 restores lazy-grid and diagnostic-message coverage on iOS/Wasm.
 
 ## Wrap-up
 

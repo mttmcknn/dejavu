@@ -8,7 +8,8 @@ Dejavu hooks into the Compose runtime's `CompositionTracer` API (available since
 4. **Tracks causality** — `Snapshot.registerApplyObserver` detects state changes; dirty bits detect parameter-driven recompositions
 5. **Reports on failure** — assembles source location, timeline, tracked composables, and causality into a structured error
 
-All tracking runs in the app process on the main thread, directly accessible to instrumented tests.
+On Android, tracking runs in the app process and is accessible to instrumented tests. JVM, iOS,
+and Wasm tests use the shared tracer through `runRecompositionTrackingUiTest`.
 
 ## Compatibility
 
@@ -30,7 +31,7 @@ is Compose 1.11 (BOM 2026.05.00). CI derives its matrix from the `composeBomComp
 Multiplatform artifacts cannot silently replace the runtime under test. `CompositionObserver`
 support is unconditional; there is no degraded or observer-excluded build path.
 
-Android 0.5.0 artifacts declare minimum compile SDK 37. To retain an older Android Compose line,
+Android 0.5.0 artifacts require compile SDK 37 and min SDK 24. To retain an older Android Compose line,
 use `enforcedPlatform` for the selected BOM in both application and instrumentation dependencies;
 a regular platform can allow the newer transitive baseline to win. DejaVu 0.4.0 remains the
 Compose Multiplatform 1.11 / compile SDK 36 baseline.
@@ -67,6 +68,7 @@ Compose 1.12. These methods require 1.12; the existing rule API remains covered 
 ## Known Limitations
 
 - **Off-screen lazy items** — `LazyColumn`/`LazyRow` only compose items that are visible. Items that haven't been composed don't exist in the composition tree, so Dejavu has nothing to track. Scroll them into view before asserting.
+- **Non-Android instance diagnostics** — unresolved tags can share a function-level count when multiple instances use the same composable. Android has the most complete per-instance diagnostics.
 - **Activity-owned Recomposer clock** — `createAndroidComposeRule` uses the Activity's real `Recomposer`, not a test-controlled one. This means `mainClock.advanceTimeBy()` can't drive infinite animations forward. Use `createComposeRule` (without an Activity) if you need a controllable clock.
 - **Parameter change tracking precision** — parameter diffs use `Group.parameters` from the Compose tooling data API, which was designed for Layout Inspector rather than programmatic diffing. Parameter names may be unavailable, and values are compared via `hashCode`/`toString`, so custom types without meaningful `toString` show opaque values.
 - **iOS x64** — Compose Multiplatform 1.11 removes Apple x64 target support, so Dejavu supports `iosArm64` and `iosSimulatorArm64` for the 1.11 baseline.

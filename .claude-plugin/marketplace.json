@@ -2,14 +2,14 @@
   "name": "dejavu",
   "owner": {
     "name": "Matt McKenna",
-    "url": "https://github.com/himattm"
+    "url": "https://github.com/mttmcknn"
   },
   "plugins": [
     {
       "name": "dejavu",
       "source": "./",
       "description": "AI agent skills for authoring Compose UI recomposition tests with Dejavu and running a closed-loop perf optimization workflow.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }
