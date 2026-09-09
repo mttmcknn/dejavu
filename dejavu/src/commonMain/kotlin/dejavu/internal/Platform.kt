@@ -20,6 +20,9 @@ internal expect fun isLoggingEnabled(): Boolean
 /** Returns the current set of live [CompositionData] snapshots from the platform runtime. */
 internal expect fun currentCompositionsSnapshot(): Set<CompositionData>
 
+/** Creates the mutable set populated directly by Compose's inspection-table runtime. */
+internal expect fun createInspectionTables(): MutableSet<CompositionData>
+
 /**
  * Platform-specific tag-mapping pass over composition data.
  *

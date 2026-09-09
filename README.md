@@ -10,7 +10,7 @@
 
 [![CI](https://github.com/himattm/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/himattm/dejavu/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
-[![Compose](https://img.shields.io/badge/Compose-1.10.x–1.11.x-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
+[![Compose](https://img.shields.io/badge/Compose-1.11.x-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ###### Featured In
@@ -188,15 +188,18 @@ All tracking runs in the app process on the main thread, directly accessible to 
 
 ## Compatibility
 
-Supported Compose range: **1.10.x–1.11.x (BOM 2026.01.01 → 2026.06.00)**.
+Supported Compose range for Dejavu 0.4.x: **1.11.x (BOM 2026.05.00 through 2026.06.01)**.
 
-**Minimum supported Compose: 1.10 (BOM 2026.01.01).** Compose 1.10 is the first version with the `CompositionObserver` API that Dejavu's causality diagnostics rely on. For older Compose (1.6–1.9), use Dejavu 0.3.x. Requires Kotlin 2.1+ with the Compose compiler plugin.
+**Minimum supported Compose: 1.11 (BOM 2026.05.00).** Dejavu 0.4.x uses the Compose testing v2 APIs introduced with this line. For Compose 1.10, use Dejavu 0.3.1; that maintenance release preserves the older Compose line instead of allowing newer transitive artifacts to mask an unsupported combination. Validated with Kotlin 2.4.0 and its Compose compiler plugin.
+
+Dejavu 0.4.x is built and released against **Compose Multiplatform 1.11.1**. Android consumers
+can use any validated BOM in the support window; they do not have to match the release BOM exactly.
 
 | Compose BOM | Compose | Kotlin | Status |
 |---|---|---|---|
-| 2026.01.01 | 1.10.x | 2.1.x+ | Minimum |
-| 2026.03.01 | 1.10.x | 2.1.x+ | Tested |
-| 2026.06.00 | 1.11.x | 2.3.x+ | Baseline |
+| 2026.05.00 | 1.11.x | 2.3.x+ | Minimum |
+| 2026.06.00 | 1.11.x | 2.3.x+ | Previous 1.11 checkpoint |
+| 2026.06.01 | 1.11.x | 2.3.x+ | Release baseline |
 
 ## Kotlin Multiplatform
 
@@ -223,28 +226,23 @@ fun myComposable_isStable() = runRecompositionTrackingUiTest {
 ```
 
 `runRecompositionTrackingUiTest` is the KMP equivalent of Android's `createRecompositionTrackingRule()`.
-It handles all Dejavu lifecycle management automatically -- enabling the tracer, resetting state,
-and cleaning up after each test. `setTrackedContent` wraps `setContent` with the inspection tables
+Return its result directly from your test so the Wasm runner waits for completion. The test body
+can suspend; Dejavu keeps tracking enabled until the body finishes and then cleans up.
+It handles all Dejavu lifecycle management automatically -- enabling the tracer and resetting state. `setTrackedContent` wraps `setContent` with the inspection tables
 and sub-composition layout required for tag-to-function mapping.
 
 ### Compose 1.11 Coverage
 
 Dejavu is validated against Compose 1.11's new composables and runtime paths via the
 `compose-experimental` module — a staging area for recomposition coverage of experimental /
-newest-Compose APIs that can't yet live in `:dejavu`'s commonTest (which compiles against the full
-Compose BOM range back to 1.6). It exercises recomposition tracking on JVM, iOS, Wasm, and
-Android instrumented for:
+newest-Compose APIs before they graduate into the core accuracy suite. It exercises recomposition
+tracking on JVM, iOS, Wasm, and Android instrumented; Android runs every supported 1.11 BOM for:
 
 - the experimental non-lazy `Grid` and `FlexBox` layouts,
 - `derivedMediaQuery` / `mediaQuery` adaptive breakpoints,
 - the Styles API (`androidx.compose.foundation.style`),
 - `movableContentOf`, and
 - the experimental LinkBuffer composer runtime path (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`).
-
-### Known Gaps
-
-- **iOS/WasmJs: `LazyVerticalGrid` crash** — The Compose runtime's internal slot table hash implementation crashes on iOS/Native and WasmJs when `LazyVerticalGrid` is in the composition. This is an upstream Compose bug, not a Dejavu issue. `LazyColumn`, `LazyRow`, and all other composables work correctly when `LazyVerticalGrid` is not present. Note that Compose 1.11's new non-lazy `Grid` is unaffected — it is exercised on iOS and WasmJs by the `compose-experimental` module (see [Compose 1.11 Coverage](#compose-111-coverage) above).
-- **WasmJs: Exception propagation** — The Wasm test runner intercepts exceptions at a higher level than the test code, preventing try-catch from capturing `AssertionError` messages. Assertion *behavior* (pass/fail) works correctly; only error message inspection is affected. Parameter validation exceptions (`IllegalArgumentException`) are caught correctly when structured inside `runComposeUiTest`.
 
 ## Known Limitations
 

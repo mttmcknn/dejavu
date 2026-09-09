@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: read
 
 jobs:
   check-bom:
@@ -31,7 +33,7 @@ jobs:
       - name: Get current BOM from version catalog
         id: current
         run: |
-          CURRENT=$(grep '^composeBom' gradle/libs.versions.toml \
+          CURRENT=$(grep '^composeBom =' gradle/libs.versions.toml \
             | sed 's/.*= *"\(.*\)"/\1/')
           echo "version=$CURRENT" >> "$GITHUB_OUTPUT"
           echo "Current BOM: $CURRENT"
@@ -135,6 +137,17 @@ jobs:
               return;
             }
 
+            const pulls = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100
+            });
+            if (pulls.data.some(p => p.title.includes('compose-bom') && p.title.includes(latest))) {
+              console.log('Dependabot PR already exists, skipping issue');
+              return;
+            }
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -152,7 +165,7 @@ jobs:
                 `${emoji} Demo and Compose 1.11 regression instrumented test suites **${status}** against BOM \`${latest}\`.`,
                 ``,
                 status === 'passed'
-                  ? `The new BOM is compatible. Update \`composeBom\` in \`gradle/libs.versions.toml\` and add \`${latest}\` to the \`compose-compat\` CI matrix.`
+                  ? `The new BOM is compatible. Update \`composeBom\` in \`gradle/libs.versions.toml\`; CI derives its release-baseline matrix entry from that value automatically.`
                   : `The new BOM has failures. Check the [workflow run](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}) for details.`,
                 ``,
                 `### Links`,

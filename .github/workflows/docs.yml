@@ -50,7 +50,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           VERSION=$(grep '^version = ' dejavu/build.gradle.kts | sed 's/version = "\(.*\)"/\1/')
-          mike deploy --update-aliases --push "${VERSION}-SNAPSHOT" snapshot
+          mike deploy --update-aliases --push "${VERSION%-SNAPSHOT}-SNAPSHOT" snapshot
 
       - name: Deploy release (tag)
         if: startsWith(github.ref, 'refs/tags/v')

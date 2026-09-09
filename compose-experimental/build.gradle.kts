@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 // APIs (currently Compose 1.11's Grid, FlexBox, derivedMediaQuery/mediaQuery,
 // Styles, the LinkBuffer composer path, and movableContentOf).
 //
-// They live here instead of `:dejavu`'s commonTest because `:dejavu`'s commonTest
-// is compiled against the full Compose BOM range back to 2024.06 (Compose 1.6) in
-// the `compose-compat` CI sweep, where these experimental APIs do not yet exist.
-// Putting them in core would break that cross-version sweep, so this module only
-// ever builds at the current baseline BOM.
+// They live here instead of `:dejavu`'s commonTest so new API coverage can land
+// immediately and graduate into the core accuracy suite once those APIs stabilize.
+// KMP uses the pinned Compose Multiplatform baseline; Android builds and runs this
+// module at every supported Compose 1.11 BOM checkpoint.
 //
 // PROMOTION: when an experimental API graduates to stable AND the `:dejavu` BOM
 // floor includes it, its composable + SideEffect-backed test is promoted into
@@ -64,6 +63,7 @@ kotlin {
     commonTest.dependencies {
       implementation(kotlin("test"))
       implementation(project(":dejavu"))
+      implementation(libs.kotlinx.atomicfu)
       implementation(compose.runtime)
       implementation(compose.ui)
       implementation(compose.foundation)
@@ -103,5 +103,13 @@ android {
 }
 
 dependencies {
+  val composeBomVersion = project.findProperty("composeBomVersion") as? String
+  val composeBom = if (composeBomVersion != null) {
+    enforcedPlatform("androidx.compose:compose-bom:$composeBomVersion")
+  } else {
+    platform(libs.androidx.compose.bom)
+  }
+  "androidMainImplementation"(composeBom)
+  "androidInstrumentedTestImplementation"(composeBom)
   "debugImplementation"(libs.androidx.ui.test.manifest)
 }

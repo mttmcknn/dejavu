@@ -37,10 +37,11 @@ kotlin {
 }
 
 dependencies {
-  // Compose BOM for version alignment (overridable via -PcomposeBomVersion=...)
+  // Compatibility runs enforce the requested BOM so transitive Compose Multiplatform
+  // dependencies cannot make an old-BOM test silently run on the release baseline.
   val composeBomVersion = project.findProperty("composeBomVersion") as? String
   val composeBom = if (composeBomVersion != null) {
-    platform("androidx.compose:compose-bom:$composeBomVersion")
+    enforcedPlatform("androidx.compose:compose-bom:$composeBomVersion")
   } else {
     platform(libs.androidx.compose.bom)
   }

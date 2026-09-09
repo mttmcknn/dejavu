@@ -12,20 +12,23 @@ All tracking runs in the app process on the main thread, directly accessible to 
 
 ## Compatibility
 
-**Minimum supported Compose: 1.10 (BOM 2026.01.01).** Compose 1.10 is the first version with the
-`CompositionObserver` API that Dejavu's causality diagnostics depend on. For older Compose (1.6–1.9),
-use Dejavu 0.3.x. Requires Kotlin 2.1+ with the Compose compiler plugin.
+**Minimum supported Compose for Dejavu 0.4.x: 1.11 (BOM 2026.05.00).** The 0.4.x test harness uses
+the Compose testing v2 APIs introduced with this line. For Compose 1.10, use Dejavu 0.3.1. This
+keeps that older Compose line available without letting newer transitive artifacts mask an
+unsupported combination. Requires Kotlin 2.3+ with the Compose compiler plugin.
 
 | Compose BOM | Compose | Kotlin | Status |
 |---|---|---|---|
-| 2026.01.01 | 1.10.x | 2.1.x+ | Minimum |
-| 2026.03.01 | 1.10.x | 2.1.x+ | Tested |
-| 2026.06.00 | 1.11.x | 2.3.x+ | Baseline |
+| 2026.05.00 | 1.11.x | 2.3.x+ | Minimum |
+| 2026.06.00 | 1.11.x | 2.3.x+ | Previous 1.11 checkpoint |
+| 2026.06.01 | 1.11.x | 2.3.x+ | Release baseline |
 
-The baseline is Compose 1.11 (BOM 2026.06.00); the floor is Compose 1.10 (BOM 2026.01.01). CI runs a
-`compose-compat` matrix that compiles and unit-tests across 2026.01.01, 2026.03.01, and 2026.06.00,
-and the Android instrumented gates run the same three BOMs. `CompositionObserver` support is
-unconditional — there is no degraded / observer-excluded build path.
+The release baseline is Compose Multiplatform 1.11.1 and Android Compose BOM 2026.06.01; the floor
+is Compose 1.11 (BOM 2026.05.00). CI derives its matrix from the `composeBomCompat*` checkpoints and
+`composeBom` baseline in `gradle/libs.versions.toml`, currently 2026.05.00, 2026.06.00, and
+2026.06.01. Compatibility runs enforce the selected BOM so newer transitive Compose
+Multiplatform artifacts cannot silently replace the runtime under test. `CompositionObserver`
+support is unconditional; there is no degraded or observer-excluded build path.
 
 ## Compose Testing v2
 
@@ -37,13 +40,13 @@ was required.
 
 ## Compose 1.11 Coverage
 
-The `compose-experimental` module — a staging area for recomposition coverage of experimental /
-newest-Compose APIs that can't live in `:dejavu`'s commonTest (which compiles against the full
-supported Compose BOM range, 2026.01.01 → 2026.06.00) — exercises Dejavu against Compose 1.11's new composables and
-runtime paths: the experimental `Grid` and `FlexBox` layouts, `derivedMediaQuery` / `mediaQuery`
-adaptive breakpoints, the Styles API (`androidx.compose.foundation.style`), `movableContentOf`, and
-the experimental LinkBuffer composer runtime path (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`).
-These tests run on JVM, iOS, Wasm, and Android instrumented.
+The `compose-experimental` module is a staging area for recomposition coverage of experimental /
+newest-Compose APIs before they graduate into the core accuracy suite. It exercises Dejavu against
+Compose 1.11's new composables and runtime paths: the experimental `Grid` and `FlexBox` layouts,
+`derivedMediaQuery` / `mediaQuery` adaptive breakpoints, the Styles API
+(`androidx.compose.foundation.style`), `movableContentOf`, and the experimental LinkBuffer composer
+runtime path (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`). These tests run on JVM, iOS,
+Wasm, and Android instrumented; Android runs every supported 1.11 BOM checkpoint.
 
 ## Known Limitations
 

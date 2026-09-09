@@ -23,6 +23,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Text input + asynchronous source (`produceState`, `snapshotFlow`) recomposition patterns.
@@ -120,7 +121,7 @@ class InputScrollPatternTest {
         // real composition count exactly (don't hardcode a frame literal), and confirm it did fire.
         onNodeWithTag("produced_value")
             .assertRecompositions(exactly = GroundTruth.delta("produced_value"))
-        assertEquals(true, GroundTruth.delta("produced_value") >= 1, "produceState recomposes the reader on a trigger change")
+        assertTrue(GroundTruth.delta("produced_value") >= 1, "produceState recomposes the reader on a trigger change")
     }
 
     @Test
@@ -138,7 +139,7 @@ class InputScrollPatternTest {
         // (no hardcoded frame literal), and confirm the flow emission did reach the reader.
         onNodeWithTag("flow_reader")
             .assertRecompositions(exactly = GroundTruth.delta("flow_reader"))
-        assertEquals(true, GroundTruth.delta("flow_reader") >= 1, "snapshotFlow emission recomposes the reader")
+        assertTrue(GroundTruth.delta("flow_reader") >= 1, "snapshotFlow emission recomposes the reader")
     }
 
     @Test
