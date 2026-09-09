@@ -1,5 +1,6 @@
 // Klib ABI Dump
 // Targets: [iosArm64, iosSimulatorArm64, wasmJs]
+// Alias: ios => [iosArm64, iosSimulatorArm64]
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: true
@@ -18,4 +19,9 @@ final fun (androidx.compose.ui.test/ComposeUiTest).dejavu/setTrackedContent(kotl
 final fun (androidx.compose.ui.test/SemanticsNodeInteraction).dejavu/assertRecompositions(kotlin/Int? = ..., kotlin/Int? = ..., kotlin/Int? = ...): androidx.compose.ui.test/SemanticsNodeInteraction // dejavu/assertRecompositions|assertRecompositions@androidx.compose.ui.test.SemanticsNodeInteraction(kotlin.Int?;kotlin.Int?;kotlin.Int?){}[0]
 final fun (androidx.compose.ui.test/SemanticsNodeInteraction).dejavu/assertStable(): androidx.compose.ui.test/SemanticsNodeInteraction // dejavu/assertStable|assertStable@androidx.compose.ui.test.SemanticsNodeInteraction(){}[0]
 final fun dejavu/dejavu_Dejavu$stableprop_getter(): kotlin/Int // dejavu/dejavu_Dejavu$stableprop_getter|dejavu_Dejavu$stableprop_getter(){}[0]
-final fun dejavu/runRecompositionTrackingUiTest(kotlin/Function1<androidx.compose.ui.test/ComposeUiTest, kotlin/Unit>) // dejavu/runRecompositionTrackingUiTest|runRecompositionTrackingUiTest(kotlin.Function1<androidx.compose.ui.test.ComposeUiTest,kotlin.Unit>){}[0]
+
+// Targets: [ios]
+final fun dejavu/runRecompositionTrackingUiTest(kotlin.coroutines/SuspendFunction1<androidx.compose.ui.test/ComposeUiTest, kotlin/Unit>) // dejavu/runRecompositionTrackingUiTest|runRecompositionTrackingUiTest(kotlin.coroutines.SuspendFunction1<androidx.compose.ui.test.ComposeUiTest,kotlin.Unit>){}[0]
+
+// Targets: [wasmJs]
+final fun dejavu/runRecompositionTrackingUiTest(kotlin.coroutines/SuspendFunction1<androidx.compose.ui.test/ComposeUiTest, kotlin/Unit>): kotlinx.coroutines.test.internal/JsPromiseInterfaceForTesting // dejavu/runRecompositionTrackingUiTest|runRecompositionTrackingUiTest(kotlin.coroutines.SuspendFunction1<androidx.compose.ui.test.ComposeUiTest,kotlin.Unit>){}[0]

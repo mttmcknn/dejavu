@@ -3,6 +3,7 @@ package dejavu.internal
 import android.util.Log
 import androidx.compose.runtime.tooling.CompositionData
 import kotlinx.atomicfu.locks.synchronized
+import java.util.concurrent.CopyOnWriteArraySet
 
 internal actual fun currentTimeMillis(): Long = System.currentTimeMillis()
 
@@ -27,9 +28,15 @@ internal actual fun currentCompositionsSnapshot(): Set<CompositionData> {
     }
 }
 
+internal actual fun createInspectionTables(): MutableSet<CompositionData> =
+    CopyOnWriteArraySet()
+
 internal actual fun platformBuildTagMapping(compositionData: Set<CompositionData>) {
     TagMapping.buildTagMapping(compositionData)
-    CommonTagMapping.buildTagMapping(compositionData, onlyUnmappedTags = true)
+    val mappedByAndroidTooling = synchronized(DejavuTracer.lastSeenTagsLock) {
+        DejavuTracer.lastSeenTags.toSet()
+    }
+    CommonTagMapping.buildTagMapping(compositionData, excludedTags = mappedByAndroidTooling)
 }
 
 internal actual class PlatformThreadLocal<T> actual constructor(private val initial: () -> T) {

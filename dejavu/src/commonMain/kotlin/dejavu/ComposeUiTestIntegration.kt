@@ -12,6 +12,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
 import dejavu.internal.DejavuTracer
 import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.test.TestResult
 
 /**
  * Runs a recomposition-tracking UI test using [runComposeUiTest].
@@ -35,13 +36,17 @@ import kotlinx.atomicfu.locks.synchronized
  * }
  * ```
  *
- * @param block The test body, executed within a [ComposeUiTest] receiver.
+ * Return this function's result directly from the test, as in the example. On Wasm it is the
+ * asynchronous result awaited by the test runner. Tracking remains enabled across suspensions
+ * and is cleaned up only after the test body completes or fails.
+ *
+ * @param block The suspendable test body, executed within a [ComposeUiTest] receiver.
  * @see setTrackedContent
  */
 @OptIn(ExperimentalTestApi::class, InternalComposeTracingApi::class)
 public fun runRecompositionTrackingUiTest(
-    block: ComposeUiTest.() -> Unit,
-) {
+    block: suspend ComposeUiTest.() -> Unit,
+): TestResult = runComposeUiTest {
     isDebugInspectorInfoEnabled = true
     DejavuTracer.enabled = true
     Composer.setTracer(DejavuTracer)
@@ -49,7 +54,7 @@ public fun runRecompositionTrackingUiTest(
     DejavuTest.reset()
 
     try {
-        runComposeUiTest(block = block)
+        block()
     } finally {
         DejavuTracer.enabled = false
         Composer.setTracer(null)

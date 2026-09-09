@@ -6,6 +6,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import dejavu.assertRecompositions
 import dejavu.assertStable
 import dejavu.createRecompositionTrackingRule
+import dejavu.resetRecompositionCounts
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,29 +67,30 @@ class InputScrollTest {
 
     @Test
     fun produceState_recomposesOnTriggerChange() {
+        composeTestRule.waitForIdle()
+        composeTestRule.resetRecompositionCounts()
+        GroundTruthCounters.reset()
+
         composeTestRule.onNodeWithTag("change_source_btn").performClick()
         composeTestRule.waitForIdle()
-        // produceState restarts when trigger changes, emitting one new value.
-        // 1: one trigger change relaunches the producer, which writes a single new `produced`
-        //    value → one recomposition once settled.
-        // FLAG (uncertain): produceState is asynchronous; the common test (InputScrollPatternTest)
-        //    deliberately pins delta(tag) rather than a literal and only asserts delta >= 1, because
-        //    the new value can land across more than one frame. Verify on emulator; if it settles
-        //    to >1, keep this directional (atLeast = 1) instead.
-        composeTestRule.onNodeWithTag("produced_value").assertRecompositions(exactly = 1)
+
+        val groundTruth = GroundTruthCounters.get("produced_value")
+        composeTestRule.onNodeWithTag("produced_value").assertRecompositions(exactly = groundTruth)
+        assertTrue("produceState must recompose its reader", groundTruth >= 1)
     }
 
     @Test
     fun snapshotFlowChange_recomposesReader() {
+        composeTestRule.waitForIdle()
+        composeTestRule.resetRecompositionCounts()
+        GroundTruthCounters.reset()
+
         composeTestRule.onNodeWithTag("change_source_btn").performClick()
         composeTestRule.waitForIdle()
-        // snapshotFlow delivers the new value to the collector, which writes `flowValue` once.
-        // 1: one source change → one new emission → reader recomposes once after it settles.
-        // FLAG (uncertain): snapshotFlow emission is asynchronous; the common test
-        //    (InputScrollPatternTest) pins delta(tag) (not a literal) and only asserts delta >= 1,
-        //    because the emission can deliver across more than one frame. Verify on emulator; if it
-        //    settles to >1, keep this directional (atLeast = 1) instead.
-        composeTestRule.onNodeWithTag("flow_reader").assertRecompositions(exactly = 1)
+
+        val groundTruth = GroundTruthCounters.get("flow_reader")
+        composeTestRule.onNodeWithTag("flow_reader").assertRecompositions(exactly = groundTruth)
+        assertTrue("snapshotFlow must recompose its reader", groundTruth >= 1)
     }
 
     @Test

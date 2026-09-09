@@ -79,11 +79,10 @@ internal object DejavuTracer : CompositionTracer {
     internal val testTagToKeyLock = SynchronizedObject()
 
     /**
-     * Shared inspection tables set for non-Android platforms.
-     * Populated by the Compose runtime when [LocalInspectionTables] is provided.
-     * Non-Android [currentCompositionsSnapshot] reads from this set.
+     * Shared inspection tables populated directly by Compose when [LocalInspectionTables] is provided.
+     * JVM platforms use a copy-on-write set because Compose can mutate it concurrently with assertions.
      */
-    internal val inspectionTables = mutableSetOf<CompositionData>()
+    internal val inspectionTables = InspectionTables(createInspectionTables())
     internal val inspectionTablesLock = SynchronizedObject()
 
     /** Track parent-child causality: stack of qualified names for the current composition. */

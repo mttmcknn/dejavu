@@ -28,6 +28,7 @@ import dejavu.assertStable
 import dejavu.resetRecompositionCounts
 import dejavu.runRecompositionTrackingUiTest
 import dejavu.setTrackedContent
+import kotlinx.coroutines.test.TestResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -142,11 +143,11 @@ class LinkBufferRegressionTest {
     }
 }
 
-private fun withLinkBufferComposer(block: ComposeUiTest.() -> Unit) {
+private fun withLinkBufferComposer(block: ComposeUiTest.() -> Unit): TestResult = runRecompositionTrackingUiTest {
     val previous = ComposeRuntimeFlags.isLinkBufferComposerEnabled
     ComposeRuntimeFlags.isLinkBufferComposerEnabled = true
     try {
-        runRecompositionTrackingUiTest(block)
+        block()
     } finally {
         ComposeRuntimeFlags.isLinkBufferComposerEnabled = previous
     }

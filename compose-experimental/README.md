@@ -11,14 +11,11 @@ APIs lands *first*, before those APIs graduate into the core accuracy suite.
 
 ## Why it is a separate module
 
-`:dejavu`'s `commonTest` is compiled against the **full Compose BOM range** — back to 2024.06
-(Compose 1.6) — in the `compose-compat` CI sweep. Experimental / newest-Compose APIs don't exist at
-those older BOMs, so putting their tests in `:dejavu`'s `commonTest` would break that cross-version
-sweep.
+Experimental / newest-Compose APIs evolve faster than Dejavu's core public behavior. Keeping their
+regressions here lets them land immediately and move into the core accuracy suite once stable.
 
-Isolating them here keeps the core suite portable across the whole BOM range. This module only ever
-builds at the **current baseline BOM**, so it is free to reference APIs that older Compose versions
-don't have.
+The KMP targets build against the pinned Compose Multiplatform release baseline. Android builds and
+runs this module at **every supported Compose 1.11 BOM checkpoint**, alongside the legacy UI suite.
 
 ## Currently covered
 
@@ -32,7 +29,8 @@ The module currently exercises Compose 1.11's new APIs:
   (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`), and
 - `movableContentOf`.
 
-These run on JVM, iOS, Wasm, and Android instrumented.
+These run on JVM, iOS, Wasm, and Android instrumented. The Android suite runs against every
+supported 1.11 BOM.
 
 ## Test style
 

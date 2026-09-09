@@ -1,6 +1,6 @@
 public final class dejavu/ComposeUiTestIntegrationKt {
 	public static final fun resetRecompositionCounts (Landroidx/compose/ui/test/ComposeUiTest;)V
-	public static final fun runRecompositionTrackingUiTest (Lkotlin/jvm/functions/Function1;)V
+	public static final fun runRecompositionTrackingUiTest (Lkotlin/jvm/functions/Function2;)V
 	public static final fun setTrackedContent (Landroidx/compose/ui/test/ComposeUiTest;Lkotlin/jvm/functions/Function2;)V
 }
 

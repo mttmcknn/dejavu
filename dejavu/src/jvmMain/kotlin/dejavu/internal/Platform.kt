@@ -3,6 +3,7 @@ package dejavu.internal
 import androidx.compose.runtime.tooling.CompositionData
 import dejavu.Dejavu
 import kotlinx.atomicfu.locks.synchronized
+import java.util.concurrent.CopyOnWriteArraySet
 
 internal actual fun currentTimeMillis(): Long = System.currentTimeMillis()
 
@@ -20,6 +21,9 @@ internal actual fun isLoggingEnabled(): Boolean = Dejavu.logToStdout
 
 internal actual fun currentCompositionsSnapshot(): Set<CompositionData> =
     synchronized(DejavuTracer.inspectionTablesLock) { DejavuTracer.inspectionTables.toSet() }
+
+internal actual fun createInspectionTables(): MutableSet<CompositionData> =
+    CopyOnWriteArraySet()
 
 // JVM Desktop uses CommonTagMapping which does a single-pass Group tree walk.
 // Android uses its own TagMapping with a two-pass algorithm that handles

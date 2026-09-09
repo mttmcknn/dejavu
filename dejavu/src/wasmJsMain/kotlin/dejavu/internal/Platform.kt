@@ -24,6 +24,8 @@ internal actual fun isLoggingEnabled(): Boolean = Dejavu.loggingEnabled
 internal actual fun currentCompositionsSnapshot(): Set<CompositionData> =
     synchronized(DejavuTracer.inspectionTablesLock) { DejavuTracer.inspectionTables.toSet() }
 
+internal actual fun createInspectionTables(): MutableSet<CompositionData> = mutableSetOf()
+
 internal actual fun platformBuildTagMapping(compositionData: Set<CompositionData>) {
     CommonTagMapping.buildTagMapping(compositionData)
 }

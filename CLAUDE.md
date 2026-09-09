@@ -30,10 +30,11 @@ Minimum verification after any code change:
 ### `compose-experimental` module
 
 Separate Gradle module (`:compose-experimental`) that stages recomposition tests for experimental /
-newest-Compose APIs. They live here, not in `:dejavu`'s commonTest, because commonTest compiles
-against the full Compose BOM range (back to 1.6) in the `compose-compat` sweep where these APIs don't
-exist. Convention: when an API graduates to stable and the `:dejavu` BOM floor includes it, promote
-its test into `dejavu/src/commonTest` and delete it here. See `compose-experimental/README.md`.
+newest-Compose APIs before they graduate into the core accuracy suite. KMP targets use the pinned
+Compose Multiplatform baseline; Android builds and runs this module at every supported Compose 1.11
+BOM checkpoint. Convention: when an API graduates to stable and the `:dejavu` BOM floor includes
+it, promote its test into `dejavu/src/commonTest` and delete it here. See
+`compose-experimental/README.md`.
 
 ## Key Architecture
 
@@ -52,6 +53,11 @@ its test into `dejavu/src/commonTest` and delete it here. See `compose-experimen
 ## Gradle
 
 Always run with `-q --console=plain`.
+
+For release readiness, start a clean emulator, set `ANDROID_SERIAL`, and run
+`./test.sh --all-boms`. This enforces every supported Android BOM and runs both UI suites in
+addition to the JVM, iOS, Wasm, API, lint, and demo build checks. Compose 1.10 consumers remain on
+Dejavu 0.3.1; Dejavu 0.4.x supports Compose 1.11 BOM 2026.05.00 through 2026.06.01.
 
 ## Bundled Claude skills
 

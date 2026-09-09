@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import demo.app.GroundTruthCounters
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 private val ORIGINAL_ORDER = listOf("Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot")
 
@@ -38,9 +39,12 @@ fun ReorderListScreen() {
     StaticReorderLabel()
     Row {
       ShuffleButton {
-        val shuffled = items.shuffled()
-        items.clear()
-        items.addAll(shuffled)
+        if (items.size > 1) {
+          val offset = Random.nextInt(1, items.size)
+          val shifted = items.drop(offset) + items.take(offset)
+          items.clear()
+          items.addAll(shifted)
+        }
       }
       Spacer(modifier = Modifier.width(8.dp))
       SwapFirstTwoButton {

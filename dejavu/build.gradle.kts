@@ -142,11 +142,13 @@ android {
   }
 }
 
-// Compose BOM for version alignment (overridable via -PcomposeBomVersion=...)
+// The normal build uses Compose's recommended platform. Compatibility checks use an
+// enforced platform so a newer Compose Multiplatform dependency cannot silently win over
+// the older BOM that CI was explicitly asked to validate.
 dependencies {
   val composeBomVersion = project.findProperty("composeBomVersion") as? String
   val composeBom = if (composeBomVersion != null) {
-    platform("androidx.compose:compose-bom:$composeBomVersion")
+    enforcedPlatform("androidx.compose:compose-bom:$composeBomVersion")
   } else {
     platform(libs.androidx.compose.bom)
   }

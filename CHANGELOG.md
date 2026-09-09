@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - Unreleased
+
 ### Changed
 - **Made the legacy recomposition test suites self-validating.** Replaced weak/directional
   assertions (`assertRecompositions(atLeast = …/atMost = …)`, `atLeast = 0`) in the `dejavu`
@@ -21,8 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`AssertionApiPatternTest` / demo `AssertionApiTest`, which exercise `atLeast`/`atMost`/range)
   and continuously-running animation / scroll-frame counts whose exact value is a moving target.
 
-## [0.4.0] - 2026-06-02
-
 ### Added
 - Bundled four Claude Code skills in `.claude/skills/` to help AI agents adopt Dejavu, author tests, triage failures, and run an iterative recomposition-optimization loop:
   - `dejavu-onboarding` — adds Dejavu to a project from scratch (gradle dependency, first `Modifier.testTag`, smallest passing test).
@@ -32,15 +32,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Packaged the same skills as a Claude Code plugin (`dejavu`) installable via `/plugin marketplace add himattm/dejavu` + `/plugin install dejavu@dejavu`. Plugin manifest at `.claude-plugin/plugin.json`, marketplace at `.claude-plugin/marketplace.json`, with `skills/` symlinked into `.claude/skills/` for a single source of truth.
 - New `compose-experimental` module (a staging area for experimental-API recomposition coverage) with tests for Compose 1.11's new APIs, running on JVM, iOS, Wasm, and Android instrumented: experimental `Grid`, experimental `FlexBox`, the experimental LinkBuffer composer runtime path (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`), `movableContentOf`, `derivedMediaQuery`/`mediaQuery` (adaptive breakpoints), and the Styles API (`androidx.compose.foundation.style`).
 - Public `ComposeUiTest.resetRecompositionCounts()` for KMP recomposition tests — resets recomposition counts mid-test while preserving composition history.
+- A Coil-style `test.sh` release check and `RELEASING.md` checklist that pin one Compose
+  Multiplatform/BOM baseline per Dejavu release while retaining older supported BOM checkpoints.
 
-### Changed
-- **Minimum supported Compose is now 1.10 (BOM 2026.01.01).** For Compose 1.6–1.9, use Dejavu 0.3.x.
+### Compatibility
+- **Minimum supported Compose is now 1.11 (BOM 2026.05.00).** Compose testing v2 is not available
+  in the 1.10 BOM line. Compose 1.10 remains supported by Dejavu 0.3.1.
 - Migrate the test harness to the Compose testing **v2** APIs (`androidx.compose.ui.test.v2.runComposeUiTest`, `androidx.compose.ui.test.junit4.v2.createAndroidComposeRule`), which default to `StandardTestDispatcher` (v1 used `UnconfinedTestDispatcher`). This completes the testing-v2 half of #63. Validated that recomposition counts are unchanged on JVM under the new dispatcher — no rebaselining was required.
 - Bump Compose Multiplatform from 1.10.3 to 1.11.1.
-- Bump Compose BOM baseline from 2026.03.01 to 2026.06.00.
+- Bump Compose BOM baseline from 2026.03.01 to 2026.06.01.
 - Drop `iosX64` from supported targets because Compose Multiplatform 1.11 no longer supports Apple x64 targets. iOS coverage remains via `iosArm64` (compile) and `iosSimulatorArm64` (tests).
 - Promote the LinkBuffer composer-path and `movableContentOf` regression tests into the cross-platform `compose-experimental` common test set (JVM, iOS, Wasm) alongside Android instrumented coverage.
-- CI: the `compose-compat` BOM matrix and the Android instrumented BOM gates now cover only supported runtimes at or above the floor — 2026.01.01, 2026.03.01, and 2026.06.00.
+- CI: derive compatibility jobs from version-catalog checkpoints and validate 2026.05.00,
+  2026.06.00, and the 2026.06.01 release baseline. Each Android checkpoint runs both the legacy
+  UI suite and the new Compose 1.11 composable/runtime regressions.
+- Publishing is an explicit workflow dispatch against a matching release tag. A documented local
+  release suite and exact verified commit can replace repeated hosted CI checks, conserving CI budget.
+
+### Fixed
+- Give the mutable inspection collection stable registration identity. Compose stores that collection
+  in a hash set; hashing its changing contents caused lazy-layout registration to crash on iOS and
+  Wasm. All eight lazy-row/grid accuracy tests now run on every target (#21).
+- Preserve the asynchronous `TestResult` from `runRecompositionTrackingUiTest` and keep tracking
+  active across suspensions. The block now accepts suspending calls, matching Compose testing v2.
+  Return the helper result directly from each Wasm test; recompile test binaries after upgrading.
+- Restore all seven Wasm diagnostic-message tests by inspecting caught assertion errors inside the
+  asynchronous UI test. The previous helper read an empty result before the test completed (#22).
+- Make `-PcomposeBomVersion` use an enforced platform during compatibility checks. This prevents
+  Compose Multiplatform's newer transitive Android artifacts from silently replacing an older BOM
+  and making a compatibility job test the wrong runtime.
+- Keep Android tags handled by `CommonTagMapping` in the per-frame fallback pass after their initial
+  mapping, so their recompositions continue to be detected. Android's primary tooling pass now
+  hands off its exact mapped-tag set instead of treating every previously known tag as handled.
+- Make JVM/Android inspection-table storage safe for concurrent Compose writes, and synchronize the
+  `SideEffect` ground-truth test counters used across UI and instrumentation threads.
+- Make the async `produceState`/`snapshotFlow` Android regressions compare Dejavu with a
+  `SideEffect` ground truth, and remove the random reset setup that could flake 1 in 720 runs.
 
 ### Removed
 - Removed the pre-1.10 degraded compatibility path (`-PexcludeCompositionObserver` / `src/observerAndroid` split); `CompositionObserver` support is now unconditional.
