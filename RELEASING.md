@@ -18,8 +18,10 @@ behavior across those releases.
 - A BOM patch updates only `composeBom`; CI picks it up automatically.
 - A new Compose minor adds a checkpoint, new-API tests in `compose-experimental`, and a Dejavu minor
   release when the compatibility contract or targets change.
-- Removing a checkpoint means moving the support floor and requires a documented Dejavu release;
-  the previous Dejavu release remains the maintenance line for consumers on the older Compose line.
+- Moving the minimum supported checkpoint requires a documented Dejavu release; the previous
+  Dejavu release remains the maintenance line for consumers on the older Compose line. Redundant
+  intermediate patch checkpoints can be retired while retaining the minimum and latest checkpoint
+  for each supported Compose line.
 
 ## Checklist
 

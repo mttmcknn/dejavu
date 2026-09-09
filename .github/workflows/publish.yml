@@ -54,6 +54,7 @@ jobs:
           if [ "$LOCAL_VERIFICATION" = true ]; then
             test "$VERIFIED_SHA" = "$(git rev-parse HEAD)"
             test -s "docs/releases/$PROJECT_VERSION.md"
+            grep -Fxq 'Status: passed' "docs/releases/$PROJECT_VERSION.md"
             echo "Using local verification recorded in docs/releases/$PROJECT_VERSION.md for $VERIFIED_SHA"
           fi
           echo "version=$RELEASE" >> "$GITHUB_OUTPUT"

@@ -26,9 +26,14 @@ Read these before generating any test code:
 - `docs/examples.md` — eight canonical patterns, including LazyColumn,
   AnimatedVisibility, deep nesting, CompositionLocal, and `derivedStateOf`
 - `docs/error-messages.md` — failure output anatomy (used by the perf-loop skill)
-- `README.md` — KMP setup section + Known Limitations / Known Gaps
+- `README.md` — KMP setup section + Known Limitations
 
 ## Canonical examples to copy from
+
+Inside DejaVu's own repository, many samples deliberately recompose too often. Preserve their
+inefficient behavior when validating the library: compare the tracer with independent `SideEffect`
+counters and test expected budget failures. Optimize a fixture only when that change is part of
+the user's request; the library's accuracy suite is not an app performance cleanup task.
 
 | Style | File |
 |---|---|
@@ -247,8 +252,9 @@ Substitute `<module>` with the gradle module that holds the test (`:app:`,
 - **`exactly` + range mutual exclusion** — `exactly` cannot combine with `atLeast`/`atMost`; throws `IllegalArgumentException`.
 - **Negative bounds** — all bounds must be `>= 0`.
 - **`assertStable()` vs `exactly = 0`** — identical; prefer `assertStable()` for intent.
-- **`LazyVerticalGrid` on iOS/Wasm** — upstream Compose crash; use `LazyColumn`/`LazyRow` (`README.md` Known Gaps).
-- **Wasm assertion-message swallowing** — don't introspect `AssertionError.message` on Wasm; pass/fail still works.
+- **Wasm asynchronous tests** — return the `TestResult` from `runRecompositionTrackingUiTest`
+  directly. Inspect caught assertion messages inside the test body. From DejaVu 0.4.0 onward,
+  diagnostic-message and lazy-grid tests run on Wasm; do not copy the old skip guards.
 - **`testTag` placement** — put the tag on the outermost user-defined composable's modifier, not buried inside framework primitives.
 - **Activity-owned clock** — `createAndroidComposeRule` uses the real Recomposer; use plain `createComposeRule()` for clock control.
 

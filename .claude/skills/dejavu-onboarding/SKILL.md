@@ -18,10 +18,10 @@ use **`dejavu-perf-loop`**.
 
 - `docs/getting-started.md` — minimal Android setup (the canonical 2-step
   install).
-- `README.md` — "KMP Test Setup" section (lines ~186–202) for non-Android
+- `README.md` — "KMP Test Setup" section for non-Android
   targets.
 - `README.md` — "Compatibility" section for Compose BOM / Kotlin version
-  requirements (`compose-runtime` 1.2.0+, Kotlin 2.0+).
+  requirements for the DejaVu version being installed.
 
 ## Workflow
 
@@ -29,8 +29,9 @@ use **`dejavu-perf-loop`**.
 
 Verify the project meets Dejavu's compatibility floor before touching anything:
 
-- **Compose runtime ≥ 1.2.0** (the `CompositionTracer` API is required).
-- **Kotlin ≥ 2.0** with the Compose compiler plugin applied.
+- **Compose version within the chosen DejaVu release's documented range.** The historical
+  `CompositionTracer` introduction in 1.2 is not the current library's support floor.
+- **Kotlin matching that release's compatibility requirements**, with the Compose compiler plugin.
 - **JVM 17+** for Android and Desktop targets.
 
 If any of these are below floor, stop and tell the user — Dejavu can't be
@@ -54,7 +55,7 @@ For Android (single-platform):
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.3.1")
+    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.4.0")
 }
 ```
 
@@ -66,7 +67,7 @@ gradle DSL:
 kotlin {
     sourceSets {
         commonTest.dependencies {
-            implementation("me.mmckenna.dejavu:dejavu:0.3.1")
+            implementation("me.mmckenna.dejavu:dejavu:0.4.0")
         }
     }
 }
@@ -79,7 +80,7 @@ kotlin {
     sourceSets {
         val commonTest by getting {
             dependencies {
-                implementation("me.mmckenna.dejavu:dejavu:0.3.1")
+                implementation("me.mmckenna.dejavu:dejavu:0.4.0")
             }
         }
     }
@@ -87,7 +88,8 @@ kotlin {
 ```
 
 Use the latest version from Maven Central (the README badge has the current
-number). Don't downgrade if the project is already on a newer release.
+number) compatible with the project's Compose version. DejaVu 0.4.x requires Compose 1.11;
+Compose 1.10 projects should stay on 0.3.1. Don't downgrade a compatible newer release.
 
 ### 4. Pick a target composable for the first test
 
@@ -196,9 +198,9 @@ Filter logcat with tag `Dejavu`. See `docs/use-cases.md` "Stream Composition Sta
 - **Compose compiler plugin missing** — `createRecompositionTrackingRule`
   works without it, but tag-to-function mapping degrades. Add the Compose
   compiler plugin if it isn't already configured.
-- **`LazyVerticalGrid` on iOS/Wasm** — upstream Compose runtime crash; pick
-  a different composable for the first test if the screen has one
-  (`README.md` Known Gaps).
+- **Wasm test completion** — return `runRecompositionTrackingUiTest` directly from the test.
+  Put diagnostic assertions inside its body so the runner awaits their asynchronous result.
+  DejaVu 0.4.0 restores lazy-grid and diagnostic-message coverage on iOS/Wasm.
 
 ## Wrap-up
 

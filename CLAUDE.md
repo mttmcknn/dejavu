@@ -2,6 +2,10 @@
 
 Implicit recomposition tracking for Compose UI tests. KMP library targeting Android, Desktop (JVM), iOS, and WasmJs.
 
+Many sample composables intentionally recompose too often. Preserve these fixtures when validating
+the library. Accuracy means matching independent `SideEffect` counters and producing the expected
+budget failures; it does not mean optimizing every sample until it is stable.
+
 ## Verification Requirements
 
 **Always run UI tests when validating changes.** This is a UI testing framework — unit tests alone are not sufficient. The SideEffect accuracy tests in `commonTest` verify that the tracer's recomposition counts match ground-truth `SideEffect` counters through actual Compose UI rendering.
@@ -40,7 +44,13 @@ it, promote its test into `dejavu/src/commonTest` and delete it here. See
 
 - `DejavuTracer` implements `CompositionTracer` — intercepts every `traceEventStart`/`traceEventEnd`
 - First composition of a key → tracked but not counted as recomposition. Subsequent → counted.
-- Tag mapping (testTag → function name) is Android-only via Group tree walking. Other platforms use function-name tracking directly.
+- Tag mapping runs on all targets. Android uses its tooling Group tree with a common fallback and
+  frame-driven per-instance tracking. Other targets walk `CompositionGroup` directly; unresolved
+  multi-instance counts can fall back to the shared function count.
+- The inspection collection has stable object identity because Compose registers it in a hash set
+  of mutable collections. Do not replace it with a content-hashed set.
+- KMP UI test helpers must return Compose's `TestResult`. Keep assertions and tracer lifecycle
+  inside the suspendable test body so Wasm awaits completion and observes failures.
 - Locking uses `kotlinx-atomicfu` `SynchronizedObject` (not `kotlin.synchronized` which is JVM-only)
 - `@kotlin.concurrent.Volatile` in common/native code (not `@Volatile` which is `kotlin.jvm.Volatile`)
 
