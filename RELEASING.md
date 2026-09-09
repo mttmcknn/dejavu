@@ -103,3 +103,8 @@ To refresh development docs, run `gh workflow run docs.yml --ref main` without `
 Snapshot pages identify themselves as unreleased and continue to show the stable dependency in
 install examples. The workflow also refreshes redirects from old unversioned guide URLs.
 It does not publish library artifacts or run the UI matrix.
+
+GitHub account links must also stay current in archived releases and the root 404 page. The
+Docs workflow checks the new build and updates GitHub references across the full `gh-pages`
+tree with `validation/update_github_links.py`. This only changes the account name; historical
+dependency versions, API content, and version aliases remain intact.
