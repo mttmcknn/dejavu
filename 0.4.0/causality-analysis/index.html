@@ -1,0 +1,1479 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Lock in Compose UI efficiency. Catch recomposition regressions before your users.">
+      
+      
+      
+        <link rel="canonical" href="https://dejavu.mmckenna.me/0.4.0/causality-analysis/">
+      
+      
+        <link rel="prev" href="../error-messages/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Causality Analysis - Dejavu</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#why-did-it-recompose-causality-analysis" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Dejavu" class="md-header__button md-logo" aria-label="Dejavu" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m.939 14.973 10.97 6.4V24L.94 17.6v-2.626zm22.123 0v2.626l-10.971 6.4v-2.626l10.97-6.401ZM.939 10.66l10.97 6.4v2.627l-7.223-4.214-1.068.622-2.253-1.313 1.07-.623-1.496-.873zm22.123 0v2.626l-1.496.873 1.07.624-2.253 1.313-1.07-.623-7.224 4.214V17.06l10.972-6.4ZM.939 6.347l10.97 6.4v2.627l-3.525-2.057-1.067.622-2.252-1.314 1.067-.622-1.429-.833-1.066.622-2.253-1.314 1.068-.622-1.514-.883Zm22.123 0v2.626l-1.514.883 1.07.622-2.254 1.315-1.068-.623-1.428.833 1.068.622-2.252 1.314-1.07-.622-3.525 2.057v-2.627l10.972-6.4ZM12 8.584l3.236 1.885-2.252 1.314-.983-.573-.982.573-2.252-1.314 3.235-1.885Zm0-4.293 6.916 4.03-2.252 1.315L12 6.918 7.338 9.635 5.085 8.321ZM12 0l10.597 6.175-2.252 1.314L12 2.627 3.657 7.489 1.405 6.175z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Dejavu
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Causality Analysis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/himattm/dejavu" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    himattm/dejavu
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../use-cases/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Use Cases
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../examples/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API Reference ↗
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../how-it-works/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  How It Works
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../error-messages/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Error Messages
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Causality Analysis
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Dejavu" class="md-nav__button md-logo" aria-label="Dejavu" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m.939 14.973 10.97 6.4V24L.94 17.6v-2.626zm22.123 0v2.626l-10.971 6.4v-2.626l10.97-6.401ZM.939 10.66l10.97 6.4v2.627l-7.223-4.214-1.068.622-2.253-1.313 1.07-.623-1.496-.873zm22.123 0v2.626l-1.496.873 1.07.624-2.253 1.313-1.07-.623-7.224 4.214V17.06l10.972-6.4ZM.939 6.347l10.97 6.4v2.627l-3.525-2.057-1.067.622-2.252-1.314 1.067-.622-1.429-.833-1.066.622-2.253-1.314 1.068-.622-1.514-.883Zm22.123 0v2.626l-1.514.883 1.07.622-2.254 1.315-1.068-.623-1.428.833 1.068.622-2.252 1.314-1.07-.622-3.525 2.057v-2.627l10.972-6.4ZM12 8.584l3.236 1.885-2.252 1.314-.983-.573-.982.573-2.252-1.314 3.235-1.885Zm0-4.293 6.916 4.03-2.252 1.315L12 6.918 7.338 9.635 5.085 8.321ZM12 0l10.597 6.175-2.252 1.314L12 2.627 3.657 7.489 1.405 6.175z"/></svg>
+
+    </a>
+    Dejavu
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/himattm/dejavu" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    himattm/dejavu
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use Cases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Examples
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference ↗
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-it-works/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How It Works
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../error-messages/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Error Messages
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Causality Analysis
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Causality Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-dejavu-detects-causes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Dejavu Detects Causes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Dejavu Detects Causes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-snapshot-state-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Snapshot State Observer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dirty-bits-from-the-composition-tracer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dirty Bits from the Composition Tracer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-causality-section-in-error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Causality Section in Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-state-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding State Changes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding State Changes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-state-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple state change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-state-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple state types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#same-value-writes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Same-value writes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-parameter-driven-recompositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Parameter-Driven Recompositions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-the-recomposition-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading the Recomposition Timeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading the Recomposition Timeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sequence-number-n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequence number (#N)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-timestamp-at-xms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative timestamp (at +Xms)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-slots-changed-param-slots-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter slots changed (param slots changed: [...])
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parent-composable-parent-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parent composable (parent: Name)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-scenarios-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Scenarios and Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Scenarios and Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-parent-recomposes-child-follows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Parent recomposes, child follows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-same-value-write-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Same-value write loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-multiple-independent-state-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Multiple independent state sources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-4-unstable-class-causes-recomposition-on-unrelated-parent-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Unstable class causes recomposition on unrelated parent change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-5-derivedstateof-preventing-unnecessary-recomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 5: derivedStateOf preventing unnecessary recomposition
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-dejavu-detects-causes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Dejavu Detects Causes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How Dejavu Detects Causes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-snapshot-state-observer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Snapshot State Observer
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dirty-bits-from-the-composition-tracer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dirty Bits from the Composition Tracer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-causality-section-in-error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Causality Section in Error Messages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-state-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding State Changes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Understanding State Changes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-state-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple state change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multiple-state-types" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multiple state types
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#same-value-writes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Same-value writes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#understanding-parameter-driven-recompositions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Understanding Parameter-Driven Recompositions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reading-the-recomposition-timeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading the Recomposition Timeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading the Recomposition Timeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sequence-number-n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sequence number (#N)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relative-timestamp-at-xms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relative timestamp (at +Xms)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-slots-changed-param-slots-changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parameter slots changed (param slots changed: [...])
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parent-composable-parent-name" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Parent composable (parent: Name)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-scenarios-and-fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Scenarios and Fixes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Scenarios and Fixes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-parent-recomposes-child-follows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 1: Parent recomposes, child follows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-same-value-write-loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 2: Same-value write loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-multiple-independent-state-sources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 3: Multiple independent state sources
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-4-unstable-class-causes-recomposition-on-unrelated-parent-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 4: Unstable class causes recomposition on unrelated parent change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-5-derivedstateof-preventing-unnecessary-recomposition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scenario 5: derivedStateOf preventing unnecessary recomposition
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/himattm/dejavu/edit/main/docs/causality-analysis.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="why-did-it-recompose-causality-analysis">Why Did It Recompose? -- Causality Analysis<a class="headerlink" href="#why-did-it-recompose-causality-analysis" title="Permanent link">&para;</a></h1>
+<p>When a Dejavu assertion fails, the error message includes a "Possible cause" section and a recomposition timeline. This document explains how Dejavu determines why a composable recomposed, what each piece of information means, and how to use it to fix unnecessary recompositions.</p>
+<hr />
+<h2 id="how-dejavu-detects-causes">How Dejavu Detects Causes<a class="headerlink" href="#how-dejavu-detects-causes" title="Permanent link">&para;</a></h2>
+<p>Dejavu uses two independent mechanisms to attribute recomposition causes:</p>
+<h3 id="1-snapshot-state-observer">1. Snapshot State Observer<a class="headerlink" href="#1-snapshot-state-observer" title="Permanent link">&para;</a></h3>
+<p>Dejavu registers a global observer via <code>Snapshot.registerApplyObserver</code> to detect state changes:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Snapshot.registerApplyObserver { changedObjects, snapshot -&gt;
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    // changedObjects: Set&lt;Any&gt; of state objects that were written
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    // Dejavu records the count and types of changed state objects
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>}
+</code></pre></div>
+<p>This captures every <code>MutableState</code>, <code>SnapshotStateList</code>, <code>SnapshotStateMap</code>, and any other <code>StateObject</code> that is written during a snapshot transaction. Dejavu records:</p>
+<ul>
+<li><strong>How many</strong> state objects changed (<code>stateChanges</code> count)</li>
+<li><strong>What types</strong> changed (e.g., <code>Int</code>, <code>String</code>, <code>SnapshotStateList</code>)</li>
+<li><strong>Whether any writes were same-value</strong> (the new value <code>==</code> the old value)</li>
+</ul>
+<h3 id="2-dirty-bits-from-the-composition-tracer">2. Dirty Bits from the Composition Tracer<a class="headerlink" href="#2-dirty-bits-from-the-composition-tracer" title="Permanent link">&para;</a></h3>
+<p>When Compose recomposes a function, the compiler generates a <code>dirty</code> bitmask indicating which parameter slots changed. Dejavu's <code>CompositionTracer</code> intercepts these values:</p>
+<ul>
+<li>Each parameter occupies 2 bits in the mask</li>
+<li>Bits <code>00</code> = unchanged, anything else (<code>01</code>, <code>10</code>, <code>11</code>) = changed</li>
+<li>Slot 0 = first parameter, slot 1 = second, etc.</li>
+</ul>
+<p>If any dirty bits are set, Dejavu marks the recomposition as <strong>parameter-driven</strong> (<code>isParameterDriven = true</code>). This means the composable recomposed because its parent passed new (or referentially different) parameter values.</p>
+<hr />
+<h2 id="the-causality-section-in-error-messages">The Causality Section in Error Messages<a class="headerlink" href="#the-causality-section-in-error-messages" title="Permanent link">&para;</a></h2>
+<p>When an assertion fails, the "Possible cause" section combines both signals:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>  Possible cause:
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    1 state change(s) of type Int
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    Parameter/parent change detected (dirty bits set)
+</code></pre></div>
+<p>This tells you:
+- One <code>Int</code> state object changed (likely <code>mutableIntStateOf</code>)
+- The composable's parameters were also marked dirty by the compiler</p>
+<p>Both conditions can be true simultaneously. A state change in a parent can cause the parent to recompose, which then passes new parameter values to the child.</p>
+<hr />
+<h2 id="understanding-state-changes">Understanding State Changes<a class="headerlink" href="#understanding-state-changes" title="Permanent link">&para;</a></h2>
+<h3 id="simple-state-change">Simple state change<a class="headerlink" href="#simple-state-change" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>  Possible cause:
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    1 state change(s) of type Int
+</code></pre></div>
+<p>One state object of type <code>Int</code> was written. This is the most common cause -- a <code>mutableIntStateOf</code> or <code>mutableStateOf&lt;Int&gt;</code> was updated, and the composable reads it (directly or through a parameter).</p>
+<h3 id="multiple-state-types">Multiple state types<a class="headerlink" href="#multiple-state-types" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>  Possible cause:
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    3 state change(s) of type Int, String, SnapshotStateList
+</code></pre></div>
+<p>Three different state objects changed. Dejavu lists the distinct types to help you identify which state sources are involved.</p>
+<h3 id="same-value-writes">Same-value writes<a class="headerlink" href="#same-value-writes" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>  Possible cause:
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    2 state change(s) of type Product (1 same-value write(s)!)
+</code></pre></div>
+<p>Two state writes occurred, but one of them set the same value that was already there. This is an unnecessary recomposition: the write triggered a snapshot notification even though nothing logically changed.</p>
+<p><strong>How Dejavu detects same-value writes:</strong></p>
+<p>For <code>MutableState</code> objects, Dejavu tracks the value before and after the write:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>val previousValue = (stateObject as? MutableState&lt;*&gt;)?.value
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>// ... after write ...
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>val newValue = (stateObject as? MutableState&lt;*&gt;)?.value
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>if (previousValue == newValue) {
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    // Same-value write detected
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>}
+</code></pre></div>
+<p><strong>Common causes of same-value writes:</strong></p>
+<ul>
+<li>Setting state unconditionally in a callback: <code>state.value = computeValue()</code> when the result is the same</li>
+<li>Using a regular class (not <code>data class</code>) as a state type, where <code>equals()</code> is reference-based</li>
+<li>Re-setting state in a <code>LaunchedEffect</code> or <code>SideEffect</code> that runs on every recomposition</li>
+</ul>
+<p><strong>Fixes:</strong></p>
+<ul>
+<li>Guard writes: <code>if (newValue != state.value) state.value = newValue</code></li>
+<li>Use <code>data class</code> so <code>equals()</code> is structural</li>
+<li>Use <code>mutableStateOf(value, policy = structuralEqualityPolicy())</code></li>
+</ul>
+<hr />
+<h2 id="understanding-parameter-driven-recompositions">Understanding Parameter-Driven Recompositions<a class="headerlink" href="#understanding-parameter-driven-recompositions" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>  Possible cause:
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    Parameter/parent change detected (dirty bits set)
+</code></pre></div>
+<p>This means the composable recomposed because its parent recomposed and passed parameter values that Compose considered "changed." No state read by this composable changed directly -- the recomposition was driven entirely by the parent.</p>
+<p><strong>Common causes:</strong></p>
+<ol>
+<li>
+<p><strong>Unstable parameter types</strong> -- a non-data-class, lambda, or collection without <code>@Stable</code>/<code>@Immutable</code> annotation. Compose cannot prove the value is unchanged, so it recomposes.</p>
+</li>
+<li>
+<p><strong>Overly broad parameter types</strong> -- passing <code>selectedCount: Int</code> when the composable only needs <code>hasSelection: Boolean</code>. Every increment triggers a recomposition even though the relevant information (is there a selection?) did not change.</p>
+</li>
+<li>
+<p><strong>Parent cascade</strong> -- the parent recomposed for its own reasons and recreated child parameter values. Even if the logical content is the same, referential inequality causes recomposition.</p>
+</li>
+</ol>
+<p><strong>Fixes:</strong></p>
+<ul>
+<li>Use <code>data class</code> for parameter types (structural equality)</li>
+<li>Add <code>@Stable</code> or <code>@Immutable</code> annotations where appropriate</li>
+<li>Narrow parameter types to what the composable actually needs</li>
+<li>Use <code>derivedStateOf</code> to convert fine-grained state into coarser signals</li>
+<li>With Compose 1.7+ strong skipping mode, lambdas are auto-memoized -- but non-lambda unstable types still cause issues</li>
+</ul>
+<hr />
+<h2 id="reading-the-recomposition-timeline">Reading the Recomposition Timeline<a class="headerlink" href="#reading-the-recomposition-timeline" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>  Recomposition timeline:
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    #1 at +0ms — param slots changed: [1] | parent: ProductListScreen
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    #2 at +16ms — param slots changed: [1] | parent: ProductListScreen
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    #3 at +32ms — param slots changed: [0, 1] | parent: ProductListScreen
+</code></pre></div>
+<p>Each line represents one recomposition event:</p>
+<h3 id="sequence-number-n">Sequence number (<code>#N</code>)<a class="headerlink" href="#sequence-number-n" title="Permanent link">&para;</a></h3>
+<p>The chronological order of recompositions for this composable since the last reset.</p>
+<h3 id="relative-timestamp-at-xms">Relative timestamp (<code>at +Xms</code>)<a class="headerlink" href="#relative-timestamp-at-xms" title="Permanent link">&para;</a></h3>
+<p>Milliseconds since the first recomposition event for this composable. Useful for:
+- Seeing if recompositions are batched (same timestamp) or spread across frames (16ms apart = separate frames)
+- Identifying rapid-fire recompositions that suggest a loop or cascade</p>
+<h3 id="parameter-slots-changed-param-slots-changed">Parameter slots changed (<code>param slots changed: [...]</code>)<a class="headerlink" href="#parameter-slots-changed-param-slots-changed" title="Permanent link">&para;</a></h3>
+<p>Which parameter slots the Compose compiler marked as dirty:
+- <code>[0]</code> -- first parameter changed
+- <code>[1]</code> -- second parameter changed
+- <code>[0, 1]</code> -- both first and second parameters changed
+- <code>[]</code> -- no parameter slots dirty (state-driven recomposition)</p>
+<p>Map slot numbers to your function signature: <code>fun MyComposable(first: A, second: B)</code> where <code>first</code> is slot 0 and <code>second</code> is slot 1.</p>
+<h3 id="parent-composable-parent-name">Parent composable (<code>parent: Name</code>)<a class="headerlink" href="#parent-composable-parent-name" title="Permanent link">&para;</a></h3>
+<p>The enclosing composable in the composition stack when the recomposition occurred. This tells you which composable triggered the cascade.</p>
+<hr />
+<h2 id="common-scenarios-and-fixes">Common Scenarios and Fixes<a class="headerlink" href="#common-scenarios-and-fixes" title="Permanent link">&para;</a></h2>
+<h3 id="scenario-1-parent-recomposes-child-follows">Scenario 1: Parent recomposes, child follows<a class="headerlink" href="#scenario-1-parent-recomposes-child-follows" title="Permanent link">&para;</a></h3>
+<p><strong>Timeline:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>  #1 at +0ms — param slots changed: [0] | parent: ParentScreen
+</code></pre></div></p>
+<p><strong>Cause:</strong> <code>ParentScreen</code> recomposed and passed a new value for parameter slot 0.</p>
+<p><strong>Investigation:</strong> Look at what <code>ParentScreen</code> passes as the first argument. Is it a new object reference each time? Is it a broader type than needed?</p>
+<p><strong>Fix:</strong> Stabilize the parameter (data class, @Stable), or narrow the type.</p>
+<h3 id="scenario-2-same-value-write-loop">Scenario 2: Same-value write loop<a class="headerlink" href="#scenario-2-same-value-write-loop" title="Permanent link">&para;</a></h3>
+<p><strong>Cause section:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  3 state change(s) of type Product (3 same-value write(s)!)
+</code></pre></div></p>
+<p><strong>Cause:</strong> State is being set to the same value three times. Each write triggers a snapshot notification, causing recomposition even though nothing changed.</p>
+<p><strong>Investigation:</strong> Find where the state is written. Look for unconditional <code>state.value = ...</code> in effects, callbacks, or data-mapping code.</p>
+<p><strong>Fix:</strong> Guard the write: <code>if (newProduct != state.value) state.value = newProduct</code></p>
+<h3 id="scenario-3-multiple-independent-state-sources">Scenario 3: Multiple independent state sources<a class="headerlink" href="#scenario-3-multiple-independent-state-sources" title="Permanent link">&para;</a></h3>
+<p><strong>Timeline:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>  #1 at +0ms — param slots changed: [0] | parent: Screen
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  #2 at +16ms — param slots changed: [1] | parent: Screen
+</code></pre></div></p>
+<p><strong>Cause:</strong> Two different state objects changed in separate frames. The first caused parameter 0 to be dirty, the second caused parameter 1.</p>
+<p><strong>Investigation:</strong> The composable depends on two state sources that update independently. Each update causes a separate recomposition.</p>
+<p><strong>Fix:</strong> If these updates should be atomic, batch them in <code>Snapshot.withMutableSnapshot { }</code>. If the composable does not need both, split it into smaller composables that each depend on only one source.</p>
+<h3 id="scenario-4-unstable-class-causes-recomposition-on-unrelated-parent-change">Scenario 4: Unstable class causes recomposition on unrelated parent change<a class="headerlink" href="#scenario-4-unstable-class-causes-recomposition-on-unrelated-parent-change" title="Permanent link">&para;</a></h3>
+<p><strong>Cause section:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>  1 state change(s) of type Int
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  Parameter/parent change detected (dirty bits set)
+</code></pre></div></p>
+<p><strong>Timeline:</strong>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>  #1 at +0ms — param slots changed: [0] | parent: ProductListScreen
+</code></pre></div></p>
+<p><strong>Investigation:</strong> The parent recomposed because an <code>Int</code> state changed. The child's parameter slot 0 was marked dirty even though the child's logical input did not change. This happens when the parameter type uses reference equality (regular class, not data class).</p>
+<p><strong>Fix:</strong> Make the parameter type a <code>data class</code>, or add <code>@Stable</code> annotation with a correct <code>equals()</code> implementation.</p>
+<h3 id="scenario-5-derivedstateof-preventing-unnecessary-recomposition">Scenario 5: derivedStateOf preventing unnecessary recomposition<a class="headerlink" href="#scenario-5-derivedstateof-preventing-unnecessary-recomposition" title="Permanent link">&para;</a></h3>
+<p><strong>Expected: <code>assertStable()</code> passes.</strong></p>
+<p>When <code>derivedStateOf</code> correctly coalesces state, the derived value does not change even though the underlying state did. The composable reading the derived value is not recomposed. This is the ideal outcome -- no error message is produced.</p>
+<p>If <code>assertStable()</code> fails on a composable that reads a <code>derivedStateOf</code>, check that:
+- The composable reads the derived value, not the raw state
+- The derived computation actually returns the same value (not a new object reference each time)</p>
+<hr />
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Meaning</th>
+<th>Typical Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>State change of type X</td>
+<td>A <code>MutableState&lt;X&gt;</code> was written</td>
+<td>Normal; check if the composable should depend on this state</td>
+</tr>
+<tr>
+<td>Same-value write</td>
+<td>State set to same value</td>
+<td>Guard writes, use <code>data class</code>, use <code>structuralEqualityPolicy</code></td>
+</tr>
+<tr>
+<td>Parameter/parent change</td>
+<td>Parent passed new parameter values</td>
+<td>Stabilize types, narrow parameters, use <code>derivedStateOf</code></td>
+</tr>
+<tr>
+<td>Multiple timeline entries</td>
+<td>Multiple recompositions over time</td>
+<td>Batch state updates, split composables, use <code>derivedStateOf</code></td>
+</tr>
+<tr>
+<td>Same timestamp entries</td>
+<td>Multiple recompositions in one frame</td>
+<td>Check for cascading invalidation within one composition pass</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/himattm/dejavu" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
