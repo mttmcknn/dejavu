@@ -71,6 +71,7 @@ jobs:
           python3 validation/docs.py repair-api docs/api
           mkdocs build --strict
           python3 validation/docs.py verify site
+          python3 validation/update_github_links.py site --check
 
       - name: Deploy documentation
         env:
@@ -81,13 +82,15 @@ jobs:
             mike set-default --push latest
           fi
 
-      - name: Refresh unversioned guide redirects
+      - name: Refresh website links across all versions
         run: |
           git worktree add build/docs-pages gh-pages
           python3 validation/docs.py redirects build/docs-pages
-          git -C build/docs-pages add getting-started examples use-cases how-it-works error-messages causality-analysis api-reference api
+          python3 validation/update_github_links.py build/docs-pages
+          python3 validation/update_github_links.py build/docs-pages --check
+          git -C build/docs-pages add --all
           if ! git -C build/docs-pages diff --cached --quiet; then
-            git -C build/docs-pages commit -m "Point unversioned guides to latest documentation"
+            git -C build/docs-pages commit -m "Refresh documentation redirects and GitHub links"
             git -C build/docs-pages push origin gh-pages
           fi
           git worktree remove build/docs-pages
