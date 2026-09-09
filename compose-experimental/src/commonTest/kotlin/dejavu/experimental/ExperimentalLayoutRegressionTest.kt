@@ -27,7 +27,6 @@ import androidx.compose.foundation.style.ExperimentalFoundationStyleApi
 import androidx.compose.foundation.style.MutableStyleState
 import androidx.compose.foundation.style.Style
 import androidx.compose.foundation.style.StyleScope
-import androidx.compose.foundation.style.pressed
 import androidx.compose.foundation.style.styleable
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -780,7 +779,7 @@ internal fun StyleRegressionScreen() {
         object : Style {
             override fun StyleScope.applyStyle() {
                 background(baseColor)
-                pressed(PressedStyle)
+                dejavuPressedStyle()
             }
         }
     }
@@ -812,7 +811,7 @@ internal fun StyleMisconfiguredScreen() {
         object : Style {
             override fun StyleScope.applyStyle() {
                 background(baseColor)
-                pressed(PressedStyle)
+                dejavuPressedStyle()
             }
         }
     }
@@ -827,12 +826,6 @@ internal fun StyleMisconfiguredScreen() {
                 .testTag("style_toggle")
                 .clickable { highlighted = !highlighted },
         )
-    }
-}
-
-private val PressedStyle = object : Style {
-    override fun StyleScope.applyStyle() {
-        background(Color.Red)
     }
 }
 

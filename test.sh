@@ -59,6 +59,7 @@ fi
 
 for module in dejavu compose-experimental; do
   for task in jvmTest iosSimulatorArm64Test wasmJsBrowserTest; do
+    python3 validation/verify_test_results.py "$module/build/test-results/$task"
     mkdir -p "$validation_dir/$module/$task"
     cp -R "$module/build/test-results/$task/." "$validation_dir/$module/$task/"
   done
@@ -74,6 +75,7 @@ for bom in "${boms[@]}"; do
     :compose-experimental:assembleDebug \
     :compose-experimental:assembleDebugAndroidTest \
     -PcomposeBomVersion="$bom"
+  python3 validation/verify_test_results.py dejavu/build/test-results/testDebugUnitTest
   mkdir -p "$validation_dir/$bom/unit"
   cp -R dejavu/build/test-results/testDebugUnitTest/. "$validation_dir/$bom/unit/"
 
@@ -83,6 +85,7 @@ for bom in "${boms[@]}"; do
       :compose-experimental:connectedDebugAndroidTest \
       -PcomposeBomVersion="$bom"
     for module in demo compose-experimental; do
+      python3 validation/verify_test_results.py "$module/build/outputs/androidTest-results/connected"
       mkdir -p "$validation_dir/$bom/$module"
       cp -R "$module/build/outputs/androidTest-results/connected/." "$validation_dir/$bom/$module/"
     done

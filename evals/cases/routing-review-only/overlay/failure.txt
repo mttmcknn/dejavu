@@ -1,0 +1,3 @@
+UnexpectedRecompositionsError: expected exactly 0, actual 1
+UI counter shows 1 after increment
+CounterValue reads that value.

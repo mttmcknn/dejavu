@@ -1,62 +1,110 @@
 # Contributing to Dejavu
 
-Thank you for your interest in contributing to Dejavu! This guide will help you get started.
+Dejavu validates recomposition behavior on Android, JVM desktop, iOS, and Wasm. Some sample
+composables intentionally recompose too often. Preserve those fixtures: a correct test proves
+that Dejavu matches independent unkeyed `SideEffect` counters and rejects an incorrect budget.
+A keyed `SideEffect` does not count every recomposition.
 
-## Getting Started
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/himattm/dejavu.git
-   cd dejavu
-   ```
-
-2. **Open in Android Studio** -- use the latest stable version of Android Studio with Kotlin 2.0+ support.
-
-3. **Sync Gradle** -- Android Studio will prompt you to sync on first open. You can also sync manually via `File > Sync Project with Gradle Files`.
-
-## Running Tests
-
-### JVM Unit Tests
+## Development setup
 
 ```bash
-./gradlew :dejavu:testDebugUnitTest
+git clone https://github.com/mttmcknn/dejavu.git
+cd dejavu
 ```
 
-These run on your local machine without an emulator and cover core tracker logic and tracer unit tests.
+Use the Gradle wrapper and JDK 17 or later. The current build pins Kotlin 2.4.0, AGP 9.4.0,
+Compose Multiplatform 1.12.0, and Android compile SDK 37. Install Android SDK platform 37 and
+accept its licenses. Android Studio must support the pinned AGP version; the Gradle wrapper is
+the command-line source of truth. Android test devices must run API 24 or later.
 
-### Instrumented Tests
+JVM tests need a desktop environment. Wasm browser tests need Chrome. iOS tests require macOS,
+Xcode, and an available arm64 simulator. See the [release validation record](docs/releases/0.5.0.md)
+for the exact environments used for the current release; minimum device support is not a claim
+that every supported OS was freshly tested.
+
+## Running tests
+
+Run targeted checks during development, then broaden to affected platforms:
 
 ```bash
-./gradlew :demo:connectedDebugAndroidTest
+# Android unit tests, without a device
+./gradlew -q --console=plain :dejavu:testDebugUnitTest
+
+# Actual Compose UI tests on each non-Android platform
+./gradlew -q --console=plain :dejavu:jvmTest :compose-experimental:jvmTest
+./gradlew -q --console=plain :dejavu:iosSimulatorArm64Test :compose-experimental:iosSimulatorArm64Test
+./gradlew -q --console=plain :dejavu:wasmJsBrowserTest :compose-experimental:wasmJsBrowserTest
+
+# Android UI tests on an explicitly selected emulator
+ANDROID_SERIAL=emulator-5554 ./gradlew -q --console=plain \
+  :demo:connectedDebugAndroidTest :compose-experimental:connectedDebugAndroidTest
+
+./gradlew -q --console=plain apiCheck :dejavu:lintDebug
 ```
 
-These require a running Android emulator or connected device (API 21+). The instrumented test suite covers UI tracking, assertion APIs, stress tests, and error output validation.
+For release readiness, use a clean emulator and `ANDROID_SERIAL=emulator-5554 ./test.sh --all-boms`.
+The script reads the supported BOMs from `gradle/libs.versions.toml`, forces fresh tests, saves
+reports, and rejects missing, failed, or skipped tests. Runtime changes need real UI tests;
+Android unit tests alone cannot verify recomposition accuracy. For new Compose APIs, see
+[compose-experimental](compose-experimental/README.md).
 
-## Code Style
+Hosted CI may be limited by budget. Equivalent passing local checks, with source revision,
+commands, platform details, counts, and exclusions recorded, can satisfy the release gate.
+Reproduced product failures still need fixes. Packaged release verification is described in
+[RELEASING.md](RELEASING.md) and the [standalone consumer guide](validation/consumer/README.md).
 
-- Follow standard [Kotlin coding conventions](https://kotlinlang.org/docs/coding-conventions.html).
-- No specific formatter is enforced yet. Keep your code consistent with the existing style in the file you are editing.
-- Use KDoc for all public API surfaces.
+## Documentation changes
 
-## Submitting PRs
+User guides live in `docs/`; the API site is generated from source and `dejavu/Module.md`.
+Use the pinned tools in a virtual environment:
 
-1. **Branch from `main`** -- this is the active development branch.
-   ```bash
-   git checkout main
-   git pull origin main
-   git checkout -b your-feature-branch
-   ```
+```bash
+python3 -m venv /tmp/dejavu-docs-env
+/tmp/dejavu-docs-env/bin/pip install -r .github/workflows/mkdocs-requirements.txt
+./gradlew -q --console=plain :dejavu:dokkaGeneratePublicationHtml
+python3 validation/docs.py repair-api docs/api
+/tmp/dejavu-docs-env/bin/mkdocs build --strict
+python3 validation/docs.py verify site
+```
 
-2. **Write tests** -- every new feature or bug fix should include tests. Use `createRecompositionTrackingRule<Activity>()` for instrumented tests.
+Update `extra.dejavu_release` in `mkdocs.yml`, dependency examples, compatibility guidance, and
+release links together when publishing a new version. Historical release records retain their
+original versions. `snapshot` is development documentation; `latest` is the stable release.
+The release checklist covers docs-only corrections and redirects from old unversioned URLs.
+Prose-only edits require a strict documentation build and link checks, not the full UI matrix.
 
-3. **Ensure all tests pass** -- run both JVM and instrumented tests before submitting.
+## Pull requests and API changes
 
-4. **Describe your changes clearly** -- explain what the PR does, why it is needed, and how you tested it.
+Branch from `main`. Explain the concrete behavior change and include the checks you ran and
+any limitations. Add regressions for fixes and new behavior; preserve intentional inefficient
+fixtures. Follow existing Kotlin style and add KDoc to new public APIs.
 
-## API Changes
+When changing the public API, run `./gradlew -q --console=plain apiDump`, review the generated
+changes, commit the API files, and run `apiCheck`. Do not accept an API diff solely to make a
+failing check green.
 
-If your change modifies the public API surface:
+Use the [bug template](https://github.com/mttmcknn/dejavu/issues/new?template=bug_report.md) for
+reproducible problems and the [feature template](https://github.com/mttmcknn/dejavu/issues/new?template=feature_request.md)
+for proposals. Include the DejaVu version, Compose BOM or Multiplatform version, platform, and
+an independent expected recomposition count. Follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+and [SECURITY.md](SECURITY.md).
 
-1. Run `./gradlew apiDump` to regenerate the API definition file.
-2. Commit the updated API file alongside your code changes.
-3. CI will run `./gradlew apiCheck` to verify API compatibility.
+## Agent skills and their evaluations
+
+Canonical skills live in real directories under `skills/`; edit them there and keep
+their bundled references portable. The `.claude/skills/` and `.agents/skills/` links
+share those files. The Claude Code plugin and cross-agent Skills CLI distribute
+the same bundles. See the [installation guide](docs/agent-skills.md).
+Run the offline checks after editing skills, packaging or the evaluation corpus:
+
+```bash
+python3 validation/skills.py
+python3 evals/run.py validate
+python3 -m unittest discover -s evals/tests -p 'test_*.py'
+```
+
+See [the evaluator guide](evals/README.md) for isolated no-skill, forced and automatic
+runs, comparing old/new skill revisions under fixed model settings, budget caps,
+and human auditing. Model results are advisory and are never CI release gates.
+The initial source-excerpt corpus checks agent decisions; library changes still
+require the actual UI test matrix above.

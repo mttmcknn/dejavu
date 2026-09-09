@@ -1,0 +1,45 @@
+{
+  "id": "routing-mixed-lifecycle",
+  "title": "Routing mixed lifecycle",
+  "family": "dejavu-error-triage",
+  "target_skills": [
+    "dejavu-error-triage",
+    "dejavu-test-writer"
+  ],
+  "expected_skills": [
+    "dejavu-error-triage",
+    "dejavu-test-writer"
+  ],
+  "allowed_skills": [
+    "dejavu-error-triage",
+    "dejavu-test-writer"
+  ],
+  "task_mode": "review",
+  "kind": "routing",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "routing-mixed-lifecycle"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Suspects lost/restored tracing state across helper teardown rather than accepting zero as improved performance; rejects nested-rule workaround."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Proposes a rule-helper-rule regression in one process with UI assertions, independent unkeyed counters, and an expected too-tight budget failure; keeps Android coverage across supported BOMs."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

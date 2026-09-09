@@ -2,12 +2,12 @@
 
 *Wait... didn't we just compose this?*
 
-[![CI](https://github.com/himattm/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/himattm/dejavu/actions/workflows/ci.yml)
+[![CI](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
-[![Compose](https://img.shields.io/badge/Compose-1.11%2B-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
+[![Compose](https://img.shields.io/badge/Compose-1.11–1.12-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-**[GitHub Repository](https://github.com/himattm/dejavu)**
+**[GitHub Repository](https://github.com/mttmcknn/dejavu)**
 
 **Guard your Compose UI efficiency. Catch recomposition regressions before your users.**
 
@@ -28,9 +28,9 @@ Dejavu is a test-only library that turns recomposition behavior into assertions.
 - **Rich diagnostics** — source location, recomposition timeline, parameter diffs, causality analysis
 - **Per-instance tracking** — multiple instances of the same composable get independent counters
 
-Dejavu 0.4.x supports Compose 1.11 (BOM 2026.05.00 through 2026.06.01); the release baseline is
-Compose Multiplatform 1.11.1 and Android Compose BOM 2026.06.01. For Compose 1.10, use Dejavu
-0.3.1. The 0.4.x test harness uses the Compose testing v2 APIs (which default to
+Dejavu 0.5.x supports Compose 1.11–1.12 (BOM 2026.05.00 through 2026.08.00); the release baseline is
+Compose Multiplatform 1.12.0 and Android Compose BOM 2026.08.00. For Compose 1.10, use Dejavu
+0.3.1. The 0.5.x test harness uses the Compose testing v2 APIs (which default to
 `StandardTestDispatcher`). Instrumented BOM gates run the supported BOM range, and the
 `compose-experimental` module (a staging area for experimental-API
 recomposition coverage) validates Dejavu against Compose 1.11's new composables (`Grid`, `FlexBox`,
@@ -41,16 +41,25 @@ recomposition coverage) validates Dejavu against Compose 1.11's new composables 
 - [Getting Started](getting-started.md) — add the dependency and write your first test
 - [Use Cases](use-cases.md) — locking in UI efficiency, AI agent guardrails, and CI enforcement
 - [Examples](examples.md) — test patterns for common scenarios
-- [API Reference](api-reference.md) — all assertions and utilities
+- [API Reference](api/index.html) — all assertions and utilities
 - [How It Works](how-it-works.md) — internals, compatibility, and limitations
+- [Releases and migration](releases/index.md) — supported versions, release notes, and validation
+- [Contributing](contributing.md) — development setup, test expectations, and project policies
 
-## Using Claude Code?
+<a id="using-claude-code"></a>
 
-Install the bundled Dejavu skills globally — they cover initial install (`dejavu-onboarding`), authoring tests (`dejavu-test-writer`), diagnosing single failures (`dejavu-error-triage`), and the iterative perf-optimization loop (`dejavu-perf-loop`):
+## Using an AI coding agent?
 
+Install DejaVu's portable skills for setup, test writing, failure diagnosis and
+performance optimization:
+
+```bash
+npx skills add mttmcknn/dejavu
 ```
-/plugin marketplace add himattm/dejavu
-/plugin install dejavu@dejavu
-```
 
-See [Use Cases → Give AI Agents a Recomposition Signal](use-cases.md#give-ai-agents-a-recomposition-signal) for what each skill does.
+Choose your agent during installation. See [Agent Skills](agent-skills.md) for
+Codex, Claude Code, Cursor, GitHub Copilot, OpenCode and manual installation.
+
+DejaVu 0.5.0 also covers Compose 1.12 keyed effects, shrinking `remember` keys, test synchronization,
+and nested movable content. The Android Compose 1.11 support floor is retained; see
+[compatibility and coverage](how-it-works.md) for the tested version matrix.
