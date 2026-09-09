@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
@@ -482,10 +482,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-claude-code" class="md-nav__link">
+  <a href="#using-an-ai-coding-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using Claude Code?
+        Using an AI coding agent?
       
     </span>
   </a>
@@ -592,6 +592,34 @@
     
   
     Use Cases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="agent-skills/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Skills
   
 
     
@@ -979,10 +1007,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-claude-code" class="md-nav__link">
+  <a href="#using-an-ai-coding-agent" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using Claude Code?
+        Using an AI coding agent?
       
     </span>
   </a>
@@ -1058,12 +1086,14 @@ recomposition coverage) validates Dejavu against Compose 1.11's new composables 
 <li><a href="releases/">Releases and migration</a> — supported versions, release notes, and validation</li>
 <li><a href="contributing/">Contributing</a> — development setup, test expectations, and project policies</li>
 </ul>
-<h2 id="using-claude-code">Using Claude Code?<a class="headerlink" href="#using-claude-code" title="Permanent link">&para;</a></h2>
-<p>Install the bundled Dejavu skills globally — they cover initial install (<code>dejavu-onboarding</code>), authoring tests (<code>dejavu-test-writer</code>), diagnosing single failures (<code>dejavu-error-triage</code>), and the iterative perf-optimization loop (<code>dejavu-perf-loop</code>):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>/plugin marketplace add mttmcknn/dejavu
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>/plugin install dejavu@dejavu
+<p><a id="using-claude-code"></a></p>
+<h2 id="using-an-ai-coding-agent">Using an AI coding agent?<a class="headerlink" href="#using-an-ai-coding-agent" title="Permanent link">&para;</a></h2>
+<p>Install DejaVu's portable skills for setup, test writing, failure diagnosis and
+performance optimization:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>npx<span class="w"> </span>skills<span class="w"> </span>add<span class="w"> </span>mttmcknn/dejavu
 </code></pre></div>
-<p>See <a href="use-cases/#give-ai-agents-a-recomposition-signal">Use Cases → Give AI Agents a Recomposition Signal</a> for what each skill does.</p>
+<p>Choose your agent during installation. See <a href="agent-skills/">Agent Skills</a> for
+Codex, Claude Code, Cursor, GitHub Copilot, OpenCode and manual installation.</p>
 <p>DejaVu 0.5.0 also covers Compose 1.12 keyed effects, shrinking <code>remember</code> keys, test synchronization,
 and nested movable content. The Android Compose 1.11 support floor is retained; see
 <a href="how-it-works/">compatibility and coverage</a> for the tested version matrix.</p>
@@ -1135,7 +1165,7 @@ and nested movable content. The Android Compose 1.11 support floor is retained; 
       <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "content.code.copy", "content.action.edit"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>

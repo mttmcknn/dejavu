@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../assets/favicon.svg">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -508,6 +508,34 @@
     
   
     Use Cases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../agent-skills/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Skills
   
 
     
@@ -1318,7 +1346,7 @@
 <hr />
 <h2 id="full-error-message-structure">Full Error Message Structure<a class="headerlink" href="#full-error-message-structure" title="Permanent link">&para;</a></h2>
 <p>A complete failure message contains up to seven sections:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag=&#39;product_header&#39;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag='product_header'
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  Composable: demo.app.ui.ProductHeader (ProductList.kt:29)
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>  Expected: exactly 0 recomposition(s)
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  Actual: 1 recomposition(s)
@@ -1339,18 +1367,18 @@
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    Parameter/parent change detected (dirty bits set)
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>
 <a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>  Node:
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    Node #42 [TestTag=&#39;product_header&#39;, Text=&#39;Products (1 selected)&#39;]
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>    Node #42 [TestTag='product_header', Text='Products (1 selected)']
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>  Semantic tree:
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    Node #1
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>      Node #10 [TestTag=&#39;product_header&#39;, Text=&#39;Products (1 selected)&#39;]  &lt;-- THIS NODE
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>      Node #20 [TestTag=&#39;product_item&#39;]
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>      Node #10 [TestTag='product_header', Text='Products (1 selected)']  &lt;-- THIS NODE
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>      Node #20 [TestTag='product_item']
 <a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>      ...
 </code></pre></div>
 <hr />
 <h2 id="section-by-section-breakdown">Section-by-Section Breakdown<a class="headerlink" href="#section-by-section-breakdown" title="Permanent link">&para;</a></h2>
 <h3 id="1-error-header">1. Error Header<a class="headerlink" href="#1-error-header" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag=&#39;product_header&#39;
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag='product_header'
 </code></pre></div>
 <p>Identifies which test tag triggered the failure. If the tag could not be mapped to a composable function, you will see a warning instead.</p>
 <h3 id="2-composable-name-and-source-location">2. Composable Name and Source Location<a class="headerlink" href="#2-composable-name-and-source-location" title="Permanent link">&para;</a></h3>
@@ -1358,7 +1386,7 @@
 </code></pre></div>
 <p>The fully qualified composable function name and its source file location. This comes from the Compose compiler's source info embedded in the composition trace. Use this to jump directly to the composable in your IDE.</p>
 <p>If the tag cannot be resolved to a composable, this section shows:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>  Warning: testTag &#39;my_tag&#39; could not be mapped to a composable function
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>  Warning: testTag 'my_tag' could not be mapped to a composable function
 </code></pre></div>
 <p>This usually means the tag was set on a node that Dejavu could not walk up to a user-defined composable (e.g., a framework-internal node).</p>
 <h3 id="3-expected-vs-actual">3. Expected vs Actual<a class="headerlink" href="#3-expected-vs-actual" title="Permanent link">&para;</a></h3>
@@ -1397,7 +1425,7 @@
 </tbody>
 </table>
 <p>A special actual value indicates the composable was never tracked:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>  Actual: composable was never composed or isn&#39;t being tracked
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>  Actual: composable was never composed or isn't being tracked
 </code></pre></div>
 <h3 id="4-all-tracked-composables">4. All Tracked Composables<a class="headerlink" href="#4-all-tracked-composables" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>  All tracked composables:
@@ -1448,12 +1476,12 @@
 <p>See <a href="../causality-analysis/">Causality Analysis</a> for a deep dive into causality analysis.</p>
 <h3 id="7-node-and-semantic-tree">7. Node and Semantic Tree<a class="headerlink" href="#7-node-and-semantic-tree" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>  Node:
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    Node #42 [TestTag=&#39;product_header&#39;, Text=&#39;Products (1 selected)&#39;]
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    Node #42 [TestTag='product_header', Text='Products (1 selected)']
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  Semantic tree:
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    Node #1
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>      Node #10 [TestTag=&#39;product_header&#39;, Text=&#39;Products (1 selected)&#39;]  &lt;-- THIS NODE
-<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>      Node #20 [TestTag=&#39;product_item&#39;]
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>      Node #10 [TestTag='product_header', Text='Products (1 selected)']  &lt;-- THIS NODE
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>      Node #20 [TestTag='product_item']
 </code></pre></div>
 <p>The failing semantics node and a dump of the full semantic tree. The <code>&lt;-- THIS NODE</code> marker highlights the asserted node in the tree. This helps you understand the node's position in the UI hierarchy and verify you are asserting on the correct element.</p>
 <hr />
@@ -1493,10 +1521,10 @@
 - Use <code>mutableStateOf(value, policy = structuralEqualityPolicy())</code>
 - Guard writes: <code>if (newValue != currentValue) state.value = newValue</code></p>
 <h3 id="pattern-3-tag-not-mapped-to-composable">Pattern 3: Tag not mapped to composable<a class="headerlink" href="#pattern-3-tag-not-mapped-to-composable" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>  Recomposition assertion failed for testTag=&#39;my_component&#39;
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  Warning: testTag &#39;my_component&#39; could not be mapped to a composable function
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>  Recomposition assertion failed for testTag='my_component'
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>  Warning: testTag 'my_component' could not be mapped to a composable function
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>  Expected: exactly 0 recomposition(s)
-<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  Actual: composable was never composed or isn&#39;t being tracked
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>  Actual: composable was never composed or isn't being tracked
 </code></pre></div>
 <p><strong>Diagnosis:</strong> Dejavu found the semantics node (the tag exists in the tree) but could not map it back to a user-defined composable function. This can happen if the tag is on a deeply nested framework composable.</p>
 <p><strong>Fixes:</strong>
@@ -1599,7 +1627,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "content.code.copy", "content.action.edit"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
       
     
   </body>
