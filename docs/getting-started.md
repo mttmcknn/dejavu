@@ -19,16 +19,28 @@ manifest in the debug variant:
 // app/build.gradle.kts
 android {
     compileSdk = 37
+    defaultConfig {
+        minSdk = 24
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 }
+
+composeCompiler { includeSourceInformation = true }
 
 dependencies {
     val composeBom = enforcedPlatform("androidx.compose:compose-bom:2026.08.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
     androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 ```
+
+Compose test APIs are compile-only dependencies of DejaVu, so include them explicitly in your
+test module. The Espresso version above matches the API 37 validation environment.
 
 To retain Android Compose 1.11, select the validated BOM `2026.05.00` or `2026.06.01` in
 that same enforced-platform declaration. Keep compile SDK 37 for the 0.5.0 Android artifact.
@@ -87,10 +99,17 @@ kotlin {
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation("me.mmckenna.dejavu:dejavu:0.5.0")
+            implementation(compose.foundation)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.uiTest)
         }
     }
 }
 ```
+
+Keep `composeCompiler { includeSourceInformation = true }` enabled in the shared module.
+For desktop tests, also add `implementation(compose.desktop.currentOs)` to `jvmTest.dependencies`.
+The Compose Multiplatform plugin supplies the `compose` dependency accessors above.
 
 Return the helper's result directly so the Wasm test runner waits for completion:
 
@@ -101,11 +120,14 @@ import dejavu.runRecompositionTrackingUiTest
 import dejavu.setTrackedContent
 import kotlin.test.Test
 
-@Test
-fun counterStartsStable() = runRecompositionTrackingUiTest {
-    setTrackedContent { CounterValue(0) }
-    waitForIdle()
-    onNodeWithTag("counter_value").assertStable()
+@OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
+class CounterMultiplatformTest {
+    @Test
+    fun counterStartsStable() = runRecompositionTrackingUiTest {
+        setTrackedContent { CounterValue(0) }
+        waitForIdle()
+        onNodeWithTag("counter_value").assertStable()
+    }
 }
 ```
 

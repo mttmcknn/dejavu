@@ -49,8 +49,14 @@ See [Compatibility](#compatibility) before adding the dependency to an older Com
 // app/build.gradle.kts
 dependencies {
     androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 ```
+
+Use your enforced Compose BOM for the unversioned Compose test artifacts. See the
+[complete setup](https://dejavu.mmckenna.me/latest/getting-started/) for the runner, compatible
+Android test dependencies, and KMP source sets.
 
 ### 2. Write a test
 
@@ -234,6 +240,7 @@ Dejavu supports Kotlin Multiplatform with the following targets:
 For non-Android platforms, use `runRecompositionTrackingUiTest` with `setTrackedContent`:
 
 ```kotlin
+@OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
 @Test
 fun myComposable_isStable() = runRecompositionTrackingUiTest {
     setTrackedContent { MyComposable() }
