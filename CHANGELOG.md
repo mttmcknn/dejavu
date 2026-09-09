@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - Unreleased
+
+### Changed
+- Build against stable Compose Multiplatform 1.12.0 and Android BOM 2026.08.00 (Compose 1.12.0).
+  DejaVu keeps independent version numbers and the Android Compose 1.11 support floor.
+- Retain Android BOM 2026.05.00 and 2026.06.01 as the minimum and latest 1.11 checkpoints.
+  Retire the redundant intermediate 2026.06.00 checkpoint without moving the support floor.
+- Upgrade the build to AGP 9.4.0 and compile SDK 37 for the new Android Compose artifacts.
+- Adapt experimental Styles fixtures to the changed `pressed` API with separate 1.11 and 1.12
+  test sources. Both retain the same deliberately inefficient and stable fixture behavior.
+- Declare Wasm executables for browser UI tests, as required by Compose Multiplatform 1.12's
+  Skiko bundling check. The library continues to publish Wasm KLIB artifacts.
+
+### Added
+- The Android rule delegates Compose 1.12's `hasPendingWork` and `runWithoutImplicitWait` APIs.
+  These new methods require Compose 1.12; existing rule methods remain covered on Compose 1.11.
+- Six public-API regressions for Compose 1.12: stable and changed keyed `SideEffect`, shrinking
+  vararg effect keys, shrinking `remember` keys, frame assertions using `runWithoutImplicitWait`,
+  and nested movable content under the LinkBuffer composer.
+- The keyed-effect regression deliberately recomposes four times while the keyed callback stays
+  quiet, proving DejaVu counts every recomposition and rejects an incorrect stability budget.
+  Unkeyed `SideEffect` remains the independent recomposition-count oracle.
+- Version-specific tests compile only where the API exists. Older Android BOM checks retain the
+  complete core suite and the original 20 experimental tests; 1.12 adds the six new regressions.
+
 ## [0.4.0] - 2026-09-09
 
 ### Changed

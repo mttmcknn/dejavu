@@ -5,7 +5,7 @@
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.4.0")
+    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
 }
 ```
 

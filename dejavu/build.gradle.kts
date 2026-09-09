@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.mmckenna.dejavu"
-version = "0.4.0"
+version = "0.5.0"
 
 kotlin {
   explicitApi()
@@ -37,7 +37,11 @@ kotlin {
   iosArm64()
   iosSimulatorArm64()
 
-  wasmJs { browser() }
+  wasmJs {
+    browser()
+    // Compose 1.12 requires webpack bundling to load Skiko for browser UI tests.
+    binaries.executable()
+  }
 
   sourceSets {
     val iosMain by creating {
@@ -102,7 +106,7 @@ kotlin {
 
 android {
   namespace = "dejavu"
-  compileSdk = 36
+  compileSdk = 37
   defaultConfig {
     minSdk = 24
     consumerProguardFiles("consumer-rules.pro")

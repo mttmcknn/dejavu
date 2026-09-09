@@ -10,7 +10,7 @@
 
 [![CI](https://github.com/himattm/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/himattm/dejavu/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
-[![Compose](https://img.shields.io/badge/Compose-1.11.x-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
+[![Compose](https://img.shields.io/badge/Compose-1.11–1.12-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ###### Featured In
@@ -44,7 +44,7 @@ Dejavu is a test-only library that turns recomposition behavior into assertions.
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.4.0")
+    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
 }
 ```
 
@@ -188,18 +188,18 @@ All tracking runs in the app process on the main thread, directly accessible to 
 
 ## Compatibility
 
-Supported Compose range for Dejavu 0.4.x: **1.11.x (BOM 2026.05.00 through 2026.06.01)**.
+Supported Compose range for Dejavu 0.5.x: **1.11.x–1.12.x (BOM 2026.05.00 through 2026.08.00)**.
 
-**Minimum supported Compose: 1.11 (BOM 2026.05.00).** Dejavu 0.4.x uses the Compose testing v2 APIs introduced with this line. For Compose 1.10, use Dejavu 0.3.1; that maintenance release preserves the older Compose line instead of allowing newer transitive artifacts to mask an unsupported combination. Validated with Kotlin 2.4.0 and its Compose compiler plugin.
+**Minimum supported Compose: 1.11 (BOM 2026.05.00).** Dejavu 0.5.x uses the Compose testing v2 APIs introduced with this line. For Compose 1.10, use Dejavu 0.3.1; that maintenance release preserves the older Compose line instead of allowing newer transitive artifacts to mask an unsupported combination. Validated with Kotlin 2.4.0 and its Compose compiler plugin.
 
-Dejavu 0.4.x is built and released against **Compose Multiplatform 1.11.1**. Android consumers
+Dejavu 0.5.x is built and released against **Compose Multiplatform 1.12.0**. Android consumers
 can use any validated BOM in the support window; they do not have to match the release BOM exactly.
 
-| Compose BOM | Compose | Kotlin | Status |
+| Compose BOM | Compose | Kotlin tested | Status |
 |---|---|---|---|
-| 2026.05.00 | 1.11.x | 2.3.x+ | Minimum |
-| 2026.06.00 | 1.11.x | 2.3.x+ | Previous 1.11 checkpoint |
-| 2026.06.01 | 1.11.x | 2.3.x+ | Release baseline |
+| 2026.05.00 | 1.11.x | 2.4.0 | Minimum |
+| 2026.06.01 | 1.11.x | 2.4.0 | Latest 1.11 checkpoint |
+| 2026.08.00 | 1.12.x | 2.4.0 | Release baseline |
 
 ## Kotlin Multiplatform
 
@@ -210,7 +210,7 @@ Dejavu supports Kotlin Multiplatform with the following targets:
 | Android | Full support | Tag mapping via `ui-tooling-data` Group tree |
 | Desktop (JVM) | Full support | Tag mapping via `CompositionGroup` + `sourceInfo` |
 | iOS (arm64, simulatorArm64) | Supported | Same as JVM; Compose Multiplatform 1.11 no longer supports `iosX64` |
-| WasmJs (browser) | Supported | Exception propagation limited in test runner |
+| WasmJs (browser) | Supported | Async result and diagnostic-message regressions verified |
 
 ### KMP Test Setup
 
@@ -231,18 +231,29 @@ can suspend; Dejavu keeps tracking enabled until the body finishes and then clea
 It handles all Dejavu lifecycle management automatically -- enabling the tracer and resetting state. `setTrackedContent` wraps `setContent` with the inspection tables
 and sub-composition layout required for tag-to-function mapping.
 
-### Compose 1.11 Coverage
+### New Compose API Coverage
 
 Dejavu is validated against Compose 1.11's new composables and runtime paths via the
 `compose-experimental` module — a staging area for recomposition coverage of experimental /
 newest-Compose APIs before they graduate into the core accuracy suite. It exercises recomposition
-tracking on JVM, iOS, Wasm, and Android instrumented; Android runs every supported 1.11 BOM for:
+tracking on JVM, iOS, Wasm, and Android instrumented; Android runs every supported BOM for:
 
 - the experimental non-lazy `Grid` and `FlexBox` layouts,
 - `derivedMediaQuery` / `mediaQuery` adaptive breakpoints,
 - the Styles API (`androidx.compose.foundation.style`),
 - `movableContentOf`, and
 - the experimental LinkBuffer composer runtime path (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`).
+
+### Compose 1.12 Coverage
+
+The Compose 1.12 baseline additionally validates keyed `SideEffect`, shrinking vararg effect and
+`remember` keys, assertions using `runWithoutImplicitWait`, and nested movable content under
+LinkBuffer. Exact counters continue using unkeyed `SideEffect`, including a deliberately inefficient
+fixture whose keyed callback stays quiet during four recompositions. The experimental suite runs
+26 tests on 1.12 and retains 20 on the supported Android 1.11 checkpoints.
+
+`DejavuComposeTestRule` delegates the new `hasPendingWork` and `runWithoutImplicitWait` methods on
+Compose 1.12. These methods require 1.12; the existing rule API remains covered on Android 1.11.
 
 ## Known Limitations
 
