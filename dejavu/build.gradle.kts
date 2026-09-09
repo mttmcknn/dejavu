@@ -220,7 +220,7 @@ mavenPublishing {
   pom {
     name.set("Dejavu")
     description.set("Implicit recomposition tracking for Jetpack Compose UI tests")
-    url.set("https://github.com/himattm/dejavu")
+    url.set("https://github.com/mttmcknn/dejavu")
     licenses {
       license {
         name.set("The Apache License, Version 2.0")
@@ -229,27 +229,30 @@ mavenPublishing {
     }
     developers {
       developer {
-        id.set("himattm")
+        id.set("mttmcknn")
         name.set("Matt McKenna")
         url.set("https://blog.mmckenna.me")
       }
     }
     scm {
-      url.set("https://github.com/himattm/dejavu")
-      connection.set("scm:git:git://github.com/himattm/dejavu.git")
-      developerConnection.set("scm:git:ssh://github.com/himattm/dejavu.git")
+      url.set("https://github.com/mttmcknn/dejavu")
+      connection.set("scm:git:git://github.com/mttmcknn/dejavu.git")
+      developerConnection.set("scm:git:ssh://github.com/mttmcknn/dejavu.git")
     }
   }
 }
 
 dokka {
   dokkaPublications.html {
+    moduleVersion.set(providers.gradleProperty("docsVersion").orElse(project.version.toString()))
+    includes.from("Module.md")
     outputDirectory.set(rootProject.layout.projectDirectory.dir("docs/api"))
   }
   dokkaSourceSets.configureEach {
     sourceLink {
       localDirectory.set(projectDir.resolve("src"))
-      remoteUrl("https://github.com/himattm/dejavu/blob/main/dejavu/src")
+      val sourceRef = providers.gradleProperty("docsSourceRef").orElse("main").get()
+      remoteUrl("https://github.com/mttmcknn/dejavu/blob/$sourceRef/dejavu/src")
       remoteLineSuffix.set("#L")
     }
     documentedVisibilities(

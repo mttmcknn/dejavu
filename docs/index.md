@@ -2,12 +2,12 @@
 
 *Wait... didn't we just compose this?*
 
-[![CI](https://github.com/himattm/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/himattm/dejavu/actions/workflows/ci.yml)
+[![CI](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
-[![Compose](https://img.shields.io/badge/Compose-1.11%2B-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
+[![Compose](https://img.shields.io/badge/Compose-1.11–1.12-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-**[GitHub Repository](https://github.com/himattm/dejavu)**
+**[GitHub Repository](https://github.com/mttmcknn/dejavu)**
 
 **Guard your Compose UI efficiency. Catch recomposition regressions before your users.**
 
@@ -41,15 +41,17 @@ recomposition coverage) validates Dejavu against Compose 1.11's new composables 
 - [Getting Started](getting-started.md) — add the dependency and write your first test
 - [Use Cases](use-cases.md) — locking in UI efficiency, AI agent guardrails, and CI enforcement
 - [Examples](examples.md) — test patterns for common scenarios
-- [API Reference](api-reference.md) — all assertions and utilities
+- [API Reference](api/index.html) — all assertions and utilities
 - [How It Works](how-it-works.md) — internals, compatibility, and limitations
+- [Releases and migration](releases/index.md) — supported versions, release notes, and validation
+- [Contributing](contributing.md) — development setup, test expectations, and project policies
 
 ## Using Claude Code?
 
 Install the bundled Dejavu skills globally — they cover initial install (`dejavu-onboarding`), authoring tests (`dejavu-test-writer`), diagnosing single failures (`dejavu-error-triage`), and the iterative perf-optimization loop (`dejavu-perf-loop`):
 
 ```
-/plugin marketplace add himattm/dejavu
+/plugin marketplace add mttmcknn/dejavu
 /plugin install dejavu@dejavu
 ```
 

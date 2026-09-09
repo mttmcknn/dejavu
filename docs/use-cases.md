@@ -53,11 +53,11 @@ For Claude Code users, Dejavu ships four skills as a Claude Code plugin so the a
 Install:
 
 ```
-/plugin marketplace add himattm/dejavu
+/plugin marketplace add mttmcknn/dejavu
 /plugin install dejavu@dejavu
 ```
 
-Sessions opened inside the [Dejavu repo](https://github.com/himattm/dejavu) auto-load the same skills from `.claude/skills/` without installing the plugin.
+Sessions opened inside the [Dejavu repo](https://github.com/mttmcknn/dejavu) auto-load the same skills from `.claude/skills/` without installing the plugin.
 
 ### Programmatic checks
 

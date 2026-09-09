@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `dejavu-test-writer` — authors Compose UI recomposition tests using Dejavu's APIs.
   - `dejavu-error-triage` — one-shot diagnosis of a single `UnexpectedRecompositionsError` block.
   - `dejavu-perf-loop` — closed-loop optimization using Dejavu as the validator.
-- Packaged the same skills as a Claude Code plugin (`dejavu`) installable via `/plugin marketplace add himattm/dejavu` + `/plugin install dejavu@dejavu`. Plugin manifest at `.claude-plugin/plugin.json`, marketplace at `.claude-plugin/marketplace.json`, with `skills/` symlinked into `.claude/skills/` for a single source of truth.
+- Packaged the same skills as a Claude Code plugin (`dejavu`) installable via `/plugin marketplace add mttmcknn/dejavu` + `/plugin install dejavu@dejavu`. Plugin manifest at `.claude-plugin/plugin.json`, marketplace at `.claude-plugin/marketplace.json`, with `skills/` symlinked into `.claude/skills/` for a single source of truth.
 - New `compose-experimental` module (a staging area for experimental-API recomposition coverage) with tests for Compose 1.11's new APIs, running on JVM, iOS, Wasm, and Android instrumented: experimental `Grid`, experimental `FlexBox`, the experimental LinkBuffer composer runtime path (`ComposeRuntimeFlags.isLinkBufferComposerEnabled`), `movableContentOf`, `derivedMediaQuery`/`mediaQuery` (adaptive breakpoints), and the Styles API (`androidx.compose.foundation.style`).
 - Public `ComposeUiTest.resetRecompositionCounts()` for KMP recomposition tests — resets recomposition counts mid-test while preserving composition history.
 - A Coil-style `test.sh` release check and `RELEASING.md` checklist that pin one Compose
