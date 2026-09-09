@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.5.0] - Unreleased
+## [0.5.0] - 2026-09-09
 
 ### Changed
 - Build against stable Compose Multiplatform 1.12.0 and Android BOM 2026.08.00 (Compose 1.12.0).
