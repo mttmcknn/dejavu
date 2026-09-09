@@ -1,0 +1,42 @@
+{
+  "id": "onboarding-kmp-novel",
+  "title": "Onboarding kmp novel",
+  "family": "dejavu-onboarding",
+  "target_skills": [
+    "dejavu-onboarding"
+  ],
+  "expected_skills": [
+    "dejavu-onboarding"
+  ],
+  "allowed_skills": [
+    "dejavu-onboarding"
+  ],
+  "task_mode": "review",
+  "kind": "novel",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "onboarding-kmp-novel"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Distinguishes KMP 1.11 from Android BOM 1.11 support; recommends the compatible 0.4.0 line or a separately authorized CMP upgrade, preserving the stated constraint."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Identifies explicit Compose UI test dependency/source information and returning the KMP helper TestResult as necessary setup; does not claim verified compilation."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

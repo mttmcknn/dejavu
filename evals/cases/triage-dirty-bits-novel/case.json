@@ -1,0 +1,46 @@
+{
+  "id": "triage-dirty-bits-novel",
+  "title": "Triage dirty bits novel",
+  "family": "dejavu-error-triage",
+  "target_skills": [
+    "dejavu-error-triage"
+  ],
+  "expected_skills": [
+    "dejavu-error-triage"
+  ],
+  "allowed_skills": [
+    "dejavu-error-triage"
+  ],
+  "task_mode": "review",
+  "kind": "novel",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "triage-dirty-bits-novel"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Does not treat dirty bits or class shape as proof of instability/cause; states a provisional mechanism and specific missing source/scheduling evidence."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Rejects blindly annotating a mutable-list holder as Immutable/Stable; explains that contracts must be truthful and UI updates preserved."
+    },
+    {
+      "id": "criterion-3",
+      "text": "Provides useful bounded diagnosis despite incomplete logs, without edits or mandatory full-log blocking."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

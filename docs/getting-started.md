@@ -158,13 +158,18 @@ dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag
 
 See the [Error Messages Guide](error-messages.md) for how to read and act on each section.
 
-## Optional: Install the Claude Code skills
+<a id="optional-install-the-claude-code-skills"></a>
 
-If you use Claude Code, you can install the bundled Dejavu skills globally so they're available in any project. The skill set covers the full lifecycle: `dejavu-onboarding` (initial install), `dejavu-test-writer` (author tests), `dejavu-error-triage` (diagnose a single failure), and `dejavu-perf-loop` (iteratively optimize a composable's recomposition behavior using Dejavu as the validator).
+## Optional: Install agent skills
 
+Use DejaVu's portable skills with a compatible coding agent to install dependencies,
+write tests, diagnose failures and optimize application recompositions:
+
+```bash
+npx skills add mttmcknn/dejavu
 ```
-/plugin marketplace add mttmcknn/dejavu
-/plugin install dejavu@dejavu
-```
 
-Sessions opened inside the [Dejavu repo](https://github.com/mttmcknn/dejavu) auto-load the same skills from `.claude/skills/` without installing the plugin. See [Use Cases → Give AI Agents a Recomposition Signal](use-cases.md#give-ai-agents-a-recomposition-signal) for what the skills do in practice.
+The [Agent Skills guide](agent-skills.md) covers agent selection, project/global
+installation, manual copying and the Claude Code marketplace option. See
+[Use Cases → Give AI Agents a Recomposition Signal](use-cases.md#give-ai-agents-a-recomposition-signal)
+for how the skills fit into a test-driven workflow.

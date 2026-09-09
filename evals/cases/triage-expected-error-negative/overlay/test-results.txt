@@ -1,0 +1,4 @@
+AccuracyTest.deliberatelyRepeated PASS
+assertFailsWith caught: UnexpectedRecompositionsError Expected exactly 0; Actual 4
+Independent counter delta = 4
+1 test; 0 failures; 0 skipped

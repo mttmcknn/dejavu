@@ -88,3 +88,23 @@ reproducible problems and the [feature template](https://github.com/mttmcknn/dej
 for proposals. Include the DejaVu version, Compose BOM or Multiplatform version, platform, and
 an independent expected recomposition count. Follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 and [SECURITY.md](SECURITY.md).
+
+## Agent skills and their evaluations
+
+Canonical skills live in real directories under `skills/`; edit them there and keep
+their bundled references portable. The `.claude/skills/` and `.agents/skills/` links
+share those files. The Claude Code plugin and cross-agent Skills CLI distribute
+the same bundles. See the [installation guide](docs/agent-skills.md).
+Run the offline checks after editing skills, packaging or the evaluation corpus:
+
+```bash
+python3 validation/skills.py
+python3 evals/run.py validate
+python3 -m unittest discover -s evals/tests -p 'test_*.py'
+```
+
+See [the evaluator guide](evals/README.md) for isolated no-skill, forced and automatic
+runs, comparing old/new skill revisions under fixed model settings, budget caps,
+and human auditing. Model results are advisory and are never CI release gates.
+The initial source-excerpt corpus checks agent decisions; library changes still
+require the actual UI test matrix above.

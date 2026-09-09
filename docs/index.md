@@ -46,16 +46,19 @@ recomposition coverage) validates Dejavu against Compose 1.11's new composables 
 - [Releases and migration](releases/index.md) — supported versions, release notes, and validation
 - [Contributing](contributing.md) — development setup, test expectations, and project policies
 
-## Using Claude Code?
+<a id="using-claude-code"></a>
 
-Install the bundled Dejavu skills globally — they cover initial install (`dejavu-onboarding`), authoring tests (`dejavu-test-writer`), diagnosing single failures (`dejavu-error-triage`), and the iterative perf-optimization loop (`dejavu-perf-loop`):
+## Using an AI coding agent?
 
+Install DejaVu's portable skills for setup, test writing, failure diagnosis and
+performance optimization:
+
+```bash
+npx skills add mttmcknn/dejavu
 ```
-/plugin marketplace add mttmcknn/dejavu
-/plugin install dejavu@dejavu
-```
 
-See [Use Cases → Give AI Agents a Recomposition Signal](use-cases.md#give-ai-agents-a-recomposition-signal) for what each skill does.
+Choose your agent during installation. See [Agent Skills](agent-skills.md) for
+Codex, Claude Code, Cursor, GitHub Copilot, OpenCode and manual installation.
 
 DejaVu 0.5.0 also covers Compose 1.12 keyed effects, shrinking `remember` keys, test synchronization,
 and nested movable content. The Android Compose 1.11 support floor is retained; see

@@ -1,0 +1,46 @@
+{
+  "id": "writer-keyed-oracle-novel",
+  "title": "Writer keyed oracle novel",
+  "family": "dejavu-test-writer",
+  "target_skills": [
+    "dejavu-test-writer"
+  ],
+  "expected_skills": [
+    "dejavu-test-writer"
+  ],
+  "allowed_skills": [
+    "dejavu-test-writer"
+  ],
+  "task_mode": "review",
+  "kind": "novel",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "writer-keyed-oracle-novel"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Separates keyed callback frequency from recomposition count and requires an independent unkeyed counter at the actual target with a settled baseline and nonzero exercise."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Requires returning TestResult and keeping captured-error assertions within the suspending helper body for Wasm."
+    },
+    {
+      "id": "criterion-3",
+      "text": "Keeps new API coverage in compose-experimental and gates the 1.12-only path, preserving supported Android 1.11 tests."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

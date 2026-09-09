@@ -14,7 +14,11 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ###### Featured In
+
 <a href="https://jetc.dev/issues/305.html"><img src="https://img.shields.io/badge/As_Seen_In-jetc.dev_Newsletter_Issue_%23305-blue?logo=Jetpack+Compose&amp;logoColor=white" alt="As Seen In - jetc.dev Newsletter Issue #305"></a>
+<a href="https://www.androidweekly.net/issues/issue-718"><img src="https://img.shields.io/badge/Featured_In-Android_Weekly_%23718-3DDC84?logo=android&amp;logoColor=white" alt="Featured In - Android Weekly Issue #718"></a>
+
+[More newsletter coverage, community articles and integration examples](#community-mentions)
 
 **[Full Documentation](https://dejavu.mmckenna.me)**
 
@@ -105,23 +109,41 @@ dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag
 
 See [Error Messages Guide](https://dejavu.mmckenna.me/latest/error-messages/) for how to read and act on each section.
 
-## Claude Code Skills (for AI Agents)
+<a id="claude-code-skills-for-ai-agents"></a>
 
-Dejavu ships four Claude Code skills that teach AI agents how to use it:
+## Agent Skills
+
+Dejavu ships four portable [Agent Skills](https://agentskills.io/) for skills-compatible coding agents, including Codex, Claude Code, Cursor, GitHub Copilot and OpenCode:
 
 - **`dejavu-onboarding`** — add Dejavu to a project from scratch (gradle dependency, first `Modifier.testTag`, smallest possible passing test).
 - **`dejavu-test-writer`** — author Compose UI recomposition tests using Dejavu's APIs (Android JUnit4 or KMP `commonTest`).
-- **`dejavu-error-triage`** — diagnose a single failing `UnexpectedRecompositionsError`: walks the error sections, names the pattern, points at the canonical fix.
-- **`dejavu-perf-loop`** — closed-loop optimization of a composable's recomposition behavior, using Dejavu as the validator. Embeds an error-pattern → fix decision tree (data class, Boolean narrowing, `derivedStateOf`, hoisted reads, `key()`, `CompositionLocal`).
+- **`dejavu-error-triage`** — diagnose a failure using source evidence and distinguish real regressions from expected accuracy-test failures.
+- **`dejavu-perf-loop`** — measure and reduce unnecessary application recompositions while preserving UI behavior and the agreed budget.
 
-Install them globally in Claude Code so they're available in any project:
+From your app's repository, use the [Skills CLI](https://github.com/vercel-labs/skills) to choose skills and target agents (requires Node.js/npm):
+
+```bash
+npx skills add mttmcknn/dejavu
+```
+
+For example, install all four for Codex and Cursor in that project:
+
+```bash
+npx skills add mttmcknn/dejavu --skill '*' --agent codex cursor
+```
+
+Add `--global` for installation across projects, or `--copy` for environments without symlink support. Other agents can consume the same complete skill folders; see the [installation guide](docs/agent-skills.md) for manual installation, updates and verification.
+
+Claude Code's existing marketplace installation also remains available:
 
 ```
 /plugin marketplace add mttmcknn/dejavu
 /plugin install dejavu@dejavu
 ```
 
-Sessions opened inside this repo also auto-load the same skills from [`.claude/skills/`](.claude/skills/) without installing the plugin.
+The canonical bundles are real directories in [`skills/`](skills/). In this checkout, [`.agents/skills/`](.agents/skills/) and [`.claude/skills/`](.claude/skills/) link to them for discovery. Each folder includes its required references and works outside this repository. Choose one installation method per agent to avoid duplicate skill entries.
+
+Skill bundle **0.3.0** is versioned independently from the library. See the [skill audit and evaluation guide](evals/README.md) for offline checks, model comparisons and evidence limits.
 
 ## Use Cases
 
@@ -133,7 +155,7 @@ When you optimize a composable — extracting a lambda, adding `remember`, switc
 
 AI coding agents can refactor composables and restructure state, but they have no way to know whether their changes made recomposition better or worse. Dejavu gives them that signal. When an agent runs your tests and a Dejavu assertion fails, the structured error message tells it exactly which composable regressed, by how much, and why — turning recomposition count into an optimization metric the agent can target directly.
 
-For Claude Code users, the bundled `dejavu-test-writer` and `dejavu-perf-loop` skills (see [Claude Code Skills](#claude-code-skills-for-ai-agents) above) teach the agent how to author Dejavu tests and run an iterative perf-optimization loop without re-deriving the API from docs.
+The bundled `dejavu-test-writer` and `dejavu-perf-loop` skills (see [Agent Skills](#agent-skills) above) teach compatible agents how to author Dejavu tests and run an iterative perf-optimization loop without re-deriving the API from docs.
 
 ### Guardrail Against Unexpected Changes
 
@@ -285,6 +307,15 @@ Compose 1.12. These methods require 1.12; the existing rule API remains covered 
 - **Non-Android instance diagnostics** — unresolved tags can share a function-level count when multiple instances use the same composable. Android has the most complete per-instance diagnostics.
 - **Activity-owned Recomposer clock** — `createAndroidComposeRule` uses the Activity's real `Recomposer`, not a test-controlled one. This means `mainClock.advanceTimeBy()` can't drive infinite animations forward. Use `createComposeRule` (without an Activity) if you need a controllable clock.
 - **Parameter change tracking precision** — parameter diffs use `Group.parameters` from the Compose tooling data API, which was designed for Layout Inspector rather than programmatic diffing. Parameter names may be unavailable, and values are compared via `hashCode`/`toString`, so custom types without meaningful `toString` show opaque values.
+
+## Community Mentions
+
+Thanks to the authors and editors who have shared DejaVu:
+
+- **JetC.dev:** [#305](https://jetc.dev/issues/305.html) introduced the library, [#306](https://jetc.dev/issues/306.html) featured the launch article, and [#315](https://jetc.dev/issues/315.html) highlighted James Cullimore's experience using it.
+- **Android Weekly:** [#718](https://www.androidweekly.net/issues/issue-718) included the launch article and library listing; [#728](https://androidweekly.net/issues/issue-728) featured Cullimore's follow-up article.
+- **James Cullimore:** [Dejavu, Compose, And The Difference Between Performance Wins And Guardrails](https://jamescullimore.dev/articles/dejavu-compose-and-the-difference-between-performance-wins-and-guardrails.html) describes adoption in a real Android app, recomposition regression protection, and an Android integration bug he helped resolve.
+- **AboutLibraries:** Mike Penz's [DejaVu integration commit](https://github.com/mikepenz/AboutLibraries/commit/90eb8d7e40b929c6eda2a60f65d6d48548275ff2) adds recomposition stability tests for library lists and rows. This historical example uses DejaVu 0.3.1; follow the current setup guide for new integrations.
 
 ## Further Reading
 

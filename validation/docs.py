@@ -81,7 +81,7 @@ def verify(site):
                   and unquote(url.fragment) not in pages[target].ids):
                 failures.append(f'{path.relative_to(site)}: missing anchor: {href}')
     stable = re.search(r'^  dejavu_release: (\S+)', (ROOT / 'mkdocs.yml').read_text(), re.M).group(1)
-    current_docs = [ROOT / 'README.md', *ROOT.glob('docs/*.md'), ROOT / '.claude/skills/dejavu-onboarding/SKILL.md']
+    current_docs = [ROOT / 'README.md', *ROOT.glob('docs/*.md'), ROOT / 'skills/dejavu-onboarding/SKILL.md', *ROOT.glob('skills/dejavu-onboarding/references/*.md')]
     for path in current_docs:
         for version in re.findall(r'me\.mmckenna\.dejavu:dejavu:([\d.]+(?:-SNAPSHOT)?)', path.read_text()):
             if version != stable:
