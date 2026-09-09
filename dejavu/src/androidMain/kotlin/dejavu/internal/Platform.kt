@@ -21,11 +21,13 @@ internal actual fun isLoggingEnabled(): Boolean = Runtime.isLoggingEnabled
 
 internal actual fun currentCompositionsSnapshot(): Set<CompositionData> {
     val runtimeSnapshots = Runtime.currentCompositionsSnapshot()
-    if (runtimeSnapshots.isNotEmpty()) return runtimeSnapshots
-
-    return synchronized(DejavuTracer.inspectionTablesLock) {
+    val explicitSnapshots = synchronized(DejavuTracer.inspectionTablesLock) {
         DejavuTracer.inspectionTables.toSet()
     }
+    // The Android lifecycle tracker can be enabled by an earlier rule in the same process.
+    // setTrackedContent supplies a separate inspection collection for its subcomposition;
+    // activity tables alone do not include that collection. Keep both views of the tree.
+    return runtimeSnapshots + explicitSnapshots
 }
 
 internal actual fun createInspectionTables(): MutableSet<CompositionData> =

@@ -35,7 +35,9 @@ kotlin {
         jvmTest.dependencies { implementation(compose.desktop.currentOs) }
         androidInstrumentedTest.dependencies {
             implementation("androidx.compose.ui:ui-test-junit4")
-            implementation("androidx.test.ext:junit:1.3.0")
+            implementation(libs.androidx.junit)
+            // Match the release suite: older transitive Espresso cannot initialize on API 37.
+            implementation(libs.androidx.espresso.core)
         }
         if (androidBom >= "2026.08.00") {
             androidInstrumentedTest.get().kotlin.srcDir("src/android112Test/kotlin")
