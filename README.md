@@ -193,7 +193,16 @@ Supported Compose range for Dejavu 0.5.x: **1.11.x–1.12.x (BOM 2026.05.00 thro
 **Minimum supported Compose: 1.11 (BOM 2026.05.00).** Dejavu 0.5.x uses the Compose testing v2 APIs introduced with this line. For Compose 1.10, use Dejavu 0.3.1; that maintenance release preserves the older Compose line instead of allowing newer transitive artifacts to mask an unsupported combination. Validated with Kotlin 2.4.0 and its Compose compiler plugin.
 
 Dejavu 0.5.x is built and released against **Compose Multiplatform 1.12.0**. Android consumers
-can use any validated BOM in the support window; they do not have to match the release BOM exactly.
+use the release BOM by default. To keep an older validated Android Compose line, enforce that
+BOM in both app and instrumentation-test dependencies; otherwise Gradle may select DejaVu's newer
+transitive baseline. Android consumers of 0.5.0 must use **compile SDK 37**, as declared in the AAR
+metadata. Use DejaVu 0.4.0 for the Compose Multiplatform 1.11 / compile SDK 36 release baseline.
+
+```kotlin
+val composeBom = enforcedPlatform("androidx.compose:compose-bom:2026.06.01")
+implementation(composeBom)
+androidTestImplementation(composeBom)
+```
 
 | Compose BOM | Compose | Kotlin tested | Status |
 |---|---|---|---|

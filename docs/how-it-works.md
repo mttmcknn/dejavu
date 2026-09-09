@@ -30,6 +30,11 @@ is Compose 1.11 (BOM 2026.05.00). CI derives its matrix from the `composeBomComp
 Multiplatform artifacts cannot silently replace the runtime under test. `CompositionObserver`
 support is unconditional; there is no degraded or observer-excluded build path.
 
+Android 0.5.0 artifacts declare minimum compile SDK 37. To retain an older Android Compose line,
+use `enforcedPlatform` for the selected BOM in both application and instrumentation dependencies;
+a regular platform can allow the newer transitive baseline to win. DejaVu 0.4.0 remains the
+Compose Multiplatform 1.11 / compile SDK 36 baseline.
+
 ## Compose Testing v2
 
 Dejavu's test harness uses the Compose testing **v2** APIs (`runComposeUiTest` /
