@@ -63,3 +63,9 @@ dependencies {
     "debugImplementation"("androidx.compose.ui:ui-test-manifest")
 }
 composeCompiler { includeSourceInformation = true }
+
+if (providers.gradleProperty("rerunTests").isPresent) {
+    tasks.withType<org.gradle.api.tasks.testing.AbstractTestTask>().configureEach {
+        outputs.upToDateWhen { false }
+    }
+}

@@ -13,11 +13,19 @@ ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew -p validation/consumer \
 ANDROID_HOME="$HOME/Library/Android/sdk" ANDROID_SERIAL=emulator-5554 \
   ./gradlew -p validation/consumer connectedDebugAndroidTest \
   -PdejavuVersion=0.5.0 -PcomposeBomVersion=2026.05.00
+python3 validation/verify_test_results.py \
+  validation/consumer/build/test-results/jvmTest \
+  validation/consumer/build/test-results/iosSimulatorArm64Test \
+  validation/consumer/build/test-results/wasmJsBrowserTest \
+  validation/consumer/build/outputs/androidTest-results/connected
 ```
 
 Repeat the Android command for the other version-catalog checkpoints and baseline. Run on the
 selected emulator only after the main instrumentation suite has finished. Preserve XML reports
 per BOM before the next run overwrites them. Supply your SDK location and current release version.
+Check the Android reports after every BOM run. A successful Gradle exit alone is insufficient:
+an emulator installation failure can leave no executed test reports. The verifier requires at
+least one actual test and no failures, errors, or skips in every supplied directory.
 
 The common smoke test suspends inside the public test helper, compares an exact recomposition
 count with an independent unkeyed `SideEffect`, and catches the expected over-budget failure.
