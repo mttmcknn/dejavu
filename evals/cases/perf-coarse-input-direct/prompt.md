@@ -1,0 +1,1 @@
+Optimize Header for the supplied scroll interaction so its existing atMost=1 budget passes. Preserve text behavior and the existing budget. Edit Screen.kt; the test and baseline observations are fixed.

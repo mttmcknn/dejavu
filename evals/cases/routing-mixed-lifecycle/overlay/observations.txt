@@ -1,0 +1,1 @@
+Android tracking rule launches activity; tagged UI updates and count=1. A KMP tracking helper then runs and tears down. A subsequent action on the original Android rule updates UI but count=0. Adding a second outer rule also gives zeros.

@@ -1,5 +1,8 @@
 package dejavu.experimental
 
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
+
 /**
  * Module-local ground-truth recomposition counter for the compose-experimental tests.
  *
@@ -17,26 +20,35 @@ package dejavu.experimental
  * but uses only the public Dejavu API (the regression module cannot touch `DejavuTracer`).
  */
 internal object GroundTruth {
+    private val lock = SynchronizedObject()
     private val counts = mutableMapOf<String, Int>()
     private val baseline = mutableMapOf<String, Int>()
 
     /** Record one composition (initial or recomposition) of the node with [tag]. */
     fun record(tag: String) {
-        counts[tag] = (counts[tag] ?: 0) + 1
+        synchronized(lock) {
+            counts[tag] = (counts[tag] ?: 0) + 1
+        }
     }
 
     /** Freeze the current counts as the baseline, aligning with Dejavu's reset point. */
     fun snapshotBaseline() {
-        baseline.clear()
-        baseline.putAll(counts)
+        synchronized(lock) {
+            baseline.clear()
+            baseline.putAll(counts)
+        }
     }
 
     /** Recompositions of [tag] since the last [snapshotBaseline] (== Dejavu post-reset count). */
-    fun delta(tag: String): Int = (counts[tag] ?: 0) - (baseline[tag] ?: 0)
+    fun delta(tag: String): Int = synchronized(lock) {
+        (counts[tag] ?: 0) - (baseline[tag] ?: 0)
+    }
 
     /** Reset all state. Call at the start of every test. */
     fun clear() {
-        counts.clear()
-        baseline.clear()
+        synchronized(lock) {
+            counts.clear()
+            baseline.clear()
+        }
     }
 }

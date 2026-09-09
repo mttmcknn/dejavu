@@ -1,0 +1,48 @@
+{
+  "id": "perf-coarse-input-direct",
+  "title": "Perf coarse input direct",
+  "family": "dejavu-perf-loop",
+  "target_skills": [
+    "dejavu-perf-loop"
+  ],
+  "expected_skills": [
+    "dejavu-perf-loop"
+  ],
+  "allowed_skills": [
+    "dejavu-perf-loop"
+  ],
+  "task_mode": "edit",
+  "kind": "direct",
+  "fixture": "source-review",
+  "allowed_write_paths": [
+    "Screen.kt"
+  ],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "perf-coarse-input-direct"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Makes a source-supported change such as passing the Boolean condition to Header so changes within positive indices need not recompose it; preserves both text states and sibling behavior."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Preserves the upper budget and UI assertions, avoids blanket stability annotations, and does not derive expected count from state-source count."
+    },
+    {
+      "id": "criterion-3",
+      "text": "Uses supplied baseline rather than claiming new measured counts or test execution."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

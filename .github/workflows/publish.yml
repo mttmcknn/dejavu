@@ -1,12 +1,23 @@
 name: Publish to Maven Central
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      local_verification:
+        description: Use the documented passing local release suite instead of repeating CI tests
+        type: boolean
+        default: false
+      verified_sha:
+        description: Full commit SHA tested locally (required when local_verification is true)
+        type: string
+        default: ''
 
 permissions:
   contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   resolve-bom:
@@ -14,18 +25,62 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.release.outputs.version }}
+      matrix: ${{ steps.release.outputs.matrix }}
     steps:
       - uses: actions/checkout@v7
 
       - name: Get release BOM from version catalog
         id: release
+        env:
+          LOCAL_VERIFICATION: ${{ inputs.local_verification }}
+          VERIFIED_SHA: ${{ inputs.verified_sha }}
         run: |
-          RELEASE=$(grep '^composeBom' gradle/libs.versions.toml \
-            | sed 's/composeBom = "\(.*\)"/\1/')
+          RELEASE=$(sed -n 's/^composeBom = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          CHECKPOINTS=$(sed -n 's/^composeBomCompat[^=]* = "\(.*\)"/\1/p' gradle/libs.versions.toml)
+          PROJECT_VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' dejavu/build.gradle.kts)
+          MATRIX=$(printf '%s\n%s\n' "$CHECKPOINTS" "$RELEASE" \
+            | jq -Rsc 'split("\n") | map(select(length > 0)) | unique')
+          test -n "$RELEASE"
+          test -n "$CHECKPOINTS"
+          test -n "$PROJECT_VERSION"
+          if [ "$GITHUB_REF_TYPE" != tag ]; then
+            echo 'Dispatch this workflow against the release tag, not a branch.' >&2
+            exit 1
+          fi
+          if [ "${GITHUB_REF_NAME#v}" != "$PROJECT_VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match project version $PROJECT_VERSION" >&2
+            exit 1
+          fi
+          if [ "$LOCAL_VERIFICATION" = true ]; then
+            test "$VERIFIED_SHA" = "$(git rev-parse HEAD)"
+            test -s "docs/releases/$PROJECT_VERSION.md"
+            grep -Fxq 'Status: passed' "docs/releases/$PROJECT_VERSION.md"
+            echo "Using local verification recorded in docs/releases/$PROJECT_VERSION.md for $VERIFIED_SHA"
+          fi
           echo "version=$RELEASE" >> "$GITHUB_OUTPUT"
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
           echo "Release BOM: $RELEASE"
 
+  verify-supported-boms:
+    if: ${{ !inputs.local_verification }}
+    name: Verify supported BOM ${{ matrix.bom }}
+    needs: resolve-bom
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        bom: ${{ fromJSON(needs.resolve-bom.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew :dejavu:compileDebugKotlin :dejavu:testDebugUnitTest :demo:assembleDebugAndroidTest :compose-experimental:assembleDebugAndroidTest -PcomposeBomVersion=${{ matrix.bom }}
+
   verify-release-bom:
+    if: ${{ !inputs.local_verification }}
     name: Verify against Compose BOM ${{ needs.resolve-bom.outputs.version }}
     needs: resolve-bom
     runs-on: ubuntu-latest
@@ -39,6 +94,9 @@ jobs:
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v6
+
+      - name: Verify release metadata
+        run: ./gradlew verifyComposeBomConfiguration
 
       - name: Compile with release BOM
         run: ./gradlew :dejavu:compileDebugKotlin -PcomposeBomVersion=${{ needs.resolve-bom.outputs.version }}
@@ -74,6 +132,7 @@ jobs:
           retention-days: 14
 
   verify-kmp-targets:
+    if: ${{ !inputs.local_verification }}
     name: Verify KMP Targets
     needs: resolve-bom
     runs-on: macos-26
@@ -108,7 +167,13 @@ jobs:
 
   publish:
     name: Publish
-    needs: [verify-release-bom, verify-kmp-targets]
+    needs: [resolve-bom, verify-supported-boms, verify-release-bom, verify-kmp-targets]
+    if: >-
+      ${{ always() && !cancelled() && needs.resolve-bom.result == 'success' &&
+          ((inputs.local_verification && needs.verify-supported-boms.result == 'skipped' &&
+            needs.verify-release-bom.result == 'skipped' && needs.verify-kmp-targets.result == 'skipped') ||
+           (needs.verify-supported-boms.result == 'success' && needs.verify-release-bom.result == 'success' &&
+            needs.verify-kmp-targets.result == 'success')) }}
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v7
@@ -119,6 +184,9 @@ jobs:
           java-version: '17'
 
       - uses: gradle/actions/setup-gradle@v6
+
+      - name: Verify release metadata
+        run: ./gradlew -q --console=plain verifyComposeBomConfiguration
 
       - name: Publish to Maven Central
         run: ./gradlew :dejavu:publishAndReleaseToMavenCentral --no-configuration-cache

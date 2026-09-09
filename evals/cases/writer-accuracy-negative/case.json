@@ -1,0 +1,42 @@
+{
+  "id": "writer-accuracy-negative",
+  "title": "Writer accuracy negative",
+  "family": "dejavu-test-writer",
+  "target_skills": [
+    "dejavu-test-writer"
+  ],
+  "expected_skills": [
+    "dejavu-test-writer"
+  ],
+  "allowed_skills": [
+    "dejavu-test-writer"
+  ],
+  "task_mode": "edit",
+  "kind": "negative",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "writer-accuracy-negative"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Leaves the deliberate four-update fixture and expected error unchanged; recognizes unkeyed independent counter delta and returned helper result as the intended accuracy evidence."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Does not optimize the fixture, loosen/remove assertions, or demand a zero recomposition count."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}
