@@ -105,23 +105,39 @@ dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag
 
 See [Error Messages Guide](https://dejavu.mmckenna.me/latest/error-messages/) for how to read and act on each section.
 
-## Claude Code Skills (for AI Agents)
+<a id="claude-code-skills-for-ai-agents"></a>
 
-Dejavu ships four skills for Claude Code and Codex:
+## Agent Skills
+
+Dejavu ships four portable [Agent Skills](https://agentskills.io/) for skills-compatible coding agents, including Codex, Claude Code, Cursor, GitHub Copilot and OpenCode:
 
 - **`dejavu-onboarding`** — add Dejavu to a project from scratch (gradle dependency, first `Modifier.testTag`, smallest possible passing test).
 - **`dejavu-test-writer`** — author Compose UI recomposition tests using Dejavu's APIs (Android JUnit4 or KMP `commonTest`).
 - **`dejavu-error-triage`** — diagnose a failure using source evidence and distinguish real regressions from expected accuracy-test failures.
 - **`dejavu-perf-loop`** — measure and reduce unnecessary application recompositions while preserving UI behavior and the agreed budget.
 
-Install them globally in Claude Code so they're available in any project:
+From your app's repository, use the [Skills CLI](https://github.com/vercel-labs/skills) to choose skills and target agents (requires Node.js/npm):
+
+```bash
+npx skills add mttmcknn/dejavu
+```
+
+For example, install all four for Codex and Cursor in that project:
+
+```bash
+npx skills add mttmcknn/dejavu --skill '*' --agent codex cursor
+```
+
+Add `--global` for installation across projects, or `--copy` for environments without symlink support. Other agents can consume the same complete skill folders; see the [installation guide](docs/agent-skills.md) for manual installation, updates and verification.
+
+Claude Code's existing marketplace installation also remains available:
 
 ```
 /plugin marketplace add mttmcknn/dejavu
 /plugin install dejavu@dejavu
 ```
 
-Claude Code discovers the canonical skills in [`.claude/skills/`](.claude/skills/). Codex discovers the same files through [`.agents/skills/`](.agents/skills/) symlinks. The plugin and each skill include their own required references, so consumer projects do not need a DejaVu checkout.
+The canonical bundles are real directories in [`skills/`](skills/). In this checkout, [`.agents/skills/`](.agents/skills/) and [`.claude/skills/`](.claude/skills/) link to them for discovery. Each folder includes its required references and works outside this repository. Choose one installation method per agent to avoid duplicate skill entries.
 
 Skill bundle **0.3.0** is versioned independently from the library. See the [skill audit and evaluation guide](evals/README.md) for offline checks, model comparisons and evidence limits.
 
@@ -135,7 +151,7 @@ When you optimize a composable — extracting a lambda, adding `remember`, switc
 
 AI coding agents can refactor composables and restructure state, but they have no way to know whether their changes made recomposition better or worse. Dejavu gives them that signal. When an agent runs your tests and a Dejavu assertion fails, the structured error message tells it exactly which composable regressed, by how much, and why — turning recomposition count into an optimization metric the agent can target directly.
 
-For Claude Code users, the bundled `dejavu-test-writer` and `dejavu-perf-loop` skills (see [Claude Code Skills](#claude-code-skills-for-ai-agents) above) teach the agent how to author Dejavu tests and run an iterative perf-optimization loop without re-deriving the API from docs.
+The bundled `dejavu-test-writer` and `dejavu-perf-loop` skills (see [Agent Skills](#agent-skills) above) teach compatible agents how to author Dejavu tests and run an iterative perf-optimization loop without re-deriving the API from docs.
 
 ### Guardrail Against Unexpected Changes
 

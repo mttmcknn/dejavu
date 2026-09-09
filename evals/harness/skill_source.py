@@ -15,8 +15,15 @@ def select_skill_revision(repo_root: Path, revision: str | None) -> None:
     if revision is None:
         return
     sha = subprocess.check_output(['git', 'rev-parse', '--verify', '--end-of-options', revision + '^{commit}'], cwd=repo_root, text=True).strip()
-    prefix = '.claude/skills/'
-    files = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', sha, '--', prefix], cwd=repo_root, text=True).splitlines()
+    # Current bundles are neutral real directories. Before the migration, skills/
+    # contained symlinks and the actual files lived under .claude/skills/.
+    for prefix in ('skills/', '.claude/skills/'):
+        entries = subprocess.check_output(['git', 'ls-tree', '-r', sha, '--', prefix], cwd=repo_root, text=True).splitlines()
+        files = [entry.split('\t', 1)[1] for entry in entries
+                 if entry.startswith(('100644 ', '100755 '))]
+        if any(name.endswith('/SKILL.md') for name in files):
+            break
+        files = []
     if not files:
         raise ValueError(f'No bundled skills at {sha}')
     destination = repo_root / '.scratch/skill-evals/skill-sources' / sha

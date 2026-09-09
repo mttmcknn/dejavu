@@ -9,10 +9,12 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def validate(root=ROOT):
     errors = []
-    skills = sorted((root / '.claude/skills').glob('*/SKILL.md'))
+    skills = sorted((root / 'skills').glob('*/SKILL.md'))
     if len(skills) != 4:
         errors.append('Expected four canonical skills')
     for path in skills:
+        if path.parent.is_symlink() or any(p.is_symlink() for p in path.parent.rglob('*')):
+            errors.append(f'{path.parent}: canonical bundle must contain real files, not symlinks')
         text = path.read_text()
         if not text.startswith('---\n') or '\n---\n' not in text[4:]:
             errors.append(f'{path}: missing frontmatter')
@@ -24,7 +26,7 @@ def validate(root=ROOT):
             errors.append(f'{path}: invalid name')
         if not description or not 1 <= len(description[1]) <= 1024:
             errors.append(f'{path}: invalid description')
-        for alias in ['skills', '.agents/skills']:
+        for alias in ['.claude/skills', '.agents/skills']:
             link = root / alias / path.parent.name
             if not link.is_symlink() or link.resolve() != path.parent.resolve():
                 errors.append(f'{link}: must link to canonical skill')

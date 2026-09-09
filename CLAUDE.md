@@ -75,10 +75,10 @@ required for runtime changes, not prose or website changes.
 
 ## Bundled agent skills
 
-Four skills live under `.claude/skills/`: `dejavu-onboarding`, `dejavu-test-writer`,
+Four skills live under `skills/`: `dejavu-onboarding`, `dejavu-test-writer`,
 `dejavu-error-triage` and `dejavu-perf-loop`. Edit these canonical files.
-`skills/` supplies Claude Code plugin links; `.agents/skills/` supplies Codex discovery
-links. References needed outside this repository are bundled inside each skill.
+The Claude Code plugin reads `skills/` directly; `.claude/skills/` and `.agents/skills/`
+supply repository discovery links. References needed outside this repository are bundled inside each skill.
 Companion skills are optional; use them when their scope fits the request.
 
 After skill changes, run `python3 validation/skills.py`, `python3 evals/run.py validate`

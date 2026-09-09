@@ -1,6 +1,7 @@
 import contextlib
 import io
 import json
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -47,6 +48,8 @@ class DejaVuContractTest(unittest.TestCase):
             skill = root / '.claude/skills/dejavu-perf-loop/SKILL.md'
             skill.parent.mkdir(parents=True)
             skill.write_text('original instructions')
+            (root / 'skills').mkdir()
+            (root / 'skills/dejavu-perf-loop').symlink_to('../.claude/skills/dejavu-perf-loop', target_is_directory=True)
             subprocess.run(['git', 'init', '-q'], cwd=root, check=True)
             subprocess.run(['git', 'add', '.'], cwd=root, check=True)
             subprocess.run(['git', '-c', 'user.name=Test', '-c', 'user.email=test@localhost', 'commit', '-qm', 'baseline'], cwd=root, check=True)
@@ -58,6 +61,41 @@ class DejaVuContractTest(unittest.TestCase):
             archived.with_name('extra.md').write_text('unexpected')
             with self.assertRaisesRegex(ValueError, 'unexpected files'):
                 select_skill_revision(root, 'HEAD')
+
+    def test_neutral_revision_archives_bundled_references_not_discovery_links(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            bundle = root / 'skills/dejavu-test-writer'
+            (bundle / 'references').mkdir(parents=True)
+            (bundle / 'SKILL.md').write_text('portable instructions')
+            (bundle / 'references/testing.md').write_text('portable reference')
+            for alias in ['.claude/skills', '.agents/skills']:
+                (root / alias).mkdir(parents=True)
+                (root / alias / bundle.name).symlink_to('../../skills/' + bundle.name, target_is_directory=True)
+            subprocess.run(['git', 'init', '-q'], cwd=root, check=True)
+            subprocess.run(['git', 'add', '.'], cwd=root, check=True)
+            subprocess.run(['git', '-c', 'user.name=Test', '-c', 'user.email=test@localhost', 'commit', '-qm', 'neutral'], cwd=root, check=True)
+            select_skill_revision(root, 'HEAD')
+            archived = skill_root(root) / bundle.name
+            self.assertEqual('portable instructions', (archived / 'SKILL.md').read_text())
+            self.assertEqual('portable reference', (archived / 'references/testing.md').read_text())
+            self.assertFalse(any(p.is_symlink() for p in skill_root(root).rglob('*')))
+
+    def test_copied_distribution_is_self_contained_and_validator_rejects_links(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ['skills', '.claude', '.agents', '.claude-plugin']:
+                # Copy only distribution metadata, never personal agent settings.
+                source = ROOT / name
+                if name in ['.claude', '.agents']:
+                    shutil.copytree(source / 'skills', root / name / 'skills', symlinks=True)
+                else:
+                    shutil.copytree(source, root / name, symlinks=True)
+            self.assertEqual([], validate_skills(root))
+            bundled = root / 'skills/dejavu-onboarding/references/setup.md'
+            bundled.unlink()
+            bundled.symlink_to(ROOT / 'skills/dejavu-onboarding/references/setup.md')
+            self.assertTrue(any('symlinks' in error for error in validate_skills(root)))
 
     def test_plan_has_three_repetitions_and_no_live_calls(self):
         with contextlib.redirect_stdout(io.StringIO()) as output:

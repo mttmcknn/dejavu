@@ -42,6 +42,7 @@ nav:
   - Getting Started: getting-started.md
   - Guides:
       - Use Cases: use-cases.md
+      - Agent Skills: agent-skills.md
       - Examples: examples.md
       - How It Works: how-it-works.md
       - Error Messages: error-messages.md

@@ -6,6 +6,12 @@ See [the audit](audit-2026-09-09.md) for the concrete instruction defects correc
 in skill bundle 0.3.0, and [upstream provenance](upstream/README.md) for the code pin,
 license and local adaptations.
 
+Canonical bundles now live in agent-neutral `skills/`; installation is documented
+in the [agent skills guide](../docs/agent-skills.md). `--skills-ref` can read both
+this layout and older revisions whose real files lived in `.claude/skills/`.
+The CLI adapter remains Codex-specific; distribution to other agents does not
+establish behavioral results for those agents.
+
 ## What this measures
 
 Each case gets a fresh workspace and conversation under three arms:

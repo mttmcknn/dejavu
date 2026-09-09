@@ -91,8 +91,10 @@ and [SECURITY.md](SECURITY.md).
 
 ## Agent skills and their evaluations
 
-Canonical skills live in `.claude/skills/`; edit them there and keep their bundled
-references portable. The `skills/` and `.agents/skills/` links share those files.
+Canonical skills live in real directories under `skills/`; edit them there and keep
+their bundled references portable. The `.claude/skills/` and `.agents/skills/` links
+share those files. The Claude Code plugin and cross-agent Skills CLI distribute
+the same bundles. See the [installation guide](docs/agent-skills.md).
 Run the offline checks after editing skills, packaging or the evaluation corpus:
 
 ```bash
