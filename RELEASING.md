@@ -61,5 +61,12 @@ behavior across those releases.
    release from the matching changelog entry. Record the release URL and artifact availability in
    the [shared release tracker](https://docs.google.com/document/d/1nfIzsfxz0ze_rTy5EKO0vG8TO_JyXDdricco7q5oyfY/edit).
    Keep release notes and social post drafts there; social copy must describe only verified changes.
+
+   ```bash
+   python3 validation/verify_maven_publication.py X.Y.Z
+   ```
+
+   This checks all six public target artifacts and their POM coordinates. A successful upload
+   workflow can mean Central is still publishing; wait for public availability before announcing.
 10. Set the next development version to `X.Y.Z-SNAPSHOT` after publication, as in
    [Coil's release checklist](https://github.com/coil-kt/coil/blob/main/RELEASING.md).
