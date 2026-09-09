@@ -14,7 +14,11 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ###### Featured In
+
 <a href="https://jetc.dev/issues/305.html"><img src="https://img.shields.io/badge/As_Seen_In-jetc.dev_Newsletter_Issue_%23305-blue?logo=Jetpack+Compose&amp;logoColor=white" alt="As Seen In - jetc.dev Newsletter Issue #305"></a>
+<a href="https://www.androidweekly.net/issues/issue-718"><img src="https://img.shields.io/badge/Featured_In-Android_Weekly_%23718-3DDC84?logo=android&amp;logoColor=white" alt="Featured In - Android Weekly Issue #718"></a>
+
+[More newsletter coverage, community articles and integration examples](#community-mentions)
 
 **[Full Documentation](https://dejavu.mmckenna.me)**
 
@@ -303,6 +307,15 @@ Compose 1.12. These methods require 1.12; the existing rule API remains covered 
 - **Non-Android instance diagnostics** — unresolved tags can share a function-level count when multiple instances use the same composable. Android has the most complete per-instance diagnostics.
 - **Activity-owned Recomposer clock** — `createAndroidComposeRule` uses the Activity's real `Recomposer`, not a test-controlled one. This means `mainClock.advanceTimeBy()` can't drive infinite animations forward. Use `createComposeRule` (without an Activity) if you need a controllable clock.
 - **Parameter change tracking precision** — parameter diffs use `Group.parameters` from the Compose tooling data API, which was designed for Layout Inspector rather than programmatic diffing. Parameter names may be unavailable, and values are compared via `hashCode`/`toString`, so custom types without meaningful `toString` show opaque values.
+
+## Community Mentions
+
+Thanks to the authors and editors who have shared DejaVu:
+
+- **JetC.dev:** [#305](https://jetc.dev/issues/305.html) introduced the library, [#306](https://jetc.dev/issues/306.html) featured the launch article, and [#315](https://jetc.dev/issues/315.html) highlighted James Cullimore's experience using it.
+- **Android Weekly:** [#718](https://www.androidweekly.net/issues/issue-718) included the launch article and library listing; [#728](https://androidweekly.net/issues/issue-728) featured Cullimore's follow-up article.
+- **James Cullimore:** [Dejavu, Compose, And The Difference Between Performance Wins And Guardrails](https://jamescullimore.dev/articles/dejavu-compose-and-the-difference-between-performance-wins-and-guardrails.html) describes adoption in a real Android app, recomposition regression protection, and an Android integration bug he helped resolve.
+- **AboutLibraries:** Mike Penz's [DejaVu integration commit](https://github.com/mikepenz/AboutLibraries/commit/90eb8d7e40b929c6eda2a60f65d6d48548275ff2) adds recomposition stability tests for library lists and rows. This historical example uses DejaVu 0.3.1; follow the current setup guide for new integrations.
 
 ## Further Reading
 
