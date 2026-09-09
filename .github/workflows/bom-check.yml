@@ -81,7 +81,7 @@ jobs:
         run: ./gradlew :demo:assembleDebug :demo:assembleDebugAndroidTest :compose-experimental:assembleDebug :compose-experimental:assembleDebugAndroidTest -PcomposeBomVersion=${{ needs.check-bom.outputs.latest }}
 
       - name: Run instrumented tests with new BOM
-        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a # v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2
         with:
           api-level: 31
           arch: x86_64
