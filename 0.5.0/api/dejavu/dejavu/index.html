@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>dejavu</title>
+    <link href="../../images/logo-icon.svg" rel="icon" type="image/svg">
+        <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js", "js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+      if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      } else {
+        const savedDarkMode = JSON.parse(storage)
+        if (savedDarkMode === true) {
+          document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+      }
+    </script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async="async"></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../ui-kit/ui-kit.min.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/safe-local-storage_blocking.js"></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async="async"></script>
+<script type="text/javascript" src="../../scripts/main.js" defer="defer"></script>
+<script type="text/javascript" src="../../scripts/prism.js" async="async"></script>
+<script type="text/javascript" src="../../ui-kit/ui-kit.min.js" defer="defer"></script>
+</head>
+<body>
+<div class="root">
+    <header class="navigation theme-dark" id="navigation-wrapper" role="banner">
+            <a class="library-name--link" href="../../index.html" tabindex="1">
+                    dejavu
+            </a>
+        <button class="navigation-controls--btn navigation-controls--btn_toc ui-kit_mobile-only" id="toc-toggle"
+                type="button">Toggle table of contents
+        </button>
+        <div class="navigation-controls--break ui-kit_mobile-only"></div>
+        <div class="library-version" id="library-version">
+0.5.0        </div>
+        <div class="navigation-controls">
+        <ul class="filter-section filter-section_loading" id="filter-section" aria-label="Target filter">
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":dejavu/androidMain">android</button>
+                <button class="platform-tag platform-selector common-like" data-active="" aria-pressed="true"
+                        data-filter=":dejavu/commonMain">common</button>
+                <button class="platform-tag platform-selector native-like" data-active="" aria-pressed="true"
+                        data-filter=":dejavu/iosMain">ios</button>
+                <button class="platform-tag platform-selector jvm-like" data-active="" aria-pressed="true"
+                        data-filter=":dejavu/jvmMain">jvm</button>
+                <button class="platform-tag platform-selector wasm-like" data-active="" aria-pressed="true"
+                        data-filter=":dejavu/wasmJsMain">wasmJs</button>
+            <div class="dropdown filter-section--dropdown" data-role="dropdown" id="filter-section-dropdown">
+                <button class="button button_dropdown filter-section--dropdown-toggle" role="combobox"
+                        data-role="dropdown-toggle"
+                        aria-controls="platform-tags-listbox"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        aria-label="Toggle source sets"
+                ></button>
+                <ul role="listbox" id="platform-tags-listbox" class="dropdown--list" data-role="dropdown-listbox" aria-label="Target filter">
+                    <div class="dropdown--header"><span>Target filter</span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close target filter">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":dejavu/androidMain"
+                                       data-filter=":dejavu/androidMain"/>
+                                <span class="checkbox--icon"></span>
+                                android
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option common-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":dejavu/commonMain"
+                                       data-filter=":dejavu/commonMain"/>
+                                <span class="checkbox--icon"></span>
+                                common
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option native-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":dejavu/iosMain"
+                                       data-filter=":dejavu/iosMain"/>
+                                <span class="checkbox--icon"></span>
+                                ios
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option jvm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":dejavu/jvmMain"
+                                       data-filter=":dejavu/jvmMain"/>
+                                <span class="checkbox--icon"></span>
+                                jvm
+                            </label>
+                        </li>
+                        <li role="option" class="dropdown--option platform-selector-option wasm-like" tabindex="0">
+                            <label class="checkbox">
+                                <input type="checkbox" class="checkbox--input" id=":dejavu/wasmJsMain"
+                                       data-filter=":dejavu/wasmJsMain"/>
+                                <span class="checkbox--icon"></span>
+                                wasmJs
+                            </label>
+                        </li>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </ul>
+            <button class="navigation-controls--btn navigation-controls--btn_theme" id="theme-toggle-button"
+                    type="button">Switch theme
+            </button>
+            <div class="navigation-controls--btn navigation-controls--btn_search" id="searchBar" role="button">Search in
+                API
+            </div>
+        </div>
+    </header>
+    <div id="container">
+        <nav id="leftColumn" class="sidebar" data-item-type="SECTION" data-item-config='{"defaultSize": 280, "minSize": 200, "maxSize": 400}'>
+            <a class="toc--skip-link" href="#main">Skip to content</a>
+            <div class="dropdown theme-dark_mobile" data-role="dropdown" id="toc-dropdown">
+                <ul role="listbox" id="toc-listbox" class="dropdown--list dropdown--list_toc-list"
+                    data-role="dropdown-listbox" aria-label="Table of contents">
+                    <div class="dropdown--header">
+                            <span>
+                                    dejavu
+                            </span>
+                        <button class="button" data-role="dropdown-toggle" aria-label="Close table of contents">
+                            <i class="ui-kit-icon ui-kit-icon_cross"></i>
+                        </button>
+                    </div>
+                    <div class="sidebar--inner" id="sideMenu"></div>
+                </ul>
+                <div class="dropdown--overlay"></div>
+            </div>
+        </nav>
+        <div id="resizer" class="resizer" data-item-type="BAR"></div>
+        <div id="main" data-item-type="SECTION" role="main">
+<div class="main-content" data-page-type="package" id="content" pageIds="dejavu::dejavu////PointingToDeclaration//1789880669">
+  <div class="breadcrumbs"><a href="../../index.html">dejavu</a><span class="delimiter">/</span><span class="current">dejavu</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="TYPE">Types</button><button class="section-tab" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="tableheader">Types</h2>
+        <div class="table"><a data-name="851118050%2FClasslikes%2F1789880669" anchor-label="Dejavu" id="851118050%2FClasslikes%2F1789880669" data-filterable-set=":dejavu/commonMain,:dejavu/androidMain,:dejavu/iosMain,:dejavu/jvmMain,:dejavu/wasmJsMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":dejavu/commonMain,:dejavu/androidMain,:dejavu/iosMain,:dejavu/jvmMain,:dejavu/wasmJsMain" data-filterable-set=":dejavu/commonMain,:dejavu/androidMain,:dejavu/iosMain,:dejavu/jvmMain,:dejavu/wasmJsMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-dejavu/index.html"><span><span>Dejavu</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="851118050%2FClasslikes%2F1789880669"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain" data-active="" data-toggle=":dejavu/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":dejavu/commonMain" data-filterable-set=":dejavu/commonMain" data-toggle=":dejavu/commonMain">common</button><button class="platform-bookmark" data-filterable-current=":dejavu/iosMain" data-filterable-set=":dejavu/iosMain" data-toggle=":dejavu/iosMain">ios</button><button class="platform-bookmark" data-filterable-current=":dejavu/jvmMain" data-filterable-set=":dejavu/jvmMain" data-toggle=":dejavu/jvmMain">jvm</button><button class="platform-bookmark" data-filterable-current=":dejavu/wasmJsMain" data-filterable-set=":dejavu/wasmJsMain" data-toggle=":dejavu/wasmJsMain">wasmJs</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":dejavu/androidMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="-dejavu/index.html">Dejavu</a></div><div class="brief "><p class="paragraph">Main entry point for enabling Dejavu's implicit recomposition tracking.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/commonMain"><div class="symbol monospace"><span class="token keyword">expect </span><span class="token keyword">object </span><a href="-dejavu/index.html">Dejavu</a></div><div class="brief "><p class="paragraph">Main entry point for enabling Dejavu's implicit recomposition tracking.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":dejavu/iosMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="-dejavu/index.html">Dejavu</a></div><div class="brief "><p class="paragraph">Main entry point for enabling Dejavu's implicit recomposition tracking on iOS.</p></div></div><div class="content sourceset-dependent-content" data-togglable=":dejavu/jvmMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="-dejavu/index.html">Dejavu</a></div><div class="brief "><p class="paragraph">Main entry point for enabling Dejavu's implicit recomposition tracking on Desktop (JVM).</p></div></div><div class="content sourceset-dependent-content" data-togglable=":dejavu/wasmJsMain"><div class="symbol monospace"><span class="token keyword">actual </span><span class="token keyword">object </span><a href="-dejavu/index.html">Dejavu</a></div><div class="brief "><p class="paragraph">Main entry point for enabling Dejavu's implicit recomposition tracking on WasmJs.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-365338080%2FClasslikes%2F-851431592" anchor-label="DejavuComposeTestRule" id="-365338080%2FClasslikes%2F-851431592" data-filterable-set=":dejavu/androidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-dejavu-compose-test-rule/index.html"><span>Dejavu</span><wbr></wbr><span>Compose</span><wbr></wbr><span>Test</span><wbr></wbr><span><span>Rule</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-365338080%2FClasslikes%2F-851431592"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain" data-active="" data-toggle=":dejavu/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/androidMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="-dejavu-compose-test-rule/index.html">DejavuComposeTestRule</a><span class="token operator">&lt;</span><a href="-dejavu-compose-test-rule/index.html">A</a><span class="token operator"> : </span><a href="https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity.html">ComponentActivity</a><span class="token operator">&gt;</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">delegate<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/AndroidComposeTestRule.html">AndroidComposeTestRule</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/test/ext/junit/rules/ActivityScenarioRule.html">ActivityScenarioRule</a><span class="token operator">&lt;</span><a href="-dejavu-compose-test-rule/index.html">A</a><span class="token operator">&gt;</span><span class="token punctuation">, </span><a href="-dejavu-compose-test-rule/index.html">A</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span> : <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/ComposeContentTestRule.html">ComposeContentTestRule</a></div><div class="brief "><p class="paragraph">A test rule that wraps <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/AndroidComposeTestRule.html">AndroidComposeTestRule</a> with automatic Dejavu lifecycle management. Enables Dejavu and resets recomposition counts before each test, so no <code class="lang-kotlin">@Before</code> boilerplate is needed.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="tableheader">Functions</h2>
+        <div class="table"><a data-name="-504482253%2FFunctions%2F-966401470" anchor-label="assertRecompositions" id="-504482253%2FFunctions%2F-966401470" data-filterable-set=":dejavu/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":dejavu/commonMain" data-filterable-set=":dejavu/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="assert-recompositions.html"><span>assert</span><wbr></wbr><span><span>Recompositions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-504482253%2FFunctions%2F-966401470"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/SemanticsNodeInteraction.html">SemanticsNodeInteraction</a><span class="token punctuation">.</span><a href="assert-recompositions.html"><span class="token function">assertRecompositions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">exactly<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">atLeast<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">atMost<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/SemanticsNodeInteraction.html">SemanticsNodeInteraction</a></div><div class="brief "><p class="paragraph">Asserts the number of recompositions for the composable associated with this node.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1012541411%2FFunctions%2F-966401470" anchor-label="assertStable" id="-1012541411%2FFunctions%2F-966401470" data-filterable-set=":dejavu/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":dejavu/commonMain" data-filterable-set=":dejavu/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="assert-stable.html"><span>assert</span><wbr></wbr><span><span>Stable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1012541411%2FFunctions%2F-966401470"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/SemanticsNodeInteraction.html">SemanticsNodeInteraction</a><span class="token punctuation">.</span><a href="assert-stable.html"><span class="token function">assertStable</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/SemanticsNodeInteraction.html">SemanticsNodeInteraction</a></div><div class="brief "><p class="paragraph">Asserts that this composable was not recomposed (stable after initial composition). Convenience alias for <code class="lang-kotlin">assertRecompositions(exactly = 0)</code>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-24552218%2FFunctions%2F-851431592" anchor-label="createRecompositionTrackingRule" id="-24552218%2FFunctions%2F-851431592" data-filterable-set=":dejavu/androidMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="[android]create-recomposition-tracking-rule.html"><span>create</span><wbr></wbr><span>Recomposition</span><wbr></wbr><span>Tracking</span><wbr></wbr><span><span>Rule</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-24552218%2FFunctions%2F-851431592"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain" data-active="" data-toggle=":dejavu/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/androidMain"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.jvm/-jvm-name/index.html"><span class="token annotation builtin">JvmName</span></a><span class="token punctuation">(</span><span>name<span class="token operator"> = </span><span class="breakable-word"><span class="token string">&quot;createRecompositionTrackingRuleForActivity&quot;</span></span></span><wbr></wbr><span class="token punctuation">)</span></div></div><span class="token keyword">inline </span><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="[android]create-recomposition-tracking-rule.html">A</a><span class="token operator"> : </span><a href="https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity.html">ComponentActivity</a><span class="token operator">&gt; </span><a href="[android]create-recomposition-tracking-rule.html"><span class="token function">createRecompositionTrackingRule</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-dejavu-compose-test-rule/index.html">DejavuComposeTestRule</a><span class="token operator">&lt;</span><a href="[android]create-recomposition-tracking-rule.html">A</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Creates a <a href="-dejavu-compose-test-rule/index.html">DejavuComposeTestRule</a> that automatically enables Dejavu and resets recomposition counts before each test. Drop-in replacement for <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/v2/package-summary.html">createAndroidComposeRule</a>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="[android]create-recomposition-tracking-rule.html"><span class="token function">createRecompositionTrackingRule</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="-dejavu-compose-test-rule/index.html">DejavuComposeTestRule</a><span class="token operator">&lt;</span><a href="https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity.html">ComponentActivity</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Creates a <a href="-dejavu-compose-test-rule/index.html">DejavuComposeTestRule</a> backed by a plain <a href="https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity.html">ComponentActivity</a>. Drop-in replacement for <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/package-summary.html">androidx.compose.ui.test.junit4.createComposeRule</a> with automatic Dejavu lifecycle management.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1557665299%2FFunctions%2F-851431592" anchor-label="getRecompositionCount" id="1557665299%2FFunctions%2F-851431592" data-filterable-set=":dejavu/androidMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-recomposition-count.html"><span>get</span><wbr></wbr><span>Recomposition</span><wbr></wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1557665299%2FFunctions%2F-851431592"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain" data-active="" data-toggle=":dejavu/androidMain">android</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/androidMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/ComposeTestRule.html">ComposeTestRule</a><span class="token punctuation">.</span><a href="get-recomposition-count.html"><span class="token function">getRecompositionCount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">tag<span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Returns the recomposition count for the composable identified by <a href="get-recomposition-count.html">tag</a>. Refreshes the tag-to-function mapping before lookup.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1957863264%2FFunctions%2F372111630" anchor-label="resetRecompositionCounts" id="-1957863264%2FFunctions%2F372111630" data-filterable-set=":dejavu/commonMain,:dejavu/androidMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":dejavu/commonMain,:dejavu/androidMain" data-filterable-set=":dejavu/commonMain,:dejavu/androidMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reset-recomposition-counts.html"><span>reset</span><wbr></wbr><span>Recomposition</span><wbr></wbr><span><span>Counts</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1957863264%2FFunctions%2F372111630"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":dejavu/androidMain" data-filterable-set=":dejavu/androidMain" data-active="" data-toggle=":dejavu/androidMain">android</button><button class="platform-bookmark" data-filterable-current=":dejavu/commonMain" data-filterable-set=":dejavu/commonMain" data-toggle=":dejavu/commonMain">common</button></div>
+<div class="content sourceset-dependent-content" data-togglable=":dejavu/androidMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/junit4/ComposeTestRule.html">ComposeTestRule</a><span class="token punctuation">.</span><a href="reset-recomposition-counts.html"><span class="token function">resetRecompositionCounts</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resets recomposition counts to zero while preserving composition history.</p></div></div><div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/ComposeUiTest.html">ComposeUiTest</a><span class="token punctuation">.</span><a href="reset-recomposition-counts.html"><span class="token function">resetRecompositionCounts</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resets recomposition counts while preserving the active composition history.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1072766642%2FFunctions%2F-966401470" anchor-label="runRecompositionTrackingUiTest" id="1072766642%2FFunctions%2F-966401470" data-filterable-set=":dejavu/commonMain"></a>
+          <div class="table-row table-row_content" data-filterable-current=":dejavu/commonMain" data-filterable-set=":dejavu/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="run-recomposition-tracking-ui-test.html"><span>run</span><wbr></wbr><span>Recomposition</span><wbr></wbr><span>Tracking</span><wbr></wbr><span>Ui</span><wbr></wbr><span><span>Test</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1072766642%2FFunctions%2F-966401470"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="run-recomposition-tracking-ui-test.html"><span class="token function">runRecompositionTrackingUiTest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">block<span class="token operator">: </span><span class="token keyword">suspend </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/ComposeUiTest.html">ComposeUiTest</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.test/TestResult///PointingToDeclaration/">TestResult</span></div><div class="brief "><p class="paragraph">Runs a recomposition-tracking UI test using <a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/v2/package-summary.html">runComposeUiTest</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1792183794%2FFunctions%2F-966401470" anchor-label="setTrackedContent" id="-1792183794%2FFunctions%2F-966401470" data-filterable-set=":dejavu/commonMain"></a>
+          <div class="table-row table-row_content" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":dejavu/commonMain" data-filterable-set=":dejavu/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-tracked-content.html"><span>set</span><wbr></wbr><span>Tracked</span><wbr></wbr><span><span>Content</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1792183794%2FFunctions%2F-966401470"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":dejavu/commonMain"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/test/ComposeUiTest.html">ComposeUiTest</a><span class="token punctuation">.</span><a href="set-tracked-content.html"><span class="token function">setTrackedContent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">content<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a> </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets content wrapped with Dejavu's inspection tables and sub-composition layout.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="footer">
+        <div class="footer--container">
+            <a href="#content" id="go-to-top-link" class="footer--button footer--button_go-to-top"></a>
+            <div class="footer--content">
+                <div>
+                    <span>Generated by </span>
+                    <a class="footer--link footer--link_external" href="https://github.com/Kotlin/dokka">
+                        Dokka
+                    </a>
+                    <div>© 2026 Copyright</div>
+                </div>
+            </div>
+        </div>
+    </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
