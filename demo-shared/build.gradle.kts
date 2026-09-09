@@ -76,7 +76,7 @@ kotlin {
 
 android {
   namespace = "demo.app.shared"
-  compileSdk = 36
+  compileSdk = 37
   defaultConfig {
     minSdk = 24
   }

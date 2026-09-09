@@ -47,6 +47,8 @@ import kotlinx.coroutines.test.TestResult
 public fun runRecompositionTrackingUiTest(
     block: suspend ComposeUiTest.() -> Unit,
 ): TestResult = runComposeUiTest {
+    val previouslyEnabled = DejavuTracer.enabled
+    val previousInspectorInfoEnabled = isDebugInspectorInfoEnabled
     isDebugInspectorInfoEnabled = true
     DejavuTracer.enabled = true
     Composer.setTracer(DejavuTracer)
@@ -56,9 +58,11 @@ public fun runRecompositionTrackingUiTest(
     try {
         block()
     } finally {
-        DejavuTracer.enabled = false
-        Composer.setTracer(null)
-        isDebugInspectorInfoEnabled = false
+        // Android's activity runtime may already own tracking. Restore that state so
+        // a later Android rule does not inherit an enabled runtime with a removed tracer.
+        DejavuTracer.enabled = previouslyEnabled
+        Composer.setTracer(if (previouslyEnabled) DejavuTracer else null)
+        isDebugInspectorInfoEnabled = previousInspectorInfoEnabled
         synchronized(DejavuTracer.inspectionTablesLock) { DejavuTracer.inspectionTables.clear() }
     }
 }

@@ -20,11 +20,13 @@ public final class dejavu/DejavuComposeTestRule : androidx/compose/ui/test/junit
 	public final fun getActivity ()Landroidx/activity/ComponentActivity;
 	public fun getDensity ()Landroidx/compose/ui/unit/Density;
 	public fun getMainClock ()Landroidx/compose/ui/test/MainTestClock;
+	public fun hasPendingWork ()Z
 	public fun onAllNodes (Landroidx/compose/ui/test/SemanticsMatcher;Z)Landroidx/compose/ui/test/SemanticsNodeInteractionCollection;
 	public fun onNode (Landroidx/compose/ui/test/SemanticsMatcher;Z)Landroidx/compose/ui/test/SemanticsNodeInteraction;
 	public fun registerIdlingResource (Landroidx/compose/ui/test/IdlingResource;)V
 	public fun runOnIdle (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public fun runOnUiThread (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public fun runWithoutImplicitWait (Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 	public fun setContent (Lkotlin/jvm/functions/Function2;)V
 	public fun unregisterIdlingResource (Landroidx/compose/ui/test/IdlingResource;)V
 	public fun waitForIdle ()V

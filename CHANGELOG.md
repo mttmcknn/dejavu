@@ -7,6 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-09
+
+### Changed
+- Build against stable Compose Multiplatform 1.12.0 and Android BOM 2026.08.00 (Compose 1.12.0).
+  DejaVu keeps independent version numbers and the Android Compose 1.11 support floor.
+- Retain Android BOM 2026.05.00 and 2026.06.01 as the minimum and latest 1.11 checkpoints.
+  Retire the redundant intermediate 2026.06.00 checkpoint without moving the support floor.
+- Upgrade the build to AGP 9.4.0 and compile SDK 37 for the new Android Compose artifacts.
+  The published AAR requires consumers to use compile SDK 37. Retaining Android Compose 1.11
+  requires an enforced BOM so the transitive 1.12 baseline does not win resolution.
+- Adapt experimental Styles fixtures to the changed `pressed` API with separate 1.11 and 1.12
+  test sources. Both retain the same deliberately inefficient and stable fixture behavior.
+- Declare Wasm executables for browser UI tests, as required by Compose Multiplatform 1.12's
+  Skiko bundling check. The library continues to publish Wasm KLIB artifacts.
+
+### Added
+- The Android rule delegates Compose 1.12's `hasPendingWork` and `runWithoutImplicitWait` APIs.
+  These new methods require Compose 1.12; existing rule methods remain covered on Compose 1.11.
+- Six public-API regressions for Compose 1.12: stable and changed keyed `SideEffect`, shrinking
+  vararg effect keys, shrinking `remember` keys, frame assertions using `runWithoutImplicitWait`,
+  and nested movable content under the LinkBuffer composer.
+- The keyed-effect regression deliberately recomposes four times while the keyed callback stays
+  quiet, proving DejaVu counts every recomposition and rejects an incorrect stability budget.
+  Unkeyed `SideEffect` remains the independent recomposition-count oracle.
+- Version-specific tests compile only where the API exists. Older Android BOM checks retain the
+  complete core suite and the original 20 experimental tests; 1.12 adds the six new regressions.
+- A standalone consumer build verifies packaged Maven artifacts across Android checkpoints and
+  the KMP baseline. Release checks now reject empty, failing, or skipped JUnit reports.
+
+### Fixed
+- Combine Android activity inspection tables with tables supplied by `setTrackedContent`.
+  Previously, enabling the Android tracking rule before a KMP helper test in the same process
+  could hide the helper's subcomposition and report an unmapped tag. A dedicated Android
+  regression and the packaged consumer suite cover both harnesses together.
+- Restore previously active tracing and inspector settings after the KMP helper finishes, so
+  a subsequent Android rule keeps tracking. The regression checks the full rule/helper/rule path.
+- Enable Android tracking before activity launch so initial inspection tables are registered
+  after a previous test disabled tracking. The setup regression verifies the first update against
+  an independent `SideEffect` count.
+
 ## [0.4.0] - 2026-09-09
 
 ### Changed

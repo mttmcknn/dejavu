@@ -55,7 +55,7 @@ For Android (single-platform):
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.4.0")
+    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
 }
 ```
 
@@ -67,7 +67,7 @@ gradle DSL:
 kotlin {
     sourceSets {
         commonTest.dependencies {
-            implementation("me.mmckenna.dejavu:dejavu:0.4.0")
+            implementation("me.mmckenna.dejavu:dejavu:0.5.0")
         }
     }
 }
@@ -80,7 +80,7 @@ kotlin {
     sourceSets {
         val commonTest by getting {
             dependencies {
-                implementation("me.mmckenna.dejavu:dejavu:0.4.0")
+                implementation("me.mmckenna.dejavu:dejavu:0.5.0")
             }
         }
     }
@@ -88,7 +88,7 @@ kotlin {
 ```
 
 Use the latest version from Maven Central (the README badge has the current
-number) compatible with the project's Compose version. DejaVu 0.4.x requires Compose 1.11;
+number) compatible with the project's Compose version. DejaVu 0.5.x requires Compose 1.11;
 Compose 1.10 projects should stay on 0.3.1. Don't downgrade a compatible newer release.
 
 ### 4. Pick a target composable for the first test
@@ -200,7 +200,7 @@ Filter logcat with tag `Dejavu`. See `docs/use-cases.md` "Stream Composition Sta
   compiler plugin if it isn't already configured.
 - **Wasm test completion** — return `runRecompositionTrackingUiTest` directly from the test.
   Put diagnostic assertions inside its body so the runner awaits their asynchronous result.
-  DejaVu 0.4.0 restores lazy-grid and diagnostic-message coverage on iOS/Wasm.
+  DejaVu 0.5.0 restores lazy-grid and diagnostic-message coverage on iOS/Wasm.
 
 ## Wrap-up
 

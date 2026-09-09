@@ -43,7 +43,11 @@ behavior across those releases.
    a new run. Document any difference between the local device coverage and the hosted CI matrix.
    Equivalent passing local checks are sufficient if hosted CI is unavailable or fails because of
    budget or infrastructure. Reproduced product failures must still be fixed.
-7. Commit the verified changes and tag the merge commit as `vX.Y.Z`. Publishing is an explicit
+7. Publish the candidate to Maven Local once using its release baseline, then run the
+   [standalone consumer checks](validation/consumer/README.md) against those same artifacts on
+   the retained Android BOMs and KMP baseline. Inspect AAR minimum compile SDK and resolved runtime
+   versions. This verifies the packaged binary without recompiling it for each older Compose BOM.
+8. Commit the verified changes and tag the merge commit as `vX.Y.Z`. Publishing is an explicit
    workflow dispatch so pushing a tag does not spend CI minutes repeating the full suite:
 
    ```bash
@@ -53,9 +57,17 @@ behavior across those releases.
 
    The workflow requires a tag matching the Gradle version, the full verified commit SHA, and
    the checked-in validation record. Omit `local_verification` to run the hosted test suite first.
-8. Verify that every target artifact is available from Maven Central, then create the GitHub
+9. Verify that every target artifact is available from Maven Central, then create the GitHub
    release from the matching changelog entry. Record the release URL and artifact availability in
    the [shared release tracker](https://docs.google.com/document/d/1nfIzsfxz0ze_rTy5EKO0vG8TO_JyXDdricco7q5oyfY/edit).
    Keep release notes and social post drafts there; social copy must describe only verified changes.
-9. Set the next development version to `X.Y.Z-SNAPSHOT` after publication, as in
+
+   ```bash
+   python3 validation/verify_maven_publication.py X.Y.Z
+   ```
+
+   This checks all six public target artifacts and their POM and Gradle module coordinates.
+   A successful upload workflow can mean Central is still publishing; wait for public availability
+   before announcing.
+10. Set the next development version to `X.Y.Z-SNAPSHOT` after publication, as in
    [Coil's release checklist](https://github.com/coil-kt/coil/blob/main/RELEASING.md).

@@ -6,13 +6,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 // compose-experimental: staging area for experimental-API recomposition coverage.
 //
 // This module hosts Dejavu recomposition tests for EXPERIMENTAL / newest-Compose
-// APIs (currently Compose 1.11's Grid, FlexBox, derivedMediaQuery/mediaQuery,
-// Styles, the LinkBuffer composer path, and movableContentOf).
+// APIs (Compose 1.11 layouts/styles and Compose 1.12 effects/testing behavior,
+// including LinkBuffer and movableContentOf).
 //
 // They live here instead of `:dejavu`'s commonTest so new API coverage can land
 // immediately and graduate into the core accuracy suite once those APIs stabilize.
 // KMP uses the pinned Compose Multiplatform baseline; Android builds and runs this
-// module at every supported Compose 1.11 BOM checkpoint.
+// module at every supported Android BOM checkpoint with matching API fixtures.
 //
 // PROMOTION: when an experimental API graduates to stable AND the `:dejavu` BOM
 // floor includes it, its composable + SideEffect-backed test is promoted into
@@ -50,9 +50,21 @@ kotlin {
   }
 
   iosSimulatorArm64()
-  wasmJs { browser() }
+  wasmJs {
+    browser()
+    // Compose 1.12 requires webpack bundling to load Skiko for browser UI tests.
+    binaries.executable()
+  }
 
   sourceSets {
+    // Keep the old Android compatibility suite compiling when a newer Compose API changes.
+    // KMP always uses the pinned release baseline; Android overrides select matching fixtures.
+    val testBom = providers.gradleProperty("composeBomVersion")
+      .orElse(libs.versions.composeBom).get()
+    commonTest.get().kotlin.srcDir(
+      if (testBom >= "2026.08.00") "src/compose112Test/kotlin" else "src/compose111Test/kotlin"
+    )
+
     commonMain.dependencies {
       implementation(project(":dejavu"))
       implementation(compose.runtime)
@@ -89,7 +101,7 @@ kotlin {
 
 android {
   namespace = "dejavu.experimental"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     minSdk = 24

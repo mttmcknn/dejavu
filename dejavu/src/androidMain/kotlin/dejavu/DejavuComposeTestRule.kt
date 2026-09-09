@@ -1,11 +1,13 @@
 package dejavu
 
+import android.app.Application
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.test.platform.app.InstrumentationRegistry
 import dejavu.internal.Runtime
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -23,14 +25,13 @@ public class DejavuComposeTestRule<A : ComponentActivity>(
     public val activity: A get() = delegate.activity
 
     override fun apply(base: Statement, description: Description): Statement {
-        return delegate.apply(object : Statement() {
+        val trackedTest = delegate.apply(object : Statement() {
             override fun evaluate() {
                 // Setup touches Choreographer (via Runtime.seedActiveActivity), which
                 // requires a thread with a Looper. The wrapped Statement runs on
                 // compose-ui-test's TestDispatcher coroutine thread (no Looper), so
                 // hop to the instrumentation main thread for setup.
                 delegate.runOnUiThread {
-                    Dejavu.enable(delegate.activity.application)
                     Runtime.seedActiveActivity(delegate.activity)
                 }
                 delegate.waitForIdle()
@@ -38,6 +39,17 @@ public class DejavuComposeTestRule<A : ComponentActivity>(
                 base.evaluate()
             }
         }, description)
+        return object : Statement() {
+            override fun evaluate() {
+                // Install tracking before ActivityScenario launches the activity. Enabling
+                // it afterward can miss the initial inspection-table registration.
+                val instrumentation = InstrumentationRegistry.getInstrumentation()
+                instrumentation.runOnMainSync {
+                    Dejavu.enable(instrumentation.targetContext.applicationContext as Application)
+                }
+                trackedTest.evaluate()
+            }
+        }
     }
 }
 
