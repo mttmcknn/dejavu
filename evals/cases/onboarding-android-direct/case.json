@@ -1,0 +1,49 @@
+{
+  "id": "onboarding-android-direct",
+  "title": "Onboarding android direct",
+  "family": "dejavu-onboarding",
+  "target_skills": [
+    "dejavu-onboarding"
+  ],
+  "expected_skills": [
+    "dejavu-onboarding"
+  ],
+  "allowed_skills": [
+    "dejavu-onboarding"
+  ],
+  "task_mode": "edit",
+  "kind": "direct",
+  "fixture": "source-review",
+  "allowed_write_paths": [
+    "app/build.gradle.kts",
+    "app/src/androidTest/CounterTest.kt"
+  ],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "onboarding-android-direct"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Uses an enforced BOM at 2026.06.01 in app and androidTest and supplies DejaVu 0.5.0, Compose JUnit test APIs and required Android test host dependencies without upgrading versions."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Creates an actual rule-owned test with initial settling/reset, a state change, a visible UI assertion, and a positive recomposition assertion; imports and host ownership are coherent."
+    },
+    {
+      "id": "criterion-3",
+      "text": "Completes authorized edits and accurately states that runtime tests were not run."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "perf-budget-negative",
+  "title": "Perf budget negative",
+  "family": "dejavu-perf-loop",
+  "target_skills": [
+    "dejavu-perf-loop"
+  ],
+  "expected_skills": [
+    "dejavu-perf-loop"
+  ],
+  "allowed_skills": [
+    "dejavu-perf-loop"
+  ],
+  "task_mode": "edit",
+  "kind": "negative",
+  "fixture": "source-review",
+  "allowed_write_paths": [],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "perf-budget-negative"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Stops because measured behavior satisfies the upper budget; makes no edits and does not force exactly=1, exactly=2, or stable."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Reuses valid supplied evidence and does not invent a lower theoretical floor or repeated probing loop."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

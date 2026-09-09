@@ -9,7 +9,7 @@
       "name": "dejavu",
       "source": "./",
       "description": "AI agent skills for authoring Compose UI recomposition tests with Dejavu and running a closed-loop perf optimization workflow.",
-      "version": "0.2.0"
+      "version": "0.3.0"
     }
   ]
 }

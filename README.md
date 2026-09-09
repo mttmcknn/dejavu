@@ -107,12 +107,12 @@ See [Error Messages Guide](https://dejavu.mmckenna.me/latest/error-messages/) fo
 
 ## Claude Code Skills (for AI Agents)
 
-Dejavu ships four Claude Code skills that teach AI agents how to use it:
+Dejavu ships four skills for Claude Code and Codex:
 
 - **`dejavu-onboarding`** — add Dejavu to a project from scratch (gradle dependency, first `Modifier.testTag`, smallest possible passing test).
 - **`dejavu-test-writer`** — author Compose UI recomposition tests using Dejavu's APIs (Android JUnit4 or KMP `commonTest`).
-- **`dejavu-error-triage`** — diagnose a single failing `UnexpectedRecompositionsError`: walks the error sections, names the pattern, points at the canonical fix.
-- **`dejavu-perf-loop`** — closed-loop optimization of a composable's recomposition behavior, using Dejavu as the validator. Embeds an error-pattern → fix decision tree (data class, Boolean narrowing, `derivedStateOf`, hoisted reads, `key()`, `CompositionLocal`).
+- **`dejavu-error-triage`** — diagnose a failure using source evidence and distinguish real regressions from expected accuracy-test failures.
+- **`dejavu-perf-loop`** — measure and reduce unnecessary application recompositions while preserving UI behavior and the agreed budget.
 
 Install them globally in Claude Code so they're available in any project:
 
@@ -121,7 +121,9 @@ Install them globally in Claude Code so they're available in any project:
 /plugin install dejavu@dejavu
 ```
 
-Sessions opened inside this repo also auto-load the same skills from [`.claude/skills/`](.claude/skills/) without installing the plugin.
+Claude Code discovers the canonical skills in [`.claude/skills/`](.claude/skills/). Codex discovers the same files through [`.agents/skills/`](.agents/skills/) symlinks. The plugin and each skill include their own required references, so consumer projects do not need a DejaVu checkout.
+
+Skill bundle **0.3.0** is versioned independently from the library. See the [skill audit and evaluation guide](evals/README.md) for offline checks, model comparisons and evidence limits.
 
 ## Use Cases
 

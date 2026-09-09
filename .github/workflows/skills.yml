@@ -1,0 +1,28 @@
+name: Skill contracts
+on:
+  pull_request:
+    paths:
+      - '.claude/skills/**'
+      - '.agents/skills/**'
+      - '.claude-plugin/**'
+      - 'skills/**'
+      - 'evals/**'
+      - 'validation/skills.py'
+      - '.github/workflows/skills.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: skills-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate bundle and corpus without model calls
+        run: |
+          python3 validation/skills.py
+          python3 evals/run.py validate
+          python3 -m unittest discover -s evals/tests -p 'test_*.py'

@@ -1,0 +1,1 @@
+Android app, Kotlin 2.4.0, compile SDK37/min24; Compose BOM2026.06.01. No DejaVu dependency or Compose test APIs. Existing CounterValue(value:Int) has tag counter_value.

@@ -1,0 +1,44 @@
+{
+  "id": "triage-wasm-direct",
+  "title": "Triage wasm direct",
+  "family": "dejavu-error-triage",
+  "target_skills": [
+    "dejavu-error-triage"
+  ],
+  "expected_skills": [
+    "dejavu-error-triage"
+  ],
+  "allowed_skills": [
+    "dejavu-error-triage"
+  ],
+  "task_mode": "edit",
+  "kind": "direct",
+  "fixture": "source-review",
+  "allowed_write_paths": [
+    "WasmTest.kt"
+  ],
+  "validators": [
+    {
+      "argv": [
+        "python3",
+        "@validators/source_contract.py",
+        "triage-wasm-direct"
+      ],
+      "timeout_seconds": 20
+    }
+  ],
+  "rubric": [
+    {
+      "id": "criterion-1",
+      "text": "Returns the helper TestResult from the test and moves the message assertion into the suspending body after the caught failure."
+    },
+    {
+      "id": "criterion-2",
+      "text": "Preserves deliberate inefficiency and budget failure, avoids skip guards or nested helpers, and does not claim runtime execution."
+    }
+  ],
+  "provenance": {
+    "kind": "synthetic",
+    "normalization_note": "Authored source excerpts and supplied observations; not a claim of an executed UI fixture."
+  }
+}

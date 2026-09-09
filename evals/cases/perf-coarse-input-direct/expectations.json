@@ -1,0 +1,9 @@
+{
+  "changed": [
+    "Screen.kt"
+  ],
+  "protected": {
+    "BudgetTest.kt": "e132fe3c8d85576675170dd0d0d1e60ab8eb9ce7706106c25b7ee23c24fdbc34",
+    "baseline.txt": "38c54687ec016ba3a32f346c7fa59f3a5e5b88944f5767055b213555411417d9"
+  }
+}

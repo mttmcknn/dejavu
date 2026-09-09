@@ -17,3 +17,4 @@ docs/api/
 __pycache__/
 blog/
 iosApp/*.xcodeproj
+.scratch/

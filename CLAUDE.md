@@ -73,25 +73,18 @@ Android consumers require compile SDK 37 and must enforce the BOM to retain an o
 For documentation-only edits, run the documentation checks in CONTRIBUTING.md; UI suites are
 required for runtime changes, not prose or website changes.
 
-## Bundled Claude skills
+## Bundled agent skills
 
-This repo ships four skills under `.claude/skills/` for AI agents working with Dejavu:
+Four skills live under `.claude/skills/`: `dejavu-onboarding`, `dejavu-test-writer`,
+`dejavu-error-triage` and `dejavu-perf-loop`. Edit these canonical files.
+`skills/` supplies Claude Code plugin links; `.agents/skills/` supplies Codex discovery
+links. References needed outside this repository are bundled inside each skill.
+Companion skills are optional; use them when their scope fits the request.
 
-- `dejavu-onboarding` — add Dejavu to a project from scratch (gradle dependency, first test).
-- `dejavu-test-writer` — author Compose UI recomposition tests using Dejavu's APIs.
-- `dejavu-error-triage` — one-shot diagnosis of a single failing `UnexpectedRecompositionsError`.
-- `dejavu-perf-loop` — closed-loop optimization of a composable's recomposition behavior, using Dejavu as the validator. Invokes `dejavu-test-writer` to establish the baseline test.
+After skill changes, run `python3 validation/skills.py`, `python3 evals/run.py validate`
+and `python3 -m unittest discover -s evals/tests -p 'test_*.py'`. Model evaluations
+are opt-in and advisory, with previews and call caps. See `evals/README.md`.
+A source-level skill evaluation does not replace actual UI verification for runtime changes.
 
-The four skills cross-reference each other so the agent can flow between them: onboarding → test-writer → (error-triage | perf-loop) depending on whether the user wants a one-shot fix or an iteration loop.
-
-All skills point at the canonical docs in `docs/` and the canonical test patterns in `dejavu/src/commonTest/kotlin/dejavu/*PatternTest.kt` rather than duplicating them. They auto-load for sessions opened in this repo.
-
-### Plugin layout
-
-The same skills are also packaged as a Claude Code plugin so users outside this repo can install them globally:
-
-- `.claude-plugin/plugin.json` — plugin manifest (`name: dejavu`).
-- `.claude-plugin/marketplace.json` — single-plugin marketplace listing.
-- `skills/<skill-name>/` — symlinks into `.claude/skills/` so the canonical SKILL.md files have one source of truth. Edit the canonical files under `.claude/skills/`; the plugin layout picks up the change via symlink.
-
-Install instructions for end-users live in `README.md`.
+Plugin metadata lives in `.claude-plugin/`; keep its plugin and marketplace
+versions equal. The skill bundle's version is independent of the library version.
