@@ -57,4 +57,4 @@ includes them; retain older Android BOM coverage. Diagnose mismatches against
 the oracle, mapping, lifecycle and fixture contract before choosing a fix.
 
 Report the interaction, expected counts, independent evidence and command/result.
-Public examples: [test patterns](https://dejavu.mmckenna.me/0.5.0/examples/).
+Public examples: [test patterns](https://dejavu.mmckenna.me/0.5.1/examples/).

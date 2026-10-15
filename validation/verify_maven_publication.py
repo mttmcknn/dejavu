@@ -16,8 +16,8 @@ PUBLICATIONS = {
     "dejavu-iossimulatorarm64": "klib",
     "dejavu-wasm-js": "klib",
 }
-GROUP = "me.mmckenna.dejavu"
-BASE = "https://repo.maven.apache.org/maven2/me/mmckenna/dejavu"
+GROUP = "dev.mttmcknn"
+BASE = "https://repo.maven.apache.org/maven2/dev/mttmcknn"
 
 
 def verify(version: str) -> bool:

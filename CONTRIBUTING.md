@@ -18,7 +18,7 @@ accept its licenses. Android Studio must support the pinned AGP version; the Gra
 the command-line source of truth. Android test devices must run API 24 or later.
 
 JVM tests need a desktop environment. Wasm browser tests need Chrome. iOS tests require macOS,
-Xcode, and an available arm64 simulator. See the [release validation record](docs/releases/0.5.0.md)
+Xcode, and an available arm64 simulator. See the [release validation record](docs/releases/0.5.1.md)
 for the exact environments used for the current release; minimum device support is not a claim
 that every supported OS was freshly tested.
 

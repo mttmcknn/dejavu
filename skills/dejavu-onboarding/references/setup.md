@@ -1,11 +1,15 @@
-# Setup contract for DejaVu 0.5.0
+# Setup contract for DejaVu 0.5.1
 
-This is a versioned reference, not a claim that 0.5.0 is always the newest release.
+This is a versioned reference, not a claim that 0.5.1 is always the newest release.
 Check the requested release's documentation when working with another version.
+
+From 0.5.1, use `dev.mttmcknn:dejavu`; releases through 0.5.0 use
+`me.mmckenna.dejavu:dejavu`. Replace the dependency when migrating; do not add both
+artifacts. Kotlin imports remain `dejavu.*`.
 
 | DejaVu | Compose Multiplatform | Android guidance |
 |---|---|---|
-| 0.5.0 | 1.12.0; validated Kotlin 2.4.0 | compile SDK 37, min SDK 24; BOM 2026.05.00, 2026.06.01 or 2026.08.00 enforced in app and androidTest |
+| 0.5.1 | 1.12.0; validated Kotlin 2.4.0 | compile SDK 37, min SDK 24; BOM 2026.05.00, 2026.06.01 or 2026.08.00 enforced in app and androidTest |
 | 0.4.0 | 1.11.1 | compile SDK 36 baseline; use its versioned setup |
 | 0.3.1 | 1.10 | use its versioned setup |
 
@@ -32,7 +36,7 @@ dependencies {
     val composeBom = enforcedPlatform("androidx.compose:compose-bom:2026.08.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
+    androidTestImplementation("dev.mttmcknn:dejavu:0.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
@@ -42,7 +46,7 @@ dependencies {
 
 For an older supported Android BOM, use that value in the same enforced-platform
 declaration. A normal platform can resolve newer transitive Compose artifacts.
-The 0.5.0 Android artifact still needs compile SDK 37.
+The 0.5.1 Android artifact still needs compile SDK 37.
 
 Use `@get:Rule val rule = createRecompositionTrackingRule()` for test-owned
 content, or the generic activity factory for a screen launched by that activity.
@@ -59,7 +63,7 @@ kotlin {
     sourceSets {
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation("me.mmckenna.dejavu:dejavu:0.5.0")
+            implementation("dev.mttmcknn:dejavu:0.5.1")
             implementation(compose.foundation)
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)
@@ -85,5 +89,5 @@ fun updates() = runRecompositionTrackingUiTest {
 The expression body returns `TestResult`, which is necessary on Wasm. Do not
 wrap it in a Unit-returning function or move assertions outside its body.
 
-Public [setup](https://dejavu.mmckenna.me/0.5.0/getting-started/) and
+Public [setup](https://dejavu.mmckenna.me/0.5.1/getting-started/) and
 [release history](https://dejavu.mmckenna.me/latest/releases/).

@@ -1,10 +1,18 @@
 # Releases and migration
 
-**Latest stable: [DejaVu 0.5.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0).**
-All six Maven Central publications are available. Dependency examples use the stable release.
+**Release candidate: DejaVu 0.5.1.** This migration release moves the Maven group from
+`me.mmckenna.dejavu` to `dev.mttmcknn`. Dependency examples in this checkout target the candidate;
+publication is pending. The latest published release is
+[0.5.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0) at the original coordinates.
+
+When 0.5.1 is published, replace the old dependency with `dev.mttmcknn:dejavu:0.5.1`.
+Kotlin imports, public APIs, runtime behavior, and Compose compatibility remain unchanged.
+Do not include both Maven groups in the same application. Existing versions remain available
+at their original coordinates.
 
 | DejaVu | Compose Multiplatform baseline | Android Compose | Android compile SDK |
 |---|---|---|---|
+| [0.5.1 candidate](0.5.1.md) | 1.12.0 | 1.11–1.12 | 37 |
 | [0.5.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0) | 1.12.0 | 1.11–1.12 | 37 |
 | [0.4.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.4.0) | 1.11.1 | 1.11 | 36 |
 | [0.3.1](https://github.com/mttmcknn/dejavu/releases/tag/v0.3.1) | 1.10.3 | 1.10 | See versioned docs |
@@ -24,6 +32,7 @@ instrumentation process. The limitation remains documented for 0.4.0.
 
 ## Validation and history
 
+- [0.5.1 validation](0.5.1.md): Maven namespace migration and packaged consumer checks.
 - [0.5.0 validation](0.5.0.md): Android, JVM, iOS, Wasm, and packaged consumer checks.
 - [0.4.0 validation](0.4.0.md): restored async Wasm and lazy-layout coverage.
 - [Changelog](https://github.com/mttmcknn/dejavu/blob/main/CHANGELOG.md).

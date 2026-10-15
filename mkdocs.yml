@@ -50,6 +50,7 @@ nav:
   - 'API Reference ↗': api/index.html
   - Releases:
       - Versions and migration: releases/index.md
+      - 0.5.1 validation: releases/0.5.1.md
       - 0.5.0 validation: releases/0.5.0.md
       - 0.4.0 validation: releases/0.4.0.md
   - Contributing: contributing.md
@@ -69,7 +70,7 @@ plugins:
   - mike
 
 extra:
-  dejavu_release: 0.5.0
+  dejavu_release: 0.5.1
   version:
     provider: mike
   social:

@@ -54,4 +54,4 @@ and verification. Distinguish unrun tests from passes. Use companion test-writin
 or triage skills when available and helpful, without mandatory handoffs or new
 confirmation gates for authorized work.
 
-Public patterns: [examples](https://dejavu.mmckenna.me/0.5.0/examples/).
+Public patterns: [examples](https://dejavu.mmckenna.me/0.5.1/examples/).

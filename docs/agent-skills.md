@@ -90,7 +90,7 @@ installation establishes discovery; run the actual test to verify its output.
 Use `npx skills update` for CLI-managed installs, the plugin updater for marketplace
 installs, or replace manually copied folders from the chosen source revision.
 For reproducible manual installs, check out a reviewed commit before copying and
-record that revision. Skill bundle 0.3.0 is independent of DejaVu library versions;
+record that revision. Skill bundle 0.3.1 is independent of DejaVu library versions;
 follow each skill's compatibility guidance for the library you use.
 
 ## Maintaining the shared source

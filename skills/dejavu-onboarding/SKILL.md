@@ -45,4 +45,4 @@ report a missing device or runtime as an unrun check.
 
 For more coverage, `dejavu-test-writer` is useful when available; it is not a
 prerequisite to finishing. Public reference:
-[versioned setup](https://dejavu.mmckenna.me/0.5.0/getting-started/).
+[versioned setup](https://dejavu.mmckenna.me/0.5.1/getting-started/).
