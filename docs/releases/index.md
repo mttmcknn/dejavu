@@ -1,24 +1,24 @@
 # Releases and migration
 
-**Release candidate: DejaVu 0.5.1.** This migration release moves the Maven group from
-`me.mmckenna.dejavu` to `dev.mttmcknn`. Dependency examples in this checkout target the candidate;
-publication is pending. The latest published release is
-[0.5.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0) at the original coordinates.
+**Latest stable: [DejaVu 0.5.1](https://github.com/mttmcknn/dejavu/releases/tag/v0.5.1).**
+This migration release moves the Maven group from `me.mmckenna.dejavu` to `dev.mttmcknn`.
+All six public Maven target artifacts and their POM and Gradle module coordinates have been
+verified.
 
-When 0.5.1 is published, replace the old dependency with `dev.mttmcknn:dejavu:0.5.1`.
+Replace the old dependency with `dev.mttmcknn:dejavu:0.5.1`.
 Kotlin imports, public APIs, runtime behavior, and Compose compatibility remain unchanged.
 Do not include both Maven groups in the same application. Existing versions remain available
 at their original coordinates.
 
 | DejaVu | Compose Multiplatform baseline | Android Compose | Android compile SDK |
 |---|---|---|---|
-| [0.5.1 candidate](0.5.1.md) | 1.12.0 | 1.11–1.12 | 37 |
+| [0.5.1](0.5.1.md) | 1.12.0 | 1.11–1.12 | 37 |
 | [0.5.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0) | 1.12.0 | 1.11–1.12 | 37 |
 | [0.4.0](https://github.com/mttmcknn/dejavu/releases/tag/v0.4.0) | 1.11.1 | 1.11 | 36 |
 | [0.3.1](https://github.com/mttmcknn/dejavu/releases/tag/v0.3.1) | 1.10.3 | 1.10 | See versioned docs |
 
 Use the [compatibility matrix](../how-it-works.md#compatibility) for exact Android BOM checkpoints.
-With 0.5.0, retain an older Android BOM using `enforcedPlatform` in both app and instrumentation
+With 0.5.x, retain an older Android BOM using `enforcedPlatform` in both app and instrumentation
 dependencies; a regular platform can resolve the newer transitive baseline. The Android artifact
 still requires compile SDK 37. The new `hasPendingWork` and `runWithoutImplicitWait` rule methods
 require Compose 1.12.
