@@ -1297,8 +1297,29 @@ Live model evaluations were not run.</p>
 <li>Documentation validation uses Python 3.14.7 with the exact pinned MkDocs packages; hosted docs use Python 3.12.</li>
 </ul>
 <h2 id="publication-tracking">Publication tracking<a class="headerlink" href="#publication-tracking" title="Permanent link">&para;</a></h2>
-<p>Publication, public Maven artifact verification, the GitHub release, and versioned documentation
-deployment are pending. Local packaging and passing tests do not establish public availability.</p>
+<p>DejaVu 0.5.1 is published under <code>dev.mttmcknn</code>. Tag <code>v0.5.1</code> points to release merge
+<a href="https://github.com/mttmcknn/dejavu/commit/6398888cdd38d5b78d5fbd3037509fed146afe00"><code>6398888cdd38d5b78d5fbd3037509fed146afe00</code></a>,
+whose tree <code>37ae77998bf99f10aca670ec164b595efcf3517b</code> matches the approved, validated candidate.
+<a href="https://github.com/mttmcknn/dejavu/pull/154">PR 154</a> merged after all 16 PR checks passed.</p>
+<p>Public Maven Central verification passed on October 15, 2026 at <strong>16:54:33 UTC</strong> using
+<code>python3 validation/verify_maven_publication.py 0.5.1</code> (exit 0). All six target binaries,
+POM coordinates, and Gradle module metadata were available: <code>dejavu</code>, <code>dejavu-android</code>,
+<code>dejavu-jvm</code>, <code>dejavu-iosarm64</code>, <code>dejavu-iossimulatorarm64</code>, and <code>dejavu-wasm-js</code>.
+The <a href="https://github.com/mttmcknn/dejavu/actions/runs/38770871078">publication workflow</a>
+succeeded; the public checks establish availability separately from that upload result.
+The <a href="https://github.com/mttmcknn/dejavu/releases/tag/v0.5.1">GitHub release</a> was published
+at <strong>16:55:07 UTC</strong>.</p>
+<p>The <a href="https://github.com/mttmcknn/dejavu/actions/runs/38770809893">tagged Docs workflow</a>
+passed at <strong>16:41:53 UTC</strong>, deploying website commit
+<a href="https://github.com/mttmcknn/dejavu/commit/1ad009e6f48a2cb201da002d88ccca12849ed4b9"><code>1ad009e6f48a2cb201da002d88ccca12849ed4b9</code></a>.
+A direct public-site check at <strong>16:53:32 UTC</strong> verified 16 successful responses, the
+<code>latest</code> alias at 0.5.1, the new stable installation coordinate, release-tag API source links,
+and redirects from three legacy guide/API routes. The stable home and explicit 0.5.1 home
+were byte-identical, and the checked pages contained no old GitHub account references.</p>
+<p>That first site check preceded public artifact verification and found candidate wording in the
+release index and the previous 0.5.0 installation coordinate in snapshot guides. This
+post-publication documentation update corrects those references. Development resumes at
+<code>0.6.0-SNAPSHOT</code>; stable dependency examples remain on <code>dev.mttmcknn:dejavu:0.5.1</code>.</p>
 
 
 
