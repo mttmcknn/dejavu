@@ -1,0 +1,20 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:dejavu////PointingToDeclaration/dejavu/dejavu/index.html
+$dokka.location:dejavu//assertRecompositions/androidx.compose.ui.test.SemanticsNodeInteraction#kotlin.Int?#kotlin.Int?#kotlin.Int?/PointingToDeclaration/dejavu/dejavu/assert-recompositions.html
+$dokka.location:dejavu//assertStable/androidx.compose.ui.test.SemanticsNodeInteraction#/PointingToDeclaration/dejavu/dejavu/assert-stable.html
+$dokka.location:dejavu//createRecompositionTrackingRule/#/PointingToDeclaration/dejavu/dejavu/[android]create-recomposition-tracking-rule.html
+$dokka.location:dejavu//getRecompositionCount/androidx.compose.ui.test.junit4.ComposeTestRule#kotlin.String/PointingToDeclaration/dejavu/dejavu/get-recomposition-count.html
+$dokka.location:dejavu//resetRecompositionCounts/androidx.compose.ui.test.ComposeUiTest#/PointingToDeclaration/dejavu/dejavu/reset-recomposition-counts.html
+$dokka.location:dejavu//resetRecompositionCounts/androidx.compose.ui.test.junit4.ComposeTestRule#/PointingToDeclaration/dejavu/dejavu/reset-recomposition-counts.html
+$dokka.location:dejavu//runRecompositionTrackingUiTest/#kotlin.coroutines.SuspendFunction1[androidx.compose.ui.test.ComposeUiTest,kotlin.Unit]/PointingToDeclaration/dejavu/dejavu/run-recomposition-tracking-ui-test.html
+$dokka.location:dejavu//setTrackedContent/androidx.compose.ui.test.ComposeUiTest#kotlin.Function0[kotlin.Unit]/PointingToDeclaration/dejavu/dejavu/set-tracked-content.html
+$dokka.location:dejavu/Dejavu///PointingToDeclaration/dejavu/dejavu/-dejavu/index.html
+$dokka.location:dejavu/Dejavu/disable/#/PointingToDeclaration/dejavu/dejavu/-dejavu/disable.html
+$dokka.location:dejavu/Dejavu/enable/#android.app.Application#kotlin.Boolean/PointingToDeclaration/dejavu/dejavu/-dejavu/enable.html
+$dokka.location:dejavu/Dejavu/enable/#kotlin.Boolean/PointingToDeclaration/dejavu/dejavu/-dejavu/[wasm-js]enable.html
+$dokka.location:dejavu/DejavuComposeTestRule///PointingToDeclaration/dejavu/dejavu/-dejavu-compose-test-rule/index.html
+$dokka.location:dejavu/DejavuComposeTestRule/DejavuComposeTestRule/#androidx.compose.ui.test.junit4.AndroidComposeTestRule[androidx.test.ext.junit.rules.ActivityScenarioRule[TypeParam(bounds=[androidx.activity.ComponentActivity])],TypeParam(bounds=[androidx.activity.ComponentActivity])]/PointingToDeclaration/dejavu/dejavu/-dejavu-compose-test-rule/-dejavu-compose-test-rule.html
+$dokka.location:dejavu/DejavuComposeTestRule/activity/#/PointingToDeclaration/dejavu/dejavu/-dejavu-compose-test-rule/activity.html
+$dokka.location:dejavu/DejavuComposeTestRule/apply/#org.junit.runners.model.Statement#org.junit.runner.Description/PointingToDeclaration/dejavu/dejavu/-dejavu-compose-test-rule/apply.html
+dejavu
