@@ -9,7 +9,7 @@
 *Wait... didn't we just compose this?*
 
 [![CI](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.mttmcknn/dejavu)](https://central.sonatype.com/artifact/dev.mttmcknn/dejavu)
 [![Compose](https://img.shields.io/badge/Compose-1.11–1.12-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -45,14 +45,14 @@ Dejavu is a test-only library that turns recomposition behavior into assertions.
 
 ### 1. Add dependency
 
-DejaVu 0.5.0 requires Android **compile SDK 37** and **min SDK 24**. The release uses
+DejaVu 0.5.1 requires Android **compile SDK 37** and **min SDK 24**. The release uses
 Compose Multiplatform 1.12.0; Android Compose 1.11 remains supported with an enforced BOM.
 See [Compatibility](#compatibility) before adding the dependency to an older Compose project.
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
+    androidTestImplementation("dev.mttmcknn:dejavu:0.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
@@ -61,6 +61,12 @@ dependencies {
 Use your enforced Compose BOM for the unversioned Compose test artifacts. See the
 [complete setup](https://dejavu.mmckenna.me/latest/getting-started/) for the runner, compatible
 Android test dependencies, and KMP source sets.
+
+Version 0.5.1 moves the Maven group to `dev.mttmcknn`. Replace the previous
+`me.mmckenna.dejavu:dejavu` dependency with `dev.mttmcknn:dejavu:0.5.1`; do not add
+both artifacts. Kotlin packages and imports remain `dejavu.*`, and the library's
+runtime behavior and public APIs are unchanged from 0.5.0. Earlier releases keep
+their original Maven coordinates.
 
 ### 2. Write a test
 
@@ -143,7 +149,7 @@ Claude Code's existing marketplace installation also remains available:
 
 The canonical bundles are real directories in [`skills/`](skills/). In this checkout, [`.agents/skills/`](.agents/skills/) and [`.claude/skills/`](.claude/skills/) link to them for discovery. Each folder includes its required references and works outside this repository. Choose one installation method per agent to avoid duplicate skill entries.
 
-Skill bundle **0.3.0** is versioned independently from the library. See the [skill audit and evaluation guide](evals/README.md) for offline checks, model comparisons and evidence limits.
+Skill bundle **0.3.1** is versioned independently from the library. See the [skill audit and evaluation guide](evals/README.md) for offline checks, model comparisons and evidence limits.
 
 ## Use Cases
 
@@ -231,7 +237,7 @@ Supported Compose range for Dejavu 0.5.x: **1.11.x–1.12.x (BOM 2026.05.00 thro
 Dejavu 0.5.x is built and released against **Compose Multiplatform 1.12.0**. Android consumers
 use the release BOM by default. To keep an older validated Android Compose line, enforce that
 BOM in both app and instrumentation-test dependencies; otherwise Gradle may select DejaVu's newer
-transitive baseline. Android consumers of 0.5.0 must use **compile SDK 37**, as declared in the AAR
+transitive baseline. Android consumers of 0.5.x must use **compile SDK 37**, as declared in the AAR
 metadata. Use DejaVu 0.4.0 for the Compose Multiplatform 1.11 / compile SDK 36 release baseline.
 
 ```kotlin

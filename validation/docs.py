@@ -83,7 +83,7 @@ def verify(site):
     stable = re.search(r'^  dejavu_release: (\S+)', (ROOT / 'mkdocs.yml').read_text(), re.M).group(1)
     current_docs = [ROOT / 'README.md', *ROOT.glob('docs/*.md'), ROOT / 'skills/dejavu-onboarding/SKILL.md', *ROOT.glob('skills/dejavu-onboarding/references/*.md')]
     for path in current_docs:
-        for version in re.findall(r'me\.mmckenna\.dejavu:dejavu:([\d.]+(?:-SNAPSHOT)?)', path.read_text()):
+        for version in re.findall(r'dev\.mttmcknn:dejavu:([\d.]+(?:-SNAPSHOT)?)', path.read_text()):
             if version != stable:
                 failures.append(f'{path.relative_to(ROOT)}: dependency {version} differs from stable {stable}')
     if failures:

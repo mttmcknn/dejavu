@@ -6,7 +6,7 @@
 // - Show manifest properties: true
 // - Show declarations: true
 
-// Library unique name: <me.mmckenna.dejavu:dejavu>
+// Library unique name: <dev.mttmcknn:dejavu>
 final object dejavu/Dejavu { // dejavu/Dejavu|null[0]
     final fun disable() // dejavu/Dejavu.disable|disable(){}[0]
     final fun enable(kotlin/Boolean = ...) // dejavu/Dejavu.enable|enable(kotlin.Boolean){}[0]

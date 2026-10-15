@@ -27,7 +27,7 @@ kotlin {
         commonMain.dependencies { implementation(compose.ui) }
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation("me.mmckenna.dejavu:dejavu:$releaseVersion")
+            implementation("dev.mttmcknn:dejavu:$releaseVersion")
             implementation(compose.foundation)
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)

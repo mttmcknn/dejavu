@@ -3,7 +3,7 @@
 *Wait... didn't we just compose this?*
 
 [![CI](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml/badge.svg)](https://github.com/mttmcknn/dejavu/actions/workflows/ci.yml)
-[![Maven Central](https://img.shields.io/maven-central/v/me.mmckenna.dejavu/dejavu)](https://central.sonatype.com/artifact/me.mmckenna.dejavu/dejavu)
+[![Maven Central](https://img.shields.io/maven-central/v/dev.mttmcknn/dejavu)](https://central.sonatype.com/artifact/dev.mttmcknn/dejavu)
 [![Compose](https://img.shields.io/badge/Compose-1.11–1.12-4285F4?logo=jetpackcompose&logoColor=white)](https://developer.android.com/develop/ui/compose)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 

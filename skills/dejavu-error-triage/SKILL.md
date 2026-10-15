@@ -47,5 +47,5 @@ proposed verification without editing or claiming a run. Report evidence,
 confidence, change (if any), and result. Companions are optional, not mandatory
 handoffs.
 
-More detail: [error anatomy](https://dejavu.mmckenna.me/0.5.0/error-messages/)
-and [causality limits](https://dejavu.mmckenna.me/0.5.0/causality-analysis/).
+More detail: [error anatomy](https://dejavu.mmckenna.me/0.5.1/error-messages/)
+and [causality limits](https://dejavu.mmckenna.me/0.5.1/causality-analysis/).

@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-10-15
+
+### Changed
+- Move Maven artifacts from `me.mmckenna.dejavu` to `dev.mttmcknn`. Update dependencies to
+  `dev.mttmcknn:dejavu:0.5.1`; platform-specific artifacts use the same new group.
+- Keep Kotlin packages, public APIs, runtime behavior, and the Compose compatibility baseline
+  unchanged from 0.5.0. Existing `dejavu.*` imports continue to work.
+- Package the four agent skills as portable folders with bundled setup and testing references,
+  shared by Skills CLI installation and the Claude Code plugin. Update the plugin to 0.3.1
+  with setup instructions and skill references for the new Maven coordinate.
+- Complete Android and KMP setup examples with explicit test dependencies, runner and manifest
+  requirements, BOM enforcement, compiler source information, and Wasm test-result handling.
+- Version API documentation and validate stable/snapshot selection, dependency examples, and
+  local links. Refresh legacy redirects and GitHub links across published documentation versions.
+- Upgrade the Gradle wrapper to 9.7.1 and the binary compatibility validator to 0.18.2.
+
+### Added
+- Offline skill packaging checks and a 15-case advisory evaluation harness for onboarding,
+  test writing, failure triage, performance work, and routing. Model scores are not release gates.
+
+### Migration
+- Replace the old Maven dependency with the new coordinate; do not include both groups in the
+  same application. Previously published versions remain available at their original coordinates.
+
 ## [0.5.0] - 2026-09-09
 
 ### Changed

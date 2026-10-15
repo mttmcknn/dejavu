@@ -2,13 +2,19 @@
 
 ## Choose a compatible release
 
-The latest stable release is **0.5.0**, built against Compose Multiplatform **1.12.0** and
+The latest stable release is **0.5.1**, built against Compose Multiplatform **1.12.0** and
 Android BOM **2026.08.00**. Android consumers need **compile SDK 37** and **min SDK 24**.
 The release was validated with Kotlin 2.4.0 and its Compose compiler plugin.
 
 Android Compose 1.11 remains supported when you enforce its BOM in both application and
 instrumentation dependencies. Use 0.4.0 for the Compose Multiplatform 1.11 / compile SDK 36
 baseline, or 0.3.1 for Compose 1.10. See [versions and migration](releases/index.md).
+
+Version 0.5.1 uses the Maven coordinates `dev.mttmcknn:dejavu:0.5.1`. When upgrading
+from 0.5.0, replace the `me.mmckenna.dejavu:dejavu` dependency instead of keeping
+both artifacts. Imports remain `dejavu.*`; this release changes publication
+coordinates without changing the library's runtime behavior or public APIs.
+Versions 0.5.0 and earlier remain under their original Maven group.
 
 ## Android setup
 
@@ -31,7 +37,7 @@ dependencies {
     val composeBom = enforcedPlatform("androidx.compose:compose-bom:2026.08.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
-    androidTestImplementation("me.mmckenna.dejavu:dejavu:0.5.0")
+    androidTestImplementation("dev.mttmcknn:dejavu:0.5.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
@@ -43,7 +49,7 @@ Compose test APIs are compile-only dependencies of DejaVu, so include them expli
 test module. The Espresso version above matches the API 37 validation environment.
 
 To retain Android Compose 1.11, select the validated BOM `2026.05.00` or `2026.06.01` in
-that same enforced-platform declaration. Keep compile SDK 37 for the 0.5.0 Android artifact.
+that same enforced-platform declaration. Keep compile SDK 37 for the 0.5.1 Android artifact.
 
 This complete test sets content, resets the budget, and then measures one state change:
 
@@ -91,14 +97,14 @@ larger scenarios and `assertStable()` expectations.
 ## Kotlin Multiplatform setup
 
 Add the dependency to the shared test source set for JVM desktop, iOS arm64 and simulator arm64,
-and WasmJs. Use the Compose Multiplatform 1.12.0 baseline for 0.5.0:
+and WasmJs. Use the Compose Multiplatform 1.12.0 baseline for 0.5.1:
 
 ```kotlin
 kotlin {
     sourceSets {
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation("me.mmckenna.dejavu:dejavu:0.5.0")
+            implementation("dev.mttmcknn:dejavu:0.5.1")
             implementation(compose.foundation)
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.uiTest)

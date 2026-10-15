@@ -9,10 +9,10 @@ Publish the candidate locally once using the release baseline, then run from the
 ```bash
 ./gradlew :dejavu:publishToMavenLocal --no-configuration-cache
 ANDROID_HOME="$HOME/Library/Android/sdk" ./gradlew -p validation/consumer \
-  jvmTest iosSimulatorArm64Test wasmJsBrowserTest -PdejavuVersion=0.5.0
+  jvmTest iosSimulatorArm64Test wasmJsBrowserTest -PdejavuVersion=0.5.1
 ANDROID_HOME="$HOME/Library/Android/sdk" ANDROID_SERIAL=emulator-5554 \
   ./gradlew -p validation/consumer connectedDebugAndroidTest \
-  -PdejavuVersion=0.5.0 -PcomposeBomVersion=2026.05.00
+  -PdejavuVersion=0.5.1 -PcomposeBomVersion=2026.05.00
 python3 validation/verify_test_results.py \
   validation/consumer/build/test-results/jvmTest \
   validation/consumer/build/test-results/iosSimulatorArm64Test \

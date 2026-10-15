@@ -7,8 +7,8 @@ plugins {
   alias(libs.plugins.vanniktech.maven.publish)
 }
 
-group = "me.mmckenna.dejavu"
-version = "0.6.0-SNAPSHOT"
+group = "dev.mttmcknn"
+version = "0.5.1"
 
 kotlin {
   explicitApi()
@@ -215,7 +215,7 @@ mavenPublishing {
     signAllPublications()
   }
 
-  coordinates("me.mmckenna.dejavu", "dejavu", version.toString())
+  coordinates("dev.mttmcknn", "dejavu", version.toString())
 
   pom {
     name.set("Dejavu")
