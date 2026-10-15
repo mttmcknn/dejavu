@@ -13,7 +13,7 @@ cd dejavu
 ```
 
 Use the Gradle wrapper and JDK 17 or later. The current build pins Kotlin 2.4.0, AGP 9.4.0,
-Compose Multiplatform 1.12.0, and Android compile SDK 37. Install Android SDK platform 37 and
+Compose Multiplatform 1.12.1, and Android compile SDK 37. Install Android SDK platform 37 and
 accept its licenses. Android Studio must support the pinned AGP version; the Gradle wrapper is
 the command-line source of truth. Android test devices must run API 24 or later.
 

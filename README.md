@@ -232,6 +232,9 @@ and Wasm tests use the shared tracer through `runRecompositionTrackingUiTest`.
 
 Supported Compose range for Dejavu 0.5.x: **1.11.x–1.12.x (BOM 2026.05.00 through 2026.08.00)**.
 
+The current development baseline (0.6.0-SNAPSHOT) uses **Compose Multiplatform 1.12.1** and
+**Android BOM 2026.09.00**. Its compatibility matrix retains the 2026.05.00 and 2026.06.01 checkpoints.
+
 **Minimum supported Compose: 1.11 (BOM 2026.05.00).** Dejavu 0.5.x uses the Compose testing v2 APIs introduced with this line. For Compose 1.10, use Dejavu 0.3.1; that maintenance release preserves the older Compose line instead of allowing newer transitive artifacts to mask an unsupported combination. Validated with Kotlin 2.4.0 and its Compose compiler plugin.
 
 Dejavu 0.5.x is built and released against **Compose Multiplatform 1.12.0**. Android consumers
@@ -251,6 +254,7 @@ androidTestImplementation(composeBom)
 | 2026.05.00 | 1.11.x | 2.4.0 | Minimum |
 | 2026.06.01 | 1.11.x | 2.4.0 | Latest 1.11 checkpoint |
 | 2026.08.00 | 1.12.x | 2.4.0 | Release baseline |
+| 2026.09.00 | 1.12.x | 2.4.0 | Development baseline |
 
 ## Kotlin Multiplatform
 

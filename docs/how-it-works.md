@@ -25,9 +25,10 @@ unsupported combination. Validated with Kotlin 2.4.0 and its Compose compiler pl
 | 2026.08.00 | 1.12.x | 2.4.0 | Release baseline |
 
 The release baseline is Compose Multiplatform 1.12.0 and Android Compose BOM 2026.08.00; the floor
-is Compose 1.11 (BOM 2026.05.00). CI derives its matrix from the `composeBomCompat*` checkpoints and
-`composeBom` baseline in `gradle/libs.versions.toml`, currently 2026.05.00, 2026.06.01, and
-2026.08.00. Compatibility runs enforce the selected BOM so newer transitive Compose
+is Compose 1.11 (BOM 2026.05.00). The current 0.6.0-SNAPSHOT development baseline uses Compose
+Multiplatform 1.12.1 and Android BOM 2026.09.00. CI derives its matrix from the `composeBomCompat*`
+checkpoints and `composeBom` baseline in `gradle/libs.versions.toml`, currently 2026.05.00,
+2026.06.01, and 2026.09.00. Compatibility runs enforce the selected BOM so newer transitive Compose
 Multiplatform artifacts cannot silently replace the runtime under test. `CompositionObserver`
 support is unconditional; there is no degraded or observer-excluded build path.
 
