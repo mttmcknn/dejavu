@@ -16,7 +16,7 @@
         <link rel="prev" href="../api/">
       
       
-        <link rel="next" href="0.5.0/">
+        <link rel="next" href="0.5.1/">
       
       
         
@@ -849,6 +849,34 @@
   
   
     <li class="md-nav__item">
+      <a href="0.5.1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.1 validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="0.5.0/" class="md-nav__link">
         
   
@@ -1010,8 +1038,14 @@
 <p>These guides may describe unreleased APIs. <a href="https://dejavu.mmckenna.me/latest/">Read the latest stable documentation</a>. Dependency examples remain on the published stable release.</p>
 </div>
 <h1 id="releases-and-migration">Releases and migration<a class="headerlink" href="#releases-and-migration" title="Permanent link">&para;</a></h1>
-<p><strong>Latest stable: <a href="https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0">DejaVu 0.5.0</a>.</strong>
-All six Maven Central publications are available. Dependency examples use the stable release.</p>
+<p><strong>Latest stable: <a href="https://github.com/mttmcknn/dejavu/releases/tag/v0.5.1">DejaVu 0.5.1</a>.</strong>
+This migration release moves the Maven group from <code>me.mmckenna.dejavu</code> to <code>dev.mttmcknn</code>.
+All six public Maven target artifacts and their POM and Gradle module coordinates have been
+verified.</p>
+<p>Replace the old dependency with <code>dev.mttmcknn:dejavu:0.5.1</code>.
+Kotlin imports, public APIs, runtime behavior, and Compose compatibility remain unchanged.
+Do not include both Maven groups in the same application. Existing versions remain available
+at their original coordinates.</p>
 <table>
 <thead>
 <tr>
@@ -1022,6 +1056,12 @@ All six Maven Central publications are available. Dependency examples use the st
 </tr>
 </thead>
 <tbody>
+<tr>
+<td><a href="0.5.1/">0.5.1</a></td>
+<td>1.12.0</td>
+<td>1.11–1.12</td>
+<td>37</td>
+</tr>
 <tr>
 <td><a href="https://github.com/mttmcknn/dejavu/releases/tag/v0.5.0">0.5.0</a></td>
 <td>1.12.0</td>
@@ -1043,7 +1083,7 @@ All six Maven Central publications are available. Dependency examples use the st
 </tbody>
 </table>
 <p>Use the <a href="../how-it-works/#compatibility">compatibility matrix</a> for exact Android BOM checkpoints.
-With 0.5.0, retain an older Android BOM using <code>enforcedPlatform</code> in both app and instrumentation
+With 0.5.x, retain an older Android BOM using <code>enforcedPlatform</code> in both app and instrumentation
 dependencies; a regular platform can resolve the newer transitive baseline. The Android artifact
 still requires compile SDK 37. The new <code>hasPendingWork</code> and <code>runWithoutImplicitWait</code> rule methods
 require Compose 1.12.</p>
@@ -1054,6 +1094,7 @@ modules when upgrading from older helper signatures.</p>
 instrumentation process. The limitation remains documented for 0.4.0.</p>
 <h2 id="validation-and-history">Validation and history<a class="headerlink" href="#validation-and-history" title="Permanent link">&para;</a></h2>
 <ul>
+<li><a href="0.5.1/">0.5.1 validation</a>: Maven namespace migration and packaged consumer checks.</li>
 <li><a href="0.5.0/">0.5.0 validation</a>: Android, JVM, iOS, Wasm, and packaged consumer checks.</li>
 <li><a href="0.4.0/">0.4.0 validation</a>: restored async Wasm and lazy-layout coverage.</li>
 <li><a href="https://github.com/mttmcknn/dejavu/blob/main/CHANGELOG.md">Changelog</a>.</li>

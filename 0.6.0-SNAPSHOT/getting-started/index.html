@@ -877,6 +877,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../releases/0.5.1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0.5.1 validation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../releases/0.5.0/" class="md-nav__link">
         
   
@@ -1072,12 +1100,17 @@
 </div>
 <h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
 <h2 id="choose-a-compatible-release">Choose a compatible release<a class="headerlink" href="#choose-a-compatible-release" title="Permanent link">&para;</a></h2>
-<p>The latest stable release is <strong>0.5.0</strong>, built against Compose Multiplatform <strong>1.12.0</strong> and
+<p>The latest stable release is <strong>0.5.1</strong>, built against Compose Multiplatform <strong>1.12.0</strong> and
 Android BOM <strong>2026.08.00</strong>. Android consumers need <strong>compile SDK 37</strong> and <strong>min SDK 24</strong>.
 The release was validated with Kotlin 2.4.0 and its Compose compiler plugin.</p>
 <p>Android Compose 1.11 remains supported when you enforce its BOM in both application and
 instrumentation dependencies. Use 0.4.0 for the Compose Multiplatform 1.11 / compile SDK 36
 baseline, or 0.3.1 for Compose 1.10. See <a href="../releases/">versions and migration</a>.</p>
+<p>Version 0.5.1 uses the Maven coordinates <code>dev.mttmcknn:dejavu:0.5.1</code>. When upgrading
+from 0.5.0, replace the <code>me.mmckenna.dejavu:dejavu</code> dependency instead of keeping
+both artifacts. Imports remain <code>dejavu.*</code>; this release changes publication
+coordinates without changing the library's runtime behavior or public APIs.
+Versions 0.5.0 and earlier remain under their original Maven group.</p>
 <h2 id="android-setup">Android setup<a class="headerlink" href="#android-setup" title="Permanent link">&para;</a></h2>
 <p>Add the test dependency to your app module. The plain rule also needs Compose's test activity
 manifest in the debug variant:</p>
@@ -1096,7 +1129,7 @@ manifest in the debug variant:</p>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="kd">val</span><span class="w"> </span><span class="nv">composeBom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">enforcedPlatform</span><span class="p">(</span><span class="s">"androidx.compose:compose-bom:2026.08.00"</span><span class="p">)</span>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="n">implementation</span><span class="p">(</span><span class="n">composeBom</span><span class="p">)</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="n">androidTestImplementation</span><span class="p">(</span><span class="n">composeBom</span><span class="p">)</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="n">androidTestImplementation</span><span class="p">(</span><span class="s">"me.mmckenna.dejavu:dejavu:0.5.0"</span><span class="p">)</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="n">androidTestImplementation</span><span class="p">(</span><span class="s">"dev.mttmcknn:dejavu:0.5.1"</span><span class="p">)</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">    </span><span class="n">androidTestImplementation</span><span class="p">(</span><span class="s">"androidx.compose.ui:ui-test-junit4"</span><span class="p">)</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="n">androidTestImplementation</span><span class="p">(</span><span class="s">"androidx.test.ext:junit:1.3.0"</span><span class="p">)</span>
 <a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="n">androidTestImplementation</span><span class="p">(</span><span class="s">"androidx.test.espresso:espresso-core:3.7.0"</span><span class="p">)</span>
@@ -1106,7 +1139,7 @@ manifest in the debug variant:</p>
 <p>Compose test APIs are compile-only dependencies of DejaVu, so include them explicitly in your
 test module. The Espresso version above matches the API 37 validation environment.</p>
 <p>To retain Android Compose 1.11, select the validated BOM <code>2026.05.00</code> or <code>2026.06.01</code> in
-that same enforced-platform declaration. Keep compile SDK 37 for the 0.5.0 Android artifact.</p>
+that same enforced-platform declaration. Keep compile SDK 37 for the 0.5.1 Android artifact.</p>
 <p>This complete test sets content, resets the budget, and then measures one state change:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">import</span><span class="w"> </span><span class="nn">androidx.compose.foundation.text.BasicText</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">import</span><span class="w"> </span><span class="nn">androidx.compose.runtime.Composable</span>
@@ -1148,12 +1181,12 @@ The rule launches that activity and manages Dejavu's lifecycle. See <a href="../
 larger scenarios and <code>assertStable()</code> expectations.</p>
 <h2 id="kotlin-multiplatform-setup">Kotlin Multiplatform setup<a class="headerlink" href="#kotlin-multiplatform-setup" title="Permanent link">&para;</a></h2>
 <p>Add the dependency to the shared test source set for JVM desktop, iOS arm64 and simulator arm64,
-and WasmJs. Use the Compose Multiplatform 1.12.0 baseline for 0.5.0:</p>
+and WasmJs. Use the Compose Multiplatform 1.12.0 baseline for 0.5.1:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">kotlin</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">sourceSets</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="n">commonTest</span><span class="p">.</span><span class="na">dependencies</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">            </span><span class="n">implementation</span><span class="p">(</span><span class="n">kotlin</span><span class="p">(</span><span class="s">"test"</span><span class="p">))</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="n">implementation</span><span class="p">(</span><span class="s">"me.mmckenna.dejavu:dejavu:0.5.0"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="n">implementation</span><span class="p">(</span><span class="s">"dev.mttmcknn:dejavu:0.5.1"</span><span class="p">)</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">            </span><span class="n">implementation</span><span class="p">(</span><span class="n">compose</span><span class="p">.</span><span class="na">foundation</span><span class="p">)</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">            </span><span class="nd">@OptIn</span><span class="p">(</span><span class="n">org</span><span class="p">.</span><span class="na">jetbrains</span><span class="p">.</span><span class="na">compose</span><span class="p">.</span><span class="na">ExperimentalComposeLibrary</span><span class="o">::</span><span class="n">class</span><span class="p">)</span>
 <a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">            </span><span class="n">implementation</span><span class="p">(</span><span class="n">compose</span><span class="p">.</span><span class="na">uiTest</span><span class="p">)</span>

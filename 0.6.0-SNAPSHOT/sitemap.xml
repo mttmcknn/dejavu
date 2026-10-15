@@ -2,50 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/agent-skills/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/causality-analysis/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/contributing/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/error-messages/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/examples/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/getting-started/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/how-it-works/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/use-cases/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/releases/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/releases/0.4.0/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
     </url>
     <url>
          <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/releases/0.5.0/</loc>
-         <lastmod>2026-09-09</lastmod>
+         <lastmod>2026-10-15</lastmod>
+    </url>
+    <url>
+         <loc>https://dejavu.mmckenna.me/0.6.0-SNAPSHOT/releases/0.5.1/</loc>
+         <lastmod>2026-10-15</lastmod>
     </url>
 </urlset>
