@@ -80,6 +80,7 @@ public fun ComposeTestRule.resetRecompositionCounts() {
  * Refreshes the tag-to-function mapping before lookup.
  *
  * @param tag the `Modifier.testTag()` value identifying the composable
+ * @throws IllegalStateException if [tag] cannot be mapped to a tracked composable
  */
 public fun ComposeTestRule.getRecompositionCount(tag: String): Int {
     val snapshots = dejavu.internal.DejavuTracer.getCompositionSnapshots()
@@ -87,14 +88,14 @@ public fun ComposeTestRule.getRecompositionCount(tag: String): Int {
         dejavu.internal.DejavuTracer.refreshTagMapping(snapshots)
     }
     val functionName = dejavu.internal.DejavuTracer.getFunctionNameForTag(tag)
+        ?: error(
+            "Recomposition count unavailable: testTag '$tag' could not be mapped to a composable function. " +
+                "Use createRecompositionTrackingRule() and enable Compose compiler source information."
+        )
     // Use per-tag fingerprint counting only for multi-instance functions
-    if (functionName != null && dejavu.internal.DejavuTracer.isMultiInstanceFunction(functionName)) {
+    if (dejavu.internal.DejavuTracer.isMultiInstanceFunction(functionName)) {
         val perTagCount = dejavu.internal.DejavuTracer.getPerTagRecompositionCount(tag)
         if (perTagCount != null) return perTagCount
     }
-    return if (functionName != null) {
-        dejavu.internal.DejavuTracer.getRecompositionCount(functionName)
-    } else {
-        dejavu.internal.DejavuTracer.getRecompositionCount(tag)
-    }
+    return dejavu.internal.DejavuTracer.getRecompositionCount(functionName)
 }
