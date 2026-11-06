@@ -69,7 +69,10 @@ For release readiness, start a clean emulator, set `ANDROID_SERIAL`, and run
 addition to the JVM, iOS, Wasm, API, lint, and demo build checks. Compose 1.10 consumers remain on
 Dejavu 0.3.1; 0.4.0 retains the Compose Multiplatform 1.11 / compile SDK 36 baseline. DejaVu 0.5.x
 builds against Compose Multiplatform 1.12.0 and supports Android BOM 2026.05.00 through 2026.08.00.
-Android consumers require compile SDK 37 and must enforce the BOM to retain an older Compose line.
+Android consumers require compile SDK 37. Published 0.5.x artifacts require an enforced BOM to
+retain an older Compose line. The 0.6.0 snapshot no longer exports the build BOM; its runtime
+tooling dependency uses the supported floor. Validate dependency changes with the packaged
+Android consumer in `validation/android-dependencies`, using regular consumer BOMs.
 For documentation-only edits, run the documentation checks in CONTRIBUTING.md; UI suites are
 required for runtime changes, not prose or website changes.
 

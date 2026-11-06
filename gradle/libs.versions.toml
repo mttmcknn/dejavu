@@ -11,6 +11,9 @@ activityCompose = "1.13.0"
 composeBom = "2026.08.00"
 # Compatibility checkpoints stay pinned until the documented support floor moves.
 composeBomCompatMinimum = "2026.05.00"
+# Runtime tooling must remain resolvable without exporting the build's newer BOM.
+# Keep this aligned with ui-tooling-data in composeBomCompatMinimum.
+composeUiMinimum = "1.11.1"
 composeBomCompatPrevious111 = "2026.06.01"
 composeMultiplatform = "1.12.0"
 coroutinesAndroid = "1.11.0"
@@ -35,6 +38,7 @@ androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", versi
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-tooling-data = { group = "androidx.compose.ui", name = "ui-tooling-data-android", version.ref = "composeUiMinimum" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }

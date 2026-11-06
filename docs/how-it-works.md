@@ -36,6 +36,13 @@ use `enforcedPlatform` for the selected BOM in both application and instrumentat
 a regular platform can allow the newer transitive baseline to win. DejaVu 0.4.0 remains the
 Compose Multiplatform 1.11 / compile SDK 36 baseline.
 
+The **0.6.0 development snapshot** changes Android dependency metadata: the build BOM is no longer
+transitive, and the required `ui-tooling-data-android` dependency declares the supported minimum, 1.11.1.
+A regular consumer `platform(...)` can therefore retain its supported Compose version without
+Dejavu upgrading it to the build baseline. This does not prevent upgrades requested by other
+dependencies or extend the compatibility range. The enforced-BOM guidance above remains valid
+for published 0.5.x artifacts.
+
 ## Compose Testing v2
 
 Dejavu's test harness uses the Compose testing **v2** APIs (`runComposeUiTest` /
