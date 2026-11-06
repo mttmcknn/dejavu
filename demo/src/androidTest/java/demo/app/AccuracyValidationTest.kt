@@ -5,8 +5,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dejavu.DejavuComposeTestRule
+import dejavu.assertStable
 import dejavu.createRecompositionTrackingRule
 import dejavu.getRecompositionCount
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,6 +47,30 @@ private fun validateAccuracy(
             "Accuracy mismatch [$label]:\n${mismatches.joinToString("\n") { "  $it" }}"
         )
     }
+}
+
+/**
+ * These root tags belong to a CompositionLocalProvider content lambda, while their
+ * SideEffect counters sit in the enclosing named screen body. Keep that independent
+ * screen-body oracle without presenting it as an exact count for the anonymous owner.
+ */
+private fun validateAnonymousProviderRoot(
+    rule: DejavuComposeTestRule<*>,
+    tag: String,
+    screenBodyBaseline: Int,
+) {
+    rule.onNodeWithTag(tag).assertExists()
+    assertEquals(
+        "Only the provider value change should recompose the named screen body for $tag",
+        1,
+        GroundTruthCounters.get(tag) - screenBodyBaseline,
+    )
+    val countError = runCatching { rule.getRecompositionCount(tag) }.exceptionOrNull()
+    assertTrue("Expected an unavailable lambda count for $tag", countError is AssertionError)
+    assertTrue(countError?.message.orEmpty().contains("testTag='$tag'"))
+    assertTrue(countError?.message.orEmpty().contains("includes a lambda owner"))
+    val stableError = runCatching { rule.onNodeWithTag(tag).assertStable() }.exceptionOrNull()
+    assertEquals(countError?.message, stableError?.message)
 }
 
 // ============================================================
@@ -225,6 +252,8 @@ class SharedStateAccuracyTest {
 
     @Test
     fun sharedStateAccuracy() {
+        rule.waitForIdle()
+        val screenBodyBaseline = GroundTruthCounters.get("shared_root")
         // Inc A, Inc B, Inc C, toggle theme
         rule.onNodeWithTag("inc_a_btn").performClick()
         rule.waitForIdle()
@@ -235,10 +264,12 @@ class SharedStateAccuracyTest {
         rule.onNodeWithTag("toggle_theme_btn").performClick()
         rule.waitForIdle()
 
+        // Only themeMode is read outside the provider's content lambda; A/B/C reads
+        // occur inside it. The named screen's SideEffect must therefore execute once.
+        validateAnonymousProviderRoot(rule, "shared_root", screenBodyBaseline)
         validateAccuracy(
             rule,
             listOf(
-                "shared_root",
                 "reader_a",
                 "reader_b",
                 "reader_c",
@@ -396,15 +427,19 @@ class DialogPopupAccuracyTest {
 
     @Test
     fun dialogPopupAccuracy() {
+        rule.waitForIdle()
+        val screenBodyBaseline = GroundTruthCounters.get("dialog_root")
         rule.onNodeWithTag("change_static_btn").performClick()
         rule.waitForIdle()
         rule.onNodeWithTag("change_dynamic_btn").performClick()
         rule.waitForIdle()
 
+        // staticConfig is read outside the provider, but dynamicValue is read inside
+        // its content lambda. The named screen's separate SideEffect executes once.
+        validateAnonymousProviderRoot(rule, "dialog_root", screenBodyBaseline)
         validateAccuracy(
             rule,
             listOf(
-                "dialog_root",
                 "static_reader_a",
                 "static_reader_b",
                 "static_reader_c",

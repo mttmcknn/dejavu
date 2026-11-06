@@ -22,6 +22,8 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 /**
  * Animation / conditional-composition pattern tests.
@@ -31,16 +33,16 @@ import kotlin.test.assertEquals
  * the real composition count and `GroundTruth.delta(tag)` is the real number of recompositions
  * since the baseline — exactly what Dejavu reports.
  *
- * Every tracked node here is **single-instance** (a `BasicText` at a distinct call site, no loops),
- * so the public per-tag API resolves the exact count on every platform and the assertions compare
- * `assertRecompositions(exactly = GroundTruth.delta(tag))`.
+ * Named composable boundaries compare exact counts with the independent oracle. The
+ * `visible_panel` tag belongs directly to an anonymous content lambda, whose exact per-instance
+ * count is unsupported; that case verifies an explicit diagnostic after exercising the content.
  *
  * Animation handling:
  * - The only real animation in this screen is the finite [AnimatedVisibility] wrapping
  *   `visible_panel`. That test drives a manual clock (`mainClock.autoAdvance = false`) so the panel
  *   recomposes across the enter/exit frames, then runs the animation to completion
- *   (`mainClock.autoAdvance = true` + `waitForIdle()`) and asserts the tracer count equals the
- *   *settled* ground-truth delta — exact, with no frame-dependent literal.
+ *   (`mainClock.autoAdvance = true` + `waitForIdle()`) and verifies that the content executed
+ *   without presenting a sampled slot-change count as its recomposition count.
  * - `variant_a`/`variant_b` (if/else swap), `animating_banner` (plain `$pulse` state read), and
  *   `conditional_child` (if-guarded) are not animated; they settle on a plain `waitForIdle()` and
  *   assert `tracer == GroundTruth.delta(tag)` directly.
@@ -78,10 +80,13 @@ class AnimationPatternTest {
         mainClock.autoAdvance = true
         waitForIdle()
 
-        // visible_panel is a single-instance node; its per-tag count resolves exactly. The frame
-        // count is animation-dependent, so assert tracer == settled ground truth (no literal).
-        onNodeWithTag("visible_panel")
-            .assertRecompositions(exactly = GroundTruth.delta("visible_panel"))
+        assertTrue(GroundTruth.delta("visible_panel") > 0, "the animation content must execute")
+        onNodeWithTag("visible_panel").assertExists()
+        val error = assertFailsWith<UnexpectedRecompositionsError> {
+            onNodeWithTag("visible_panel")
+                .assertRecompositions(exactly = GroundTruth.delta("visible_panel"))
+        }
+        assertTrue(error.message.orEmpty().contains("includes a lambda owner"))
     }
 
     @Test

@@ -109,6 +109,7 @@ private inline fun SemanticsNodeInteraction.onRecompositions(
             DejavuTracer.refreshTagMapping(snapshots)
         }
         functionName = DejavuTracer.getFunctionNameForTag(testTag)
+        DejavuTracer.requireSupportedTagCount(testTag)
         // Use per-tag fingerprint counting only for multi-instance functions
         val perTagCount = if (functionName != null && DejavuTracer.isMultiInstanceFunction(functionName)) {
             DejavuTracer.getPerTagRecompositionCount(testTag)
