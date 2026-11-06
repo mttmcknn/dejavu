@@ -47,6 +47,10 @@ behavior across those releases.
    [standalone consumer checks](validation/consumer/README.md) against those same artifacts on
    the retained Android BOMs and KMP baseline. Inspect AAR minimum compile SDK and resolved runtime
    versions. This verifies the packaged binary without recompiling it for each older Compose BOM.
+   Also run the [Android dependency consumer](validation/android-dependencies/README.md) with
+   regular supported BOMs and both Gradle metadata and POMs. Enforced-BOM checks cannot reveal
+   accidental transitive upgrades in a publication. This fixture uses an isolated local Maven
+   directory and verifies that required runtime tooling still resolves without a consumer BOM.
 8. Commit the verified changes and tag the merge commit as `vX.Y.Z`. Publishing is an explicit
    workflow dispatch so pushing a tag does not spend CI minutes repeating the full suite:
 

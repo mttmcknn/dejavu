@@ -77,7 +77,12 @@ kotlin {
     androidMain.dependencies {
       compileOnly(libs.androidx.ui.tooling)
       implementation(libs.kotlinx.coroutines.android)
-      implementation("androidx.compose.ui:ui-tooling-data")
+      // Required at runtime for Android tag mapping. Publish the supported floor so
+      // consumers retain their Compose version and do not need to supply a BOM just
+      // to resolve this dependency. Our compile-only BOM selects the build baseline.
+      // Use the Android coordinate so Kotlin's POM rewriting does not replace the
+      // declared floor with the build's resolved multiplatform variant version.
+      implementation(libs.androidx.ui.tooling.data)
       // Needed for DejavuComposeTestRule (Android-specific JUnit4 rule)
       compileOnly("androidx.compose.ui:ui-test-junit4")
       // Pinned to avoid Gradle resolution conflict with BOM-managed transitive version; compileOnly, never shipped
@@ -157,8 +162,18 @@ dependencies {
     platform(libs.androidx.compose.bom)
   }
   "androidMainCompileOnly"(composeBom)
-  "androidMainImplementation"(composeBom)
+  // The build baseline is not a consumer runtime requirement. Publishing this BOM
+  // silently upgrades supported older Compose versions on the test runtime classpath.
   "androidUnitTestImplementation"(composeBom)
+}
+
+// Opt-in, isolated repository for packaged-consumer verification. Never writes to
+// Maven Local or a remote repository; the property is interpreted as a file path.
+providers.gradleProperty("validationRepository").orNull?.let { repositoryPath ->
+  publishing.repositories.maven {
+    name = "validation"
+    url = uri(file(repositoryPath))
+  }
 }
 
 composeCompiler {

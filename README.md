@@ -240,6 +240,12 @@ BOM in both app and instrumentation-test dependencies; otherwise Gradle may sele
 transitive baseline. Android consumers of 0.5.x must use **compile SDK 37**, as declared in the AAR
 metadata. Use DejaVu 0.4.0 for the Compose Multiplatform 1.11 / compile SDK 36 release baseline.
 
+**Development snapshot (0.6.0):** the Android publication no longer exports the build's Compose
+BOM. It supplies `ui-tooling-data-android` at the supported minimum (1.11.1), allowing a consumer's normal
+`platform(...)` to retain its supported Compose version. Other dependencies can still request a
+newer Compose version; inspect the resolved test runtime classpath. The 0.5.x guidance below
+continues to apply to published releases.
+
 ```kotlin
 val composeBom = enforcedPlatform("androidx.compose:compose-bom:2026.06.01")
 implementation(composeBom)
