@@ -2,6 +2,10 @@
 
 When a recomposition assertion fails, Dejavu throws an `UnexpectedRecompositionsError` with a structured, multi-section diagnostic. This guide explains how to read each section and what to do about common failures.
 
+> **Development snapshot:** The explicit failures for unmapped tags described here are unreleased.
+> Published 0.5.x can return zero or fall back to a function-name count when mapping is missing,
+> so `assertStable()` may pass without a valid mapping.
+
 ---
 
 ## Full Error Message Structure
@@ -49,7 +53,7 @@ dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag
 dejavu.UnexpectedRecompositionsError: Recomposition assertion failed for testTag='product_header'
 ```
 
-Identifies which test tag triggered the failure. If the tag could not be mapped to a composable function, you will see a warning instead.
+Identifies which test tag triggered the failure. If the tag could not be mapped to a composable function, the assertion fails with an unavailable-count diagnostic.
 
 ### 2. Composable Name and Source Location
 
@@ -62,10 +66,19 @@ The fully qualified composable function name and its source file location. This 
 If the tag cannot be resolved to a composable, this section shows:
 
 ```
-  Warning: testTag 'my_tag' could not be mapped to a composable function
+  testTag 'my_tag' could not be mapped to a composable function
+  Actual: unavailable — no tag-to-composable mapping
 ```
 
-This usually means the tag was set on a node that Dejavu could not walk up to a user-defined composable (e.g., a framework-internal node).
+This can mean inspection tables or compiler source information are missing, or the tag is on a
+node that Dejavu cannot associate with a user-defined composable. Use
+`createRecompositionTrackingRule()`, or pair `runRecompositionTrackingUiTest` with
+`setTrackedContent`. Ensure the Compose compiler includes source information.
+
+An unavailable count is never treated as zero: `assertStable()` and all recomposition bounds
+fail until the tag can be mapped. Android's `getRecompositionCount(tag)` throws
+`IllegalStateException` for the same condition. A test tag that happens to match a function name
+does not bypass this requirement.
 
 ### 3. Expected vs Actual
 
@@ -215,14 +228,16 @@ The failing semantics node and a dump of the full semantic tree. The `<-- THIS N
 
 ```
   Recomposition assertion failed for testTag='my_component'
-  Warning: testTag 'my_component' could not be mapped to a composable function
+  testTag 'my_component' could not be mapped to a composable function
   Expected: exactly 0 recomposition(s)
-  Actual: composable was never composed or isn't being tracked
+  Actual: unavailable — no tag-to-composable mapping
 ```
 
-**Diagnosis:** Dejavu found the semantics node (the tag exists in the tree) but could not map it back to a user-defined composable function. This can happen if the tag is on a deeply nested framework composable.
+**Diagnosis:** Dejavu found the semantics node (the tag exists in the tree) but could not map it back to a user-defined composable function. Check inspection-table setup and source information before interpreting this as a recomposition count.
 
 **Fixes:**
+- Use `setTrackedContent` inside `runRecompositionTrackingUiTest`, or the Android tracking rule
+- Enable Compose compiler source information
 - Move `Modifier.testTag()` to the outermost composable in your function
 - Verify the composable is a user-defined function (not a framework primitive)
 

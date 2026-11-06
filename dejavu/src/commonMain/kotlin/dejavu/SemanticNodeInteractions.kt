@@ -27,7 +27,8 @@ internal class UnexpectedRecompositionsError(
  * - [atLeast] and/or [atMost] — count must fall within this range
  *
  * @return The same [SemanticsNodeInteraction] for chaining
- * @throws UnexpectedRecompositionsError if the actual count doesn't match
+ * @throws UnexpectedRecompositionsError if the actual count doesn't match, or the node's testTag
+ * cannot be mapped to a tracked composable
  */
 public fun SemanticsNodeInteraction.assertRecompositions(
     exactly: Int? = null,
@@ -49,7 +50,13 @@ public fun SemanticsNodeInteraction.assertRecompositions(
         }
     }
 
-    return onRecompositions { count, functionName, testTag, node, interaction ->
+    val description = when {
+        exactly != null -> "exactly $exactly"
+        atLeast != null && atMost != null -> "between $atLeast and $atMost"
+        atLeast != null -> "at least $atLeast"
+        else -> "at most $atMost"
+    }
+    return onRecompositions(description) { count, functionName, testTag, node, interaction ->
         val failed = when {
             exactly != null -> count != exactly
             atLeast != null && atMost != null -> count < atLeast || count > atMost
@@ -58,13 +65,6 @@ public fun SemanticsNodeInteraction.assertRecompositions(
             else -> false
         }
         if (failed) {
-            val description = when {
-                exactly != null -> "exactly $exactly"
-                atLeast != null && atMost != null -> "between $atLeast and $atMost"
-                atLeast != null -> "at least $atLeast"
-                atMost != null -> "at most $atMost"
-                else -> "unknown"
-            }
             failRecompositionsExpectation(
                 predicateDescription = description,
                 actualCount = count,
@@ -91,6 +91,7 @@ public fun SemanticsNodeInteraction.assertStable(): SemanticsNodeInteraction =
  * to [block] along with the resolved function name and testTag.
  */
 private inline fun SemanticsNodeInteraction.onRecompositions(
+    predicateDescription: String,
     block: (count: Int, functionName: String?, testTag: String?, node: SemanticsNode, interaction: SemanticsNodeInteraction) -> Unit,
 ): SemanticsNodeInteraction {
     val node = fetchSemanticsNode("Failed to get semantics node for recomposition assertion")
@@ -109,16 +110,24 @@ private inline fun SemanticsNodeInteraction.onRecompositions(
             DejavuTracer.refreshTagMapping(snapshots)
         }
         functionName = DejavuTracer.getFunctionNameForTag(testTag)
+        if (functionName == null) {
+            failRecompositionsExpectation(
+                predicateDescription = predicateDescription,
+                actualCount = null,
+                functionName = null,
+                testTag = testTag,
+                node = node,
+                interaction = this,
+            )
+        }
         // Use per-tag fingerprint counting only for multi-instance functions
-        val perTagCount = if (functionName != null && DejavuTracer.isMultiInstanceFunction(functionName)) {
+        val perTagCount = if (DejavuTracer.isMultiInstanceFunction(functionName)) {
             DejavuTracer.getPerTagRecompositionCount(testTag)
         } else null
         count = if (perTagCount != null) {
             perTagCount
-        } else if (functionName != null) {
-            DejavuTracer.getRecompositionCount(functionName)
         } else {
-            DejavuTracer.getRecompositionCount(testTag)
+            DejavuTracer.getRecompositionCount(functionName)
         }
     } else {
         throw UnexpectedRecompositionsError(
@@ -138,7 +147,7 @@ private inline fun SemanticsNodeInteraction.onRecompositions(
  */
 private fun failRecompositionsExpectation(
     predicateDescription: String,
-    actualCount: Int,
+    actualCount: Int?,
     functionName: String?,
     testTag: String?,
     node: SemanticsNode,
@@ -163,12 +172,16 @@ private fun failRecompositionsExpectation(
                 appendLine("  Composable: $functionName")
             }
         } else if (testTag != null) {
-            appendLine("  Warning: testTag '$testTag' could not be mapped to a composable function")
+            appendLine("  testTag '$testTag' could not be mapped to a composable function")
+            appendLine("  Use createRecompositionTrackingRule(), or runRecompositionTrackingUiTest with setTrackedContent.")
+            appendLine("  Ensure Compose compiler source information is enabled for the tagged composable.")
         }
 
         // Expected vs actual
         appendLine("  Expected: $predicateDescription recomposition(s)")
-        if (actualCount == -1) {
+        if (actualCount == null) {
+            appendLine("  Actual: unavailable — no tag-to-composable mapping")
+        } else if (actualCount == -1) {
             appendLine("  Actual: composable was never composed or isn't being tracked")
         } else {
             appendLine("  Actual: $actualCount recomposition(s)")
