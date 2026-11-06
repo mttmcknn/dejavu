@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import dejavu.internal.Runtime
+import dejavu.internal.FrameRefreshScheduler
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
@@ -16,6 +17,9 @@ import org.junit.runners.model.Statement
  * A test rule that wraps [AndroidComposeTestRule] with automatic Dejavu
  * lifecycle management. Enables Dejavu and resets recomposition counts
  * before each test, so no `@Before` boilerplate is needed.
+ *
+ * Tracking started by this rule is released after the test, including failures.
+ * Tracking already enabled by the application remains owned by the application.
  */
 public class DejavuComposeTestRule<A : ComponentActivity>(
     private val delegate: AndroidComposeTestRule<ActivityScenarioRule<A>, A>
@@ -44,10 +48,17 @@ public class DejavuComposeTestRule<A : ComponentActivity>(
                 // Install tracking before ActivityScenario launches the activity. Enabling
                 // it afterward can miss the initial inspection-table registration.
                 val instrumentation = InstrumentationRegistry.getInstrumentation()
-                instrumentation.runOnMainSync {
-                    Dejavu.enable(instrumentation.targetContext.applicationContext as Application)
+                var ownedSession: FrameRefreshScheduler? = null
+                try {
+                    instrumentation.runOnMainSync {
+                        ownedSession = Runtime.beginTestSession(
+                            instrumentation.targetContext.applicationContext as Application
+                        )
+                    }
+                    trackedTest.evaluate()
+                } finally {
+                    instrumentation.runOnMainSync { Runtime.endTestSession(ownedSession) }
                 }
-                trackedTest.evaluate()
             }
         }
     }

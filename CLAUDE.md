@@ -20,7 +20,7 @@ Minimum verification after any code change:
 ./gradlew -q --console=plain apiCheck                            # API compat (all targets)
 ```
 
-`jvmTest`, `iosSimulatorArm64Test`, and `wasmJsBrowserTest` all run the compose UI integration tests (SideEffect accuracy, recomposition counting) from `commonTest`. Android excludes compose UI tests from `testDebugUnitTest` (they require Robolectric); Android compose coverage comes from instrumented tests in the demo app.
+`jvmTest`, `iosSimulatorArm64Test`, and `wasmJsBrowserTest` all run the compose UI integration tests (SideEffect accuracy, recomposition counting) from `commonTest`. Android excludes those common UI tests from `testDebugUnitTest`; dedicated Robolectric scheduler and lifecycle UI regressions run from `androidUnitTest`. Broader Android Compose coverage comes from instrumented tests in the demo app.
 
 ## Project Structure
 

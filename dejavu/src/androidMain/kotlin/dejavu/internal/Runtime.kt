@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
-import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.runtime.Composer
@@ -19,6 +18,7 @@ import androidx.compose.ui.tooling.data.asTree
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
@@ -35,17 +35,22 @@ internal object Runtime {
   private var appRef: Application? = null
   private var mainScope: CoroutineScope? = null
   private val observedRecomposers = mutableSetOf<Any>()
-  private val observerHandles = mutableListOf<Any>()
+  private val observerHandles = IdentityHashMap<Any, Any>()
+  private val recomposerStateJobs = IdentityHashMap<Any, Job>()
 
   private var observer: ObserverDelegate = NoOpObserver
 
   private var lifecycleCallbacks: Application.ActivityLifecycleCallbacks? = null
   @Volatile
   private var lastResumedRef: WeakReference<Activity>? = null
+  // Retain only a weak hint across disable/enable: registering lifecycle callbacks
+  // does not replay onResume for an activity that is already on screen.
+  private var lastKnownActivityRef: WeakReference<Activity>? = null
 
   // Per-recomposer change count tracking
   private val recomposerChangeCount = IdentityHashMap<Any, Long>()
-  private var frameCallback: Choreographer.FrameCallback? = null
+  @Volatile
+  private var frameRefresh: FrameRefreshScheduler? = null
 
   // Latest composition snapshot cache (identity-based)
   private val latestSnapshots: MutableSet<CompositionData> =
@@ -72,9 +77,26 @@ internal object Runtime {
     logToLogcat: Boolean = false,
   ) {
     if (enabled) return
+    try {
+      startSession(app, logToLogcat)
+    } catch (failure: Throwable) {
+      disable()
+      throw failure
+    }
+  }
+
+  @OptIn(InternalComposeTracingApi::class)
+  private fun startSession(app: Application, logToLogcat: Boolean) {
+    val refresh = FrameRefreshScheduler(::refreshCompositionData)
+    frameRefresh = refresh
     enabled = true
     this.logToLogcat = logToLogcat
     appRef = app
+
+    lastResumedRef = lastKnownActivityRef?.get()
+      ?.takeIf { it.application === app && !it.isDestroyed && !it.isFinishing }
+      ?.let { WeakReference(it) }
+    refresh.request()
 
     observer = DejavuCompositionObserver
     if (logToLogcat) Log.d(TAG, "Dejavu enabled — streaming recomposition events (filter: \"Dejavu\")")
@@ -113,28 +135,35 @@ internal object Runtime {
         sameValueWrites = sameValueWrites,
         isParameterDriven = false
       )
+      refresh.request()
     }
 
-    // Collect running recomposers and start the frame loop
+    // Observe work rather than polling forever. An Idle transition supplies a
+    // final refresh after applyChanges; pending work alone never rearms a frame.
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     mainScope = scope
     scope.launch {
       Recomposer.runningRecomposers.collectLatest { currentSet ->
+        val removed = observedRecomposers.filter { it !in currentSet }
+        removed.forEach { info ->
+          observedRecomposers.remove(info)
+          recomposerStateJobs.remove(info)?.cancel()
+          observerHandles.remove(info)?.let { observer.disposeHandle(it) }
+          recomposerChangeCount.remove(info)
+        }
         currentSet.forEach { info ->
           if (observedRecomposers.add(info)) {
             // Initialize change count baseline
             getChangeCount(info)?.let { recomposerChangeCount[info] = it }
             tryRegisterCompositionObserver(info)
-            // When a recomposer appears, seed inspection tags now and next frame
+            // Seed immediately and once asynchronously when a recomposer appears.
             lastResumedRef?.get()?.let { activity ->
               ensureInspectionTag(activity)
             }
-            Choreographer.getInstance().postFrameCallback { _ ->
-              lastResumedRef?.get()?.let { activity ->
-                ensureInspectionTag(activity)
-              }
+            recomposerStateJobs[info] = scope.launch {
+              info.state.collect { refresh.request() }
             }
-            ensureFrameLoop()
+            refresh.request()
           }
         }
       }
@@ -173,6 +202,7 @@ internal object Runtime {
         if (lastResumedRef?.get() === activity) {
           lastResumedRef = null
         }
+        if (lastKnownActivityRef?.get() === activity) lastKnownActivityRef = null
       }
     }
     app.registerActivityLifecycleCallbacks(callbacks)
@@ -183,9 +213,12 @@ internal object Runtime {
   fun disable() {
     if (!enabled) return
     enabled = false
+    frameRefresh?.dispose()
+    frameRefresh = null
     if (logToLogcat) Log.d(TAG, "Dejavu disabled")
 
     DejavuTracer.enabled = false
+    Composer.setTracer(null)
 
     // Restore previous inspector info state
     isDebugInspectorInfoEnabled = previousInspectorInfoEnabled
@@ -196,7 +229,7 @@ internal object Runtime {
     stateValueCache.clear()
     pendingCause = null
 
-    observerHandles.forEach { observer.disposeHandle(it) }
+    observerHandles.values.forEach { observer.disposeHandle(it) }
     observerHandles.clear()
     observer.fullReset()
     observer.resetRegistrar()
@@ -204,6 +237,7 @@ internal object Runtime {
 
     mainScope?.cancel()
     mainScope = null
+    recomposerStateJobs.clear()
     appRef?.let { app ->
       lifecycleCallbacks?.let { app.unregisterActivityLifecycleCallbacks(it) }
     }
@@ -211,9 +245,23 @@ internal object Runtime {
     observedRecomposers.clear()
     recomposerChangeCount.clear()
     latestSnapshots.clear()
-    frameCallback?.let { Choreographer.getInstance().removeFrameCallback(it) }
-    frameCallback = null
+    lastResumedRef = null
     appRef = null
+  }
+
+  /** The scheduler identity is also the ownership token for a rule's session. */
+  internal fun beginTestSession(app: Application): FrameRefreshScheduler? {
+    if (enabled) return null
+    enable(app)
+    return frameRefresh
+  }
+
+  internal fun endTestSession(session: FrameRefreshScheduler?) {
+    if (session != null && frameRefresh === session) disable()
+  }
+
+  internal fun requestFrameRefresh() {
+    frameRefresh?.request()
   }
 
   fun getPendingCause(): RecomposeCause? = pendingCause
@@ -228,14 +276,9 @@ internal object Runtime {
     if (!enabled) return
     if (lastResumedRef?.get() === activity) return
     lastResumedRef = WeakReference(activity)
+    lastKnownActivityRef = lastResumedRef
     ensureInspectionTag(activity)
-    Choreographer.getInstance().postFrameCallback { _ ->
-      if (!enabled) return@postFrameCallback
-      if (lastResumedRef?.get() === activity) {
-        ensureInspectionTag(activity)
-      }
-    }
-    ensureFrameLoop()
+    requestFrameRefresh()
   }
 
   private fun seedInspectionTagRecursively(
@@ -253,40 +296,28 @@ internal object Runtime {
     }
   }
 
-  private fun ensureFrameLoop() {
-    if (frameCallback != null) return
-    val cb = Choreographer.FrameCallback {
-      if (!enabled) return@FrameCallback
+  private fun refreshCompositionData() {
+    if (!enabled) return
+    lastResumedRef?.get()?.let { ensureInspectionTag(it) }
 
-      // Check for composition changes
-      var anyChanged = false
-      val iterator = recomposerChangeCount.entries.iterator()
-      while (iterator.hasNext()) {
-        val entry = iterator.next()
-        val prev = entry.value
-        val curr = getChangeCount(entry.key) ?: prev
-        if (curr > prev) {
-          anyChanged = true
-          recomposerChangeCount[entry.key] = curr
-        }
+    // Check for composition changes for diagnostic logging only.
+    var anyChanged = false
+    val iterator = recomposerChangeCount.entries.iterator()
+    while (iterator.hasNext()) {
+      val entry = iterator.next()
+      val prev = entry.value
+      val curr = getChangeCount(entry.key) ?: prev
+      if (curr > prev) {
+        anyChanged = true
+        recomposerChangeCount[entry.key] = curr
       }
-      val pending = observedRecomposers.any { hasPendingWork(it) == true }
-
-      if (pending || anyChanged) {
-        // Capture snapshots and refresh tag mapping
-        latestSnapshots.clear()
-        latestSnapshots.addAll(currentCompositionsSnapshot())
-        DejavuTracer.buildTagMappingFromFrameLoop(latestSnapshots)
-
-        if (logToLogcat) {
-          logFrameDetails(anyChanged)
-        }
-      }
-
-      Choreographer.getInstance().postFrameCallback(frameCallback)
     }
-    frameCallback = cb
-    Choreographer.getInstance().postFrameCallback(cb)
+    // A composition may execute without increasing Recomposer.changeCount.
+    // Refresh on the notification itself, not just a change-count difference.
+    latestSnapshots.clear()
+    latestSnapshots.addAll(currentCompositionsSnapshot())
+    DejavuTracer.buildTagMappingFromFrameLoop(latestSnapshots)
+    if (logToLogcat) logFrameDetails(anyChanged)
   }
 
   private fun logFrameDetails(anyChanged: Boolean) {
@@ -297,8 +328,6 @@ internal object Runtime {
 
   @Volatile
   private var changeCountMethod: Method? = null
-  @Volatile
-  private var hasPendingWorkMethod: Method? = null
 
   private fun getChangeCount(recomposerInfo: Any): Long? {
     return try {
@@ -317,23 +346,8 @@ internal object Runtime {
     }
   }
 
-  private fun hasPendingWork(recomposerInfo: Any): Boolean? {
-    return try {
-      val method = hasPendingWorkMethod ?: recomposerInfo.javaClass.getDeclaredMethod("getHasPendingWork").also {
-        it.isAccessible = true
-        hasPendingWorkMethod = it
-      }
-      val v = method.invoke(recomposerInfo)
-      when (v) {
-        is Boolean -> v
-        else -> null
-      }
-    } catch (_: Throwable) {
-      null
-    }
-  }
-
   internal fun currentCompositionsSnapshot(): Set<CompositionData> {
+    if (!enabled) return emptySet()
     val activity = lastResumedRef?.get() ?: return emptySet()
     val root = activity.window?.decorView ?: return emptySet()
     val out: MutableSet<CompositionData> = Collections.newSetFromMap(IdentityHashMap())
@@ -370,6 +384,6 @@ internal object Runtime {
 
   private fun tryRegisterCompositionObserver(recomposerInfo: Any) {
     val handle = observer.tryRegister(recomposerInfo) ?: return
-    observerHandles.add(handle)
+    observerHandles[recomposerInfo] = handle
   }
 }

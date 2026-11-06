@@ -80,7 +80,11 @@ internal object DejavuCompositionObserver :
     // ── CompositionObserver callbacks ────────────────────────────────
 
     override fun onBeginComposition(composition: ObservableComposition) {}
-    override fun onEndComposition(composition: ObservableComposition) {}
+    override fun onEndComposition(composition: ObservableComposition) {
+        // This hook precedes applyChanges (and can run on an abort). Only queue
+        // work; inspecting the tree synchronously here would observe partial data.
+        if (compositionHandles.containsKey(composition)) Runtime.requestFrameRefresh()
+    }
 
     override fun onScopeEnter(scope: RecomposeScope) {
         // Name isn't available yet (startRestartGroup fires before traceEventStart).
