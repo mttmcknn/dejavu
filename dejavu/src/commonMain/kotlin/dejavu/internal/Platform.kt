@@ -1,6 +1,8 @@
 package dejavu.internal
 
 import androidx.compose.runtime.tooling.CompositionData
+import androidx.compose.runtime.ExperimentalComposeRuntimeApi
+import androidx.compose.runtime.tooling.CompositionObserver
 
 /** Returns the current wall-clock time in milliseconds. */
 internal expect fun currentTimeMillis(): Long
@@ -56,3 +58,7 @@ internal expect fun isObserverAvailable(): Boolean
 
 /** Resets the observer's per-test state (invalidations, dependencies). */
 internal expect fun resetObserver()
+
+/** The active platform diagnostics sink sharing the helper's single observer installation. */
+@OptIn(ExperimentalComposeRuntimeApi::class)
+internal expect fun platformDiagnosticCompositionObserver(): CompositionObserver?

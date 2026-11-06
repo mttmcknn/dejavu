@@ -135,6 +135,10 @@ internal object DejavuTracer : CompositionTracer {
         // Skip framework composables for counting
         if (isFrameworkComposable(info)) return
 
+        // Anonymous bodies need a scope identity; their compiler key alone is
+        // shared by every invocation. Named-function accounting stays unchanged.
+        if (traced.simpleName == "<anonymous>") ExactScopeCounts.onTrace(key)
+
         // Count total compositions for this key
         val totalCount = synchronized(compositionCountsLock) {
             val prev = compositionCounts.getOrPut(key) { 0 }
@@ -304,6 +308,7 @@ internal object DejavuTracer : CompositionTracer {
     fun buildTagMapping(compositionData: Set<CompositionData>) {
         synchronized(lastSeenTagsLock) { lastSeenTags.clear() }
         platformBuildTagMapping(compositionData)
+        ExactTagMapping.refresh(compositionData)
     }
 
     /**
@@ -525,6 +530,8 @@ internal object DejavuTracer : CompositionTracer {
      * can detect post-reset changes deterministically.
      */
     fun resetCounts() {
+        ExactScopeCounts.resetCounts()
+        ExactTagMapping.clear()
         // Snapshot current key-based recomposition counts as baseline so that
         // post-reset queries only report recompositions that occur after this point.
         synchronized(compositionCountsLock) {

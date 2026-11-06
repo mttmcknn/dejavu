@@ -11,7 +11,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -29,10 +28,10 @@ import org.junit.runner.RunWith
 /** Android's named-owner mapper must not hide the lambda that actually executes. */
 @RunWith(AndroidJUnit4::class)
 class LambdaAttributionAndroidTest {
-    @Test fun lambdaInstances_rejectUnsupportedCounts() = registryCase(false, false)
-    @Test fun lambdaInstances_queriesDoNotMakeCountsSupported() = registryCase(true, false)
+    @Test fun lambdaInstances_countThreeAndZeroWithoutIntermediateQueries() = registryCase(false, false)
+    @Test fun lambdaInstances_queriesPreserveExactCounts() = registryCase(true, false)
     @Test fun namedRenderer_doesNotHideLambdaOwnership() = registryCase(false, true)
-    @Test fun namedRenderer_queriesDoNotMakeCountsSupported() = registryCase(true, true)
+    @Test fun namedRenderer_queriesPreserveExactCounts() = registryCase(true, true)
 
     private fun registryCase(queryEachUpdate: Boolean, namedRenderer: Boolean) = runRecompositionTrackingUiTest {
         val echo = mutableIntStateOf(0)
@@ -60,27 +59,41 @@ class LambdaAttributionAndroidTest {
         val echoBaseline = echoCount.get()
         val stableBaseline = stableCount.get()
         resetRecompositionCounts()
-        repeat(3) {
+        repeat(3) { index ->
             runOnIdle { echo.intValue++ }
             waitForIdle()
-            if (queryEachUpdate) assertUnsupported("echo")
+            if (queryEachUpdate) {
+                assertEquals(index + 1, echoCount.get() - echoBaseline)
+                assertEquals(0, stableCount.get() - stableBaseline)
+                onNodeWithTag("echo").assertRecompositions(exactly = index + 1)
+                onNodeWithTag("stable").assertStable()
+            }
         }
         onNodeWithTag("echo").assertTextEquals("echo:3")
         onNodeWithTag("stable").assertTextEquals("stable:0")
         assertEquals(3, echoCount.get() - echoBaseline)
         assertEquals(0, stableCount.get() - stableBaseline)
-        assertUnsupported("echo")
-        assertUnsupported("stable")
-    }
+        // Query the unchanged instance first to expose accidental shared totals.
+        repeat(2) {
+            onNodeWithTag("stable").assertRecompositions(exactly = 0)
+            onNodeWithTag("echo").assertRecompositions(exactly = 3)
+        }
+        onNodeWithTag("echo").assertRecompositions(atLeast = 0)
+        assertTrue(runCatching { onNodeWithTag("echo").assertStable() }.exceptionOrNull() is AssertionError)
+        assertTrue(runCatching {
+            onNodeWithTag("echo").assertRecompositions(atMost = 2)
+        }.exceptionOrNull() is AssertionError)
+        assertTrue(runCatching {
+            onNodeWithTag("stable").assertRecompositions(exactly = 1)
+        }.exceptionOrNull() is AssertionError)
 
-    private fun ComposeUiTest.assertUnsupported(tag: String) {
-        val stable = runCatching { onNodeWithTag(tag).assertStable() }.exceptionOrNull()
-        val exact = runCatching { onNodeWithTag(tag).assertRecompositions(exactly = 3) }.exceptionOrNull()
-        val unbounded = runCatching { onNodeWithTag(tag).assertRecompositions(atLeast = 0) }.exceptionOrNull()
-        assertTrue(stable is AssertionError)
-        assertTrue(stable?.message.orEmpty().contains("includes a lambda owner"))
-        assertEquals(stable?.message, exact?.message)
-        assertEquals(stable?.message, unbounded?.message)
+        val echoResetBaseline = echoCount.get()
+        val stableResetBaseline = stableCount.get()
+        resetRecompositionCounts()
+        onNodeWithTag("echo").assertRecompositions(exactly = 0)
+        onNodeWithTag("stable").assertStable()
+        assertEquals(0, echoCount.get() - echoResetBaseline)
+        assertEquals(0, stableCount.get() - stableResetBaseline)
     }
 }
 

@@ -83,10 +83,11 @@ public fun ComposeTestRule.resetRecompositionCounts() {
  */
 public fun ComposeTestRule.getRecompositionCount(tag: String): Int {
     val snapshots = dejavu.internal.DejavuTracer.getCompositionSnapshots()
-    if (snapshots.isNotEmpty()) {
+    if (snapshots.isNotEmpty() || dejavu.internal.ExactScopeCounts.isActive) {
         dejavu.internal.DejavuTracer.refreshTagMapping(snapshots)
     }
     val functionName = dejavu.internal.DejavuTracer.getFunctionNameForTag(tag)
+    dejavu.internal.ExactTagMapping.count(tag)?.let { return it }
     dejavu.internal.DejavuTracer.requireSupportedTagCount(tag)
     // Use per-tag fingerprint counting only for multi-instance functions
     if (functionName != null && dejavu.internal.DejavuTracer.isMultiInstanceFunction(functionName)) {

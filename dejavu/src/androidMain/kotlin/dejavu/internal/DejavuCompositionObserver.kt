@@ -134,16 +134,35 @@ internal object DejavuCompositionObserver :
 
     // ── CompositionRegistrationObserver ──
 
-    private val compositionHandles: MutableMap<ObservableComposition, CompositionObserverHandle> =
+    private class CompositionRegistration(var handle: CompositionObserverHandle? = null)
+
+    private val compositionHandles: MutableMap<ObservableComposition, CompositionRegistration> =
         Collections.synchronizedMap(IdentityHashMap())
 
     override fun onCompositionRegistered(composition: ObservableComposition) {
-        if (compositionHandles.containsKey(composition)) return
-        compositionHandles[composition] = composition.setObserver(this)
+        val registration = synchronized(compositionHandles) {
+            if (compositionHandles.containsKey(composition)) return
+            CompositionRegistration().also { compositionHandles[composition] = it }
+        }
+        val handle = try {
+            TrackingCompositionObservers.acquire(composition)
+        } catch (failure: Throwable) {
+            synchronized(compositionHandles) {
+                if (compositionHandles[composition] === registration) compositionHandles.remove(composition)
+            }
+            throw failure
+        }
+        val retained = synchronized(compositionHandles) {
+            if (compositionHandles[composition] === registration) {
+                registration.handle = handle
+                true
+            } else false
+        }
+        if (!retained) handle.dispose()
     }
 
     override fun onCompositionUnregistered(composition: ObservableComposition) {
-        compositionHandles.remove(composition)?.dispose()
+        compositionHandles.remove(composition)?.handle?.dispose()
     }
 
     // ── ObserverDelegate ─────────────────────────────────────────────
@@ -165,7 +184,7 @@ internal object DejavuCompositionObserver :
 
     override fun resetRegistrar() {
         synchronized(compositionHandles) {
-            compositionHandles.values.toList().also { compositionHandles.clear() }
+            compositionHandles.values.mapNotNull { it.handle }.also { compositionHandles.clear() }
         }.forEach { it.dispose() }
     }
 

@@ -130,7 +130,7 @@ internal object CommonTagMapping {
      * 1. [InspectableValue] API (preferred, Compose 1.3+)
      * 2. Semantics configuration fallback
      */
-    private fun extractTestTag(group: CompositionGroup): String? {
+    internal fun extractTestTag(group: CompositionGroup): String? {
         val node = group.node
         if (node !is LayoutInfo) return null
 
