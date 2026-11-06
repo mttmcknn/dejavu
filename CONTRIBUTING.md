@@ -27,7 +27,7 @@ that every supported OS was freshly tested.
 Run targeted checks during development, then broaden to affected platforms:
 
 ```bash
-# Android unit tests, without a device
+# Android unit tests and dedicated Robolectric UI regressions, without a device
 ./gradlew -q --console=plain :dejavu:testDebugUnitTest
 
 # Actual Compose UI tests on each non-Android platform

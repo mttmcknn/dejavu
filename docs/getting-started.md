@@ -94,6 +94,25 @@ For a screen owned by your app activity, use `createRecompositionTrackingRule<Yo
 The rule launches that activity and manages Dejavu's lifecycle. See [Examples](examples.md) for
 larger scenarios and `assertStable()` expectations.
 
+### Robolectric and runtime ownership (development snapshot)
+
+The **0.6.0 development snapshot** fixes the Android rule's continuously reposted frame
+callback, which could prevent Robolectric's main queue from becoming idle
+([issue #141](https://github.com/mttmcknn/dejavu/issues/141)). Inspection now requests a
+bounded refresh when composition activity occurs. It does not advance the Compose test
+clock when `mainClock.autoAdvance` is false. This fix is not present in published 0.5.x.
+
+When testing a development candidate locally, use `RobolectricTestRunner`, enable
+`android.testOptions.unitTests.isIncludeAndroidResources`, and put the Compose test and
+Dejavu dependencies in `testImplementation`. Keep the Compose test activity manifest in
+`debugImplementation`. The repository's Android local lane includes real Robolectric UI
+regressions in addition to its instrumented device tests.
+
+The rule releases tracking that it started, even when setup or the test fails. If your
+application already called `Dejavu.enable`, the rule leaves that session active; your
+application remains responsible for `Dejavu.disable`. Tests can continue to use the KMP
+helper when they own content through `setTrackedContent`.
+
 ## Kotlin Multiplatform setup
 
 Add the dependency to the shared test source set for JVM desktop, iOS arm64 and simulator arm64,
