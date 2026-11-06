@@ -2,6 +2,10 @@
 
 When a recomposition assertion fails, Dejavu throws an `UnexpectedRecompositionsError` with a structured, multi-section diagnostic. This guide explains how to read each section and what to do about common failures.
 
+> **Development snapshot:** The explicit failures for unmapped tags described here are unreleased.
+> Published 0.5.x can return zero or fall back to a function-name count when mapping is missing,
+> so `assertStable()` may pass without a valid mapping.
+
 ---
 
 ## Full Error Message Structure
