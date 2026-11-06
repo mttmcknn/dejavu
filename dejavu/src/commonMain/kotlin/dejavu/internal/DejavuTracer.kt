@@ -3,6 +3,7 @@ package dejavu.internal
 import androidx.compose.runtime.InternalComposeTracingApi
 import androidx.compose.runtime.CompositionTracer
 import androidx.compose.runtime.tooling.CompositionData
+import dejavu.UnexpectedRecompositionsError
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
@@ -73,6 +74,9 @@ internal object DejavuTracer : CompositionTracer {
     /** Cache of testTag -> composable function name. */
     internal val testTagToFunction = mutableMapOf<String, String>()
     internal val testTagToFunctionLock = SynchronizedObject()
+
+    /** Lambda ownership observed in this measurement window; retained until resetCounts(). */
+    private val anonymousOwnerTags = mutableSetOf<String>()
 
     /** Cache of testTag -> composable key (int) for per-instance recomposition counting. */
     internal val testTagToKey = mutableMapOf<String, Int>()
@@ -272,6 +276,24 @@ internal object DejavuTracer : CompositionTracer {
      */
     fun getFunctionNameForTag(testTag: String): String? = synchronized(testTagToFunctionLock) {
         testTagToFunction[testTag]
+    }
+
+    internal fun recordAnonymousTagOwner(tag: String) {
+        synchronized(testTagToFunctionLock) { anonymousOwnerTags.add(tag) }
+    }
+
+    internal fun requireSupportedTagCount(tag: String) {
+        val anonymousOwner = synchronized(testTagToFunctionLock) { tag in anonymousOwnerTags }
+        if (anonymousOwner) {
+            throw UnexpectedRecompositionsError(
+                "Recomposition count unavailable for testTag='$tag': this measurement window includes a lambda owner.\n" +
+                    "  Exact per-instance lambda execution counts are not supported.\n" +
+                    "  Shared trace totals and sampled slot changes cannot establish this element's count.\n" +
+                    "  Measure the component body with an independent SideEffect counter, or tag a named " +
+                    "composable boundary whose count has been verified independently.\n" +
+                    "  If the tag now belongs to a named component, reset counts after that component settles."
+            )
+        }
     }
 
     /**
@@ -513,7 +535,10 @@ internal object DejavuTracer : CompositionTracer {
         }
         synchronized(recompositionCountsLock) { recompositionCounts.clear() }
         synchronized(recompositionEventsLock) { recompositionEvents.clear() }
-        synchronized(testTagToFunctionLock) { testTagToFunction.clear() }
+        synchronized(testTagToFunctionLock) {
+            testTagToFunction.clear()
+            anonymousOwnerTags.clear()
+        }
         synchronized(testTagToKeyLock) { testTagToKey.clear() }
         synchronized(perTagLock) {
             perTagRecompCounts.clear()

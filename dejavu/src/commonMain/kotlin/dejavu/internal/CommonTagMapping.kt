@@ -57,8 +57,15 @@ internal object CommonTagMapping {
 
         // Check if this group has a LayoutNode with testTag
         val testTag = extractTestTag(group)
-        if (testTag != null && currentFunctionName != null && testTag !in excludedTags) {
-            registerTag(testTag, currentFunctionName, currentKey, group)
+        if (testTag != null && currentFunctionName != null) {
+            // Validate ownership even when Android's named-function mapper already claimed
+            // the tag. A nearer lambda can execute without its named renderer executing.
+            if (currentFunctionName.substringAfterLast('.') == "<anonymous>") {
+                DejavuTracer.recordAnonymousTagOwner(testTag)
+            }
+            if (testTag !in excludedTags) {
+                registerTag(testTag, currentFunctionName, currentKey, group)
+            }
         }
 
         // Recurse into children
@@ -71,30 +78,27 @@ internal object CommonTagMapping {
      * Resolves the user composable qualified name for a [CompositionGroup].
      *
      * Tries two approaches:
-     * 1. Parse [CompositionGroup.sourceInfo] (available when source information collection is enabled)
-     * 2. Look up [CompositionGroup.key] in [DejavuTracer.keyToInfo] (populated by traceEventStart)
+     * 1. Look up [CompositionGroup.key] in [DejavuTracer.keyToInfo] (populated by traceEventStart)
+     * 2. Resolve [CompositionGroup.sourceInfo]'s name against traced user functions
      *
      * Returns the qualified function name if this group represents a user composable, null otherwise.
      */
     private fun resolveUserComposable(group: CompositionGroup): String? {
-        // Approach 1: sourceInfo (most reliable when available)
-        val sourceInfoName = extractFunctionName(group.sourceInfo)
-        if (sourceInfoName != null && !DejavuTracer.isFrameworkComposable(sourceInfoName)) {
-            return sourceInfoName
-        }
-
-        // Approach 2: match group key against tracer's key→info map
+        // A traced key identifies the actual body, including an anonymous composable.
+        // Source information only contains a simple name: treating every bare name as
+        // user code lets infrastructure such as ReusableComposeNode steal ownership.
         val key = group.key
         if (key is Int) {
             val traced = synchronized(DejavuTracer.keyToInfoLock) {
                 DejavuTracer.keyToInfo[key]
             }
-            if (traced != null && !DejavuTracer.isFrameworkComposable(traced.fullInfo)) {
-                return traced.qualifiedName
+            if (traced != null) {
+                return traced.qualifiedName.takeUnless {
+                    DejavuTracer.isFrameworkComposable(traced.fullInfo)
+                }
             }
         }
-
-        return null
+        return DejavuTracer.resolveUserComposable(extractFunctionName(group.sourceInfo), null)
     }
 
     /**

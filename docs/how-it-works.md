@@ -67,6 +67,7 @@ Compose 1.12. These methods require 1.12; the existing rule API remains covered 
 
 ## Known Limitations
 
+- **Anonymous composable owners** — a tag whose owning body is a composable lambda has no supported exact per-instance execution count. Recomposition assertions (including `assertStable()`) and Android's `getRecompositionCount(tag)` report an unavailable-count error instead of returning a shared function total or a sampled slot-change count. This also applies when a lambda executes inside a named renderer. Use an independent unkeyed `SideEffect` counter in the body being measured, or a named composable boundary whose count is independently verified. A measurement window that included a lambda owner stays unsupported until counts are reset; if the tag is reused by a named component, let it settle and then reset counts.
 - **Off-screen lazy items** — `LazyColumn`/`LazyRow` only compose items that are visible. Items that haven't been composed don't exist in the composition tree, so Dejavu has nothing to track. Scroll them into view before asserting.
 - **Non-Android instance diagnostics** — unresolved tags can share a function-level count when multiple instances use the same composable. Android has the most complete per-instance diagnostics.
 - **Activity-owned Recomposer clock** — `createAndroidComposeRule` uses the Activity's real `Recomposer`, not a test-controlled one. This means `mainClock.advanceTimeBy()` can't drive infinite animations forward. Use `createComposeRule` (without an Activity) if you need a controllable clock.
