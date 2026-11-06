@@ -98,6 +98,9 @@ kotlin {
         implementation(libs.junit)
         implementation(libs.truth)
         implementation(libs.robolectric)
+        implementation(libs.androidx.ui.test.junit4)
+        implementation(libs.androidx.ui.tooling)
+        implementation(libs.androidx.activity.compose)
         implementation(compose.runtime)
       }
     }
@@ -150,6 +153,7 @@ android {
 // enforced platform so a newer Compose Multiplatform dependency cannot silently win over
 // the older BOM that CI was explicitly asked to validate.
 dependencies {
+  "debugImplementation"(libs.androidx.ui.test.manifest)
   val composeBomVersion = project.findProperty("composeBomVersion") as? String
   val composeBom = if (composeBomVersion != null) {
     enforcedPlatform("androidx.compose:compose-bom:$composeBomVersion")

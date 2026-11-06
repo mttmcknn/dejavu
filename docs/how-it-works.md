@@ -65,9 +65,36 @@ fixture whose keyed callback stays quiet during four recompositions. The experim
 `DejavuComposeTestRule` delegates the new `hasPendingWork` and `runWithoutImplicitWait` methods on
 Compose 1.12. These methods require 1.12; the existing rule API remains covered on Android 1.11.
 
+## Exact lambda counts (development snapshot)
+
+The **0.6.0 development snapshot** adds committed execution counts for anonymous
+composable instances in content owned by `runRecompositionTrackingUiTest` and
+`setTrackedContent`. This behavior is not in published 0.5.x releases.
+
+Each count uses the restart scope's tooling identity together with the compiler's
+body key. A trace records a count operation on the owning composer's change list,
+using the same primitive as an unkeyed `SideEffect`. Compose applies that operation
+only when it commits the work. Initial composition is excluded, and `resetCounts()`
+establishes a new baseline for live instances. Reading a count does not sample or
+increment it, so three executions remain three whether assertions run after every
+update or only once at the end. Skipped bodies and discarded work do not count.
+
+The implementation uses `IdentifiableRecomposeScope`, composition observers and
+`Composer.recordSideEffect`. The last API is marked **InternalComposeApi**; this is
+an additional runtime compatibility dependency, not a new compiler plugin or an
+annotation required on application components. Recording an effect also adds
+measurement overhead, so these counts are intended for tests, not profiling costs.
+
+The helper captures its own root and content composers. This does **not** capture
+arbitrary activity-owned compositions or separate composers created by lazy layouts,
+dialogs, popups or user `SubcomposeLayout` instances. During the helper session, an
+anonymous tag without a verified captured scope fails explicitly. A parent composer's
+count cannot stand in for an uncaptured child. Named-function counts and their existing
+multi-instance approximation limits are unchanged.
+
 ## Known Limitations
 
-- **Anonymous composable owners** — exact per-instance execution counts for composable lambdas are unsupported, including in published releases. **The unpublished 0.6.0 development snapshot** adds an explicit unavailable-count error to recomposition assertions (including `assertStable()`) and Android's `getRecompositionCount(tag)` instead of returning a shared function total or a sampled slot-change count. This diagnostic is not yet available in published releases. It also applies when a lambda executes inside a named renderer. Use an independent unkeyed `SideEffect` counter in the body being measured, or a named composable boundary whose count is independently verified. In the development snapshot, a measurement window that included a lambda owner stays unsupported until counts are reset; if the tag is reused by a named component, let it settle and then reset counts.
+- **Uncaptured anonymous owners** — published 0.5.x releases cannot provide exact lambda-instance counts. The unpublished development snapshot supports the captured helper path described above and rejects unsupported paths, including an ordinary activity-owned lambda inside a named renderer. Use the tracked helper or an independent unkeyed `SideEffect` counter in the actual body. If a tag changes from a lambda owner to a named owner during a measurement window, let the new component settle and reset counts before measuring it.
 - **Off-screen lazy items** — `LazyColumn`/`LazyRow` only compose items that are visible. Items that haven't been composed don't exist in the composition tree, so Dejavu has nothing to track. Scroll them into view before asserting.
 - **Non-Android instance diagnostics** — unresolved tags can share a function-level count when multiple instances use the same composable. Android has the most complete per-instance diagnostics.
 - **Activity-owned Recomposer clock** — `createAndroidComposeRule` uses the Activity's real `Recomposer`, not a test-controlled one. This means `mainClock.advanceTimeBy()` can't drive infinite animations forward. Use `createComposeRule` (without an Activity) if you need a controllable clock.

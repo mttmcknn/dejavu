@@ -1,6 +1,8 @@
 package dejavu.internal
 
 import androidx.compose.runtime.tooling.CompositionData
+import androidx.compose.runtime.ExperimentalComposeRuntimeApi
+import androidx.compose.runtime.tooling.CompositionObserver
 import dejavu.Dejavu
 import kotlinx.atomicfu.locks.synchronized
 import java.util.concurrent.CopyOnWriteArraySet
@@ -48,3 +50,6 @@ internal actual fun describeInvalidationCauses(qualifiedName: String): String? =
 internal actual fun describeStateDependencies(qualifiedName: String): String? = null
 internal actual fun isObserverAvailable(): Boolean = false
 internal actual fun resetObserver() {}
+
+@OptIn(ExperimentalComposeRuntimeApi::class)
+internal actual fun platformDiagnosticCompositionObserver(): CompositionObserver? = null

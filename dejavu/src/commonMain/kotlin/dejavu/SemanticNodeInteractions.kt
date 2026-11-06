@@ -105,13 +105,14 @@ private inline fun SemanticsNodeInteraction.onRecompositions(
 
     if (testTag != null) {
         val snapshots = DejavuTracer.getCompositionSnapshots()
-        if (snapshots.isNotEmpty()) {
+        if (snapshots.isNotEmpty() || dejavu.internal.ExactScopeCounts.isActive) {
             DejavuTracer.refreshTagMapping(snapshots)
         }
         functionName = DejavuTracer.getFunctionNameForTag(testTag)
-        DejavuTracer.requireSupportedTagCount(testTag)
+        val exactCount = dejavu.internal.ExactTagMapping.count(testTag)
+        if (exactCount == null) DejavuTracer.requireSupportedTagCount(testTag)
         // Use per-tag fingerprint counting only for multi-instance functions
-        val perTagCount = if (functionName != null && DejavuTracer.isMultiInstanceFunction(functionName)) {
+        val perTagCount = exactCount ?: if (functionName != null && DejavuTracer.isMultiInstanceFunction(functionName)) {
             DejavuTracer.getPerTagRecompositionCount(testTag)
         } else null
         count = if (perTagCount != null) {
@@ -146,6 +147,9 @@ private fun failRecompositionsExpectation(
     interaction: SemanticsNodeInteraction,
 ): Nothing {
     val message = buildString {
+        val hasCommittedLambdaCount = testTag?.let {
+            dejavu.internal.ExactTagMapping.count(it) != null
+        } ?: false
         // Header line
         if (testTag != null) {
             appendLine("Recomposition assertion failed for testTag='$testTag'")
@@ -174,6 +178,9 @@ private fun failRecompositionsExpectation(
         } else {
             appendLine("  Actual: $actualCount recomposition(s)")
         }
+        if (hasCommittedLambdaCount) {
+            appendLine("  Count source: committed executions of this lambda instance")
+        }
 
         // All tracked composables
         val allCounts = DejavuTracer.getAllRecompositionCounts()
@@ -192,7 +199,7 @@ private fun failRecompositionsExpectation(
         // Recomposition timeline
         if (functionName != null) {
             val isMultiInstance = DejavuTracer.isMultiInstanceFunction(functionName)
-            val perTagEvents = if (isMultiInstance && testTag != null) {
+            val perTagEvents = if (!hasCommittedLambdaCount && isMultiInstance && testTag != null) {
                 DejavuTracer.getPerTagRecompositionEvents(testTag)
             } else {
                 emptyList()
@@ -200,7 +207,9 @@ private fun failRecompositionsExpectation(
             val events = perTagEvents.ifEmpty { DejavuTracer.getRecompositionEvents(functionName) }
             if (events.isNotEmpty()) {
                 appendLine()
-                if (isMultiInstance && perTagEvents.isNotEmpty()) {
+                if (hasCommittedLambdaCount) {
+                    appendLine("  Function trace timeline (all instances; execution attempts):")
+                } else if (isMultiInstance && perTagEvents.isNotEmpty()) {
                     appendLine("  Recomposition timeline (per-instance for testTag='$testTag'):")
                 } else {
                     appendLine("  Recomposition timeline:")

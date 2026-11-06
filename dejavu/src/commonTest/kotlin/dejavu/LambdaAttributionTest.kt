@@ -22,11 +22,11 @@ import kotlin.test.assertTrue
 
 class LambdaAttributionTest {
     @Test
-    fun repeatedLambdaWithoutIntermediateQueries_rejectsUnsupportedCounts() =
+    fun repeatedLambdaWithoutIntermediateQueries_countsEachInstanceExactly() =
         registryCase(queryEachUpdate = false, namedRenderer = false)
 
     @Test
-    fun repeatedLambdaWithIntermediateQueries_rejectsTheSameCounts() =
+    fun repeatedLambdaWithIntermediateQueries_preservesExactCounts() =
         registryCase(queryEachUpdate = true, namedRenderer = false)
 
     @Test
@@ -59,20 +59,25 @@ class LambdaAttributionTest {
         val useLambda = mutableIntStateOf(1)
         val value = mutableIntStateOf(0)
         val component: @Composable () -> Unit = {
-            BasicText("lambda:${value.intValue}", Modifier.testTag("reused"))
+            val currentValue = value.intValue
+            SideEffect { GroundTruth.record("reused") }
+            BasicText("lambda:$currentValue", Modifier.testTag("reused"))
         }
         setTrackedContent {
             if (useLambda.intValue == 1) component()
             else LambdaTestNamedComponent("reused", value)
         }
         waitForIdle()
-        assertLambdaCountUnavailable("reused")
+        onNodeWithTag("reused").assertTextEquals("lambda:0")
+        assertEquals(1, GroundTruth.total("reused"))
+        onNodeWithTag("reused").assertRecompositions(exactly = 0)
+        onNodeWithTag("reused").assertStable()
 
         runOnIdle { useLambda.intValue = 0 }
         waitForIdle()
         onNodeWithTag("reused").assertTextEquals("reused:0")
-        // The old window includes unsupported executions even though its tag was reused.
-        assertLambdaCountUnavailable("reused")
+        // A tag that changes from lambda to named ownership needs an explicit new window.
+        assertNewMeasurementWindowRequired("reused")
         resetRecompositionCounts()
         GroundTruth.snapshotBaseline()
         runOnIdle { value.intValue++ }
@@ -108,25 +113,44 @@ class LambdaAttributionTest {
         waitForIdle()
         resetRecompositionCounts()
         GroundTruth.snapshotBaseline()
-        repeat(3) {
+        repeat(3) { index ->
             runOnIdle { echo.intValue++ }
             waitForIdle()
-            if (queryEachUpdate) assertLambdaCountUnavailable("echo")
+            if (queryEachUpdate) {
+                assertEquals(index + 1, GroundTruth.delta("echo"))
+                assertEquals(0, GroundTruth.delta("stable"))
+                onNodeWithTag("echo").assertRecompositions(exactly = index + 1)
+                onNodeWithTag("stable").assertStable()
+            }
         }
         onNodeWithTag("echo").assertTextEquals("echo:3")
         onNodeWithTag("stable").assertTextEquals("stable:0")
         assertEquals(3, GroundTruth.delta("echo"))
         assertEquals(0, GroundTruth.delta("stable"))
-        assertLambdaCountUnavailable("echo")
-        assertLambdaCountUnavailable("stable")
+        // Query the unchanged instance first to expose accidental shared totals.
+        repeat(2) {
+            onNodeWithTag("stable").assertRecompositions(exactly = 0)
+            onNodeWithTag("echo").assertRecompositions(exactly = 3)
+        }
+        onNodeWithTag("echo").assertRecompositions(atLeast = 0)
+        assertFailsWith<UnexpectedRecompositionsError> { onNodeWithTag("echo").assertStable() }
+        assertFailsWith<UnexpectedRecompositionsError> {
+            onNodeWithTag("echo").assertRecompositions(atMost = 2)
+        }
+        assertFailsWith<UnexpectedRecompositionsError> {
+            onNodeWithTag("stable").assertRecompositions(exactly = 1)
+        }
         assertTrue(DejavuTracer.getFunctionNameForTag("echo") != "ReusableComposeNode")
 
-        // Clearing the measurement window must not turn unsupported ownership into zero.
         resetRecompositionCounts()
-        assertLambdaCountUnavailable("echo")
+        GroundTruth.snapshotBaseline()
+        onNodeWithTag("echo").assertRecompositions(exactly = 0)
+        onNodeWithTag("stable").assertStable()
+        assertEquals(0, GroundTruth.delta("echo"))
+        assertEquals(0, GroundTruth.delta("stable"))
     }
 
-    private fun ComposeUiTest.assertLambdaCountUnavailable(tag: String) {
+    private fun ComposeUiTest.assertNewMeasurementWindowRequired(tag: String) {
         val stableError = assertFailsWith<UnexpectedRecompositionsError> {
             onNodeWithTag(tag).assertStable()
         }

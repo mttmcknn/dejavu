@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Composer
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.InternalComposeTracingApi
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.tooling.LocalInspectionTables
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
@@ -11,6 +13,7 @@ import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
 import dejavu.internal.DejavuTracer
+import dejavu.internal.TrackingCompositionObservers
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.test.TestResult
 
@@ -53,17 +56,23 @@ public fun runRecompositionTrackingUiTest(
     DejavuTracer.enabled = true
     Composer.setTracer(DejavuTracer)
     synchronized(DejavuTracer.inspectionTablesLock) { DejavuTracer.inspectionTables.clear() }
-    DejavuTest.reset()
-
     try {
+        DejavuTest.reset()
+        TrackingCompositionObservers.startHelperSession()
         block()
     } finally {
-        // Android's activity runtime may already own tracking. Restore that state so
-        // a later Android rule does not inherit an enabled runtime with a removed tracer.
-        DejavuTracer.enabled = previouslyEnabled
-        Composer.setTracer(if (previouslyEnabled) DejavuTracer else null)
-        isDebugInspectorInfoEnabled = previousInspectorInfoEnabled
-        synchronized(DejavuTracer.inspectionTablesLock) { DejavuTracer.inspectionTables.clear() }
+        // Release only this helper's observer leases. An Android runtime that was already
+        // enabled retains its registration and continues receiving diagnostic callbacks.
+        try {
+            TrackingCompositionObservers.clearHelperSession()
+        } finally {
+            // Android's activity runtime may already own tracking. Restore that state so
+            // a later Android rule does not inherit an enabled runtime with a removed tracer.
+            DejavuTracer.enabled = previouslyEnabled
+            Composer.setTracer(if (previouslyEnabled) DejavuTracer else null)
+            isDebugInspectorInfoEnabled = previousInspectorInfoEnabled
+            synchronized(DejavuTracer.inspectionTablesLock) { DejavuTracer.inspectionTables.clear() }
+        }
     }
 }
 
@@ -119,11 +128,17 @@ public fun ComposeUiTest.resetRecompositionCounts() {
  * ([assertRecompositions]/[assertStable]) can resolve testTag to function mappings
  * via [DejavuTracer.getCompositionSnapshots] without any manual sync.
  */
+@OptIn(InternalComposeApi::class)
 @Composable
 internal fun DejavuTrackedContent(content: @Composable () -> Unit) {
+    // Installing before the subcomposition starts lets its initial pass inherit our observer.
+    TrackingCompositionObservers.attachComposer(currentComposer)
     CompositionLocalProvider(LocalInspectionTables provides DejavuTracer.inspectionTables) {
         SubcomposeLayout { constraints ->
-            val placeables = subcompose(Unit) { content() }
+            val placeables = subcompose(Unit) {
+                TrackingCompositionObservers.attachComposer(currentComposer)
+                content()
+            }
                 .map { it.measure(constraints) }
             layout(
                 placeables.maxOfOrNull { it.width } ?: 0,

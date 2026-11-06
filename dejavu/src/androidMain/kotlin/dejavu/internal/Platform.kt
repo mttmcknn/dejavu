@@ -2,6 +2,8 @@ package dejavu.internal
 
 import android.util.Log
 import androidx.compose.runtime.tooling.CompositionData
+import androidx.compose.runtime.ExperimentalComposeRuntimeApi
+import androidx.compose.runtime.tooling.CompositionObserver
 import kotlinx.atomicfu.locks.synchronized
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -65,3 +67,7 @@ internal actual fun isObserverAvailable(): Boolean =
 internal actual fun resetObserver() {
     Runtime.observerDelegate.reset()
 }
+
+@OptIn(ExperimentalComposeRuntimeApi::class)
+internal actual fun platformDiagnosticCompositionObserver(): CompositionObserver? =
+    if (Runtime.observerDelegate === DejavuCompositionObserver) DejavuCompositionObserver else null
